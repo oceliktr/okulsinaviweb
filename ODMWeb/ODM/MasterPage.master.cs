@@ -9,28 +9,28 @@ namespace ODM
     {
         public void UyariKirmizi(string uyariMesaji, PlaceHolder phUyari)
         {
-            AdminUyarilar uyari = (AdminUyarilar)LoadControl("Uyarilar.ascx");
+            AdminUyarilar uyari = (AdminUyarilar)LoadControl("~/Kutuphaneler/Uyarilar.ascx");
             uyari.PanelUyariKirmizi = true;
             uyari.LiteralUyariKirmizi = uyariMesaji;
             phUyari.Controls.Add(uyari);
         }
         public void UyariTuruncu(string uyariMesaji, PlaceHolder phUyari)
         {
-            AdminUyarilar uyari = (AdminUyarilar)LoadControl("Uyarilar.ascx");
+            AdminUyarilar uyari = (AdminUyarilar)LoadControl("~/Kutuphaneler/Uyarilar.ascx");
             uyari.PanelUyariTuruncu = true;
             uyari.LiteralUyariTuruncu = uyariMesaji;
             phUyari.Controls.Add(uyari);
         }
         public void UyariBilgilendirme(string uyariMesaji, PlaceHolder phUyari)
         {
-            AdminUyarilar uyari = (AdminUyarilar)LoadControl("Uyarilar.ascx");
+            AdminUyarilar uyari = (AdminUyarilar)LoadControl("~/Kutuphaneler/Uyarilar.ascx");
             uyari.PanelBilgilendirme = true;
             uyari.LiteralBilgilendirme = uyariMesaji;
             phUyari.Controls.Add(uyari);
         }
         public void UyariIslemTamam(string uyariMesaji, PlaceHolder phUyari)
         {
-            AdminUyarilar uyari = (AdminUyarilar)LoadControl("Uyarilar.ascx");
+            AdminUyarilar uyari = (AdminUyarilar)LoadControl("~/Kutuphaneler/Uyarilar.ascx");
             uyari.PanelIslemTamam = true;
             uyari.LiteralIslemTamam = uyariMesaji;
             phUyari.Controls.Add(uyari);
@@ -63,25 +63,12 @@ namespace ODM
             string sitil = "skin-purple";
             string kutu = "";
             string sidebar = "";
-            ltrSitil.Text = string.Format("<link rel=\"stylesheet\" href=\"dist/css/skins/{0}.css\" />", sitil);
+            ltrSitil.Text = string.Format("<link rel=\"stylesheet\" href=\"/dist/css/skins/{0}.css\" />", sitil);
             string body = string.Format("{0} {1} {2}  sidebar-mini", sitil, kutu, sidebar);
             myBody.Attributes.Add("class", body); //sabit genişlik
 
             if (IsPostBack) return;
-            //if (Request.IsLocal)
-            //{
-            //    string uyeNo = "1"; //1262
-            //    HttpCookie uyeCookie = new HttpCookie("uyeCookie");
-            //    uyeCookie["Oturum"] = "Acik";
-            //    uyeCookie["UyeId"] = uyeNo;
-            //    uyeCookie["Yetki"] = "Admin|IlceMEMYetkilisi|OkulYetkilisi|UstDegerlendirici|";//3
-            //    uyeCookie.Expires = DateTime.Now.AddDays(1);
-            //    Session["UyeId"] = uyeNo;
-
-            //    Response.Cookies.Add(uyeCookie);
-            //}
-            //else
-            //{
+         
                 try
                 {
                     if (Request.Cookies["uyeCookie"] != null)
@@ -108,11 +95,11 @@ namespace ODM
                 {
                     Response.Redirect("Cikis.aspx");
                 }
-            //}
+            
 
             try
             {
-                if (Yetki().Contains("Admin"))
+                if (Yetki().Contains("Root"))
                 {
                     liKullanicilar.Visible = true;
                     liAyarlar.Visible = true;
@@ -131,7 +118,7 @@ namespace ODM
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-            string avatar = "images/avatar.png";
+            string avatar = "/images/avatar.png";
             if (IsPostBack) return;
             HttpCookie httpCookie = Request.Cookies["uyeCookie"];
             if (httpCookie == null) return;

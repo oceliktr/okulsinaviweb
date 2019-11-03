@@ -12,11 +12,12 @@ namespace DAL
         public int AltOgrenmeAlani { get; set; }
         public int KazanimNo { get; set; }
         public string Kazanim { get; set; }
+        public string Karne { get; set; }
     }
 
     public class KazanimlarDB
     {
-        readonly HelperDb helper = new HelperDb();
+        private readonly HelperDb helper = new HelperDb();
 
         public DataTable KayitlariGetir()
         {
@@ -25,7 +26,7 @@ namespace DAL
         }
         public DataTable KayitlariGetir(int brans, int sinif)
         {
-            const string sql = "select * from kazanimlar where BransId=?BransId and Sinif=?Sinif order by OgrenmeAlani,AltOgrenmeAlani asc";
+            const string sql = "select * from kazanimlar where BransId=?BransId and Sinif=?Sinif order by OgrenmeAlani,AltOgrenmeAlani,KazanimNo asc";
             MySqlParameter[] p =
             {
                 new MySqlParameter("?BransId", MySqlDbType.Int32),
@@ -71,6 +72,7 @@ namespace DAL
                 info.AltOgrenmeAlani = dr.GetMySayi("AltOgrenmeAlani");
                 info.KazanimNo = dr.GetMySayi("KazanimNo");
                 info.Kazanim = dr.GetMyMetin("Kazanim");
+                info.Karne = dr.GetMyMetin("Karne");
             }
             dr.Close();
 

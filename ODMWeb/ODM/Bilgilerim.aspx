@@ -50,7 +50,7 @@
                                                            <div class="form-group">
                                                                 <label class="col-sm-4 control-label">Adı Soyadı</label>
                                                                 <div class="col-sm-8">
-                                                                    <asp:TextBox ID="txtAdiSoyadi" CssClass="form-control" Enabled="False" runat="server"></asp:TextBox>
+                                                                    <asp:TextBox ID="txtAdiSoyadi" CssClass="form-control" runat="server"></asp:TextBox>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">

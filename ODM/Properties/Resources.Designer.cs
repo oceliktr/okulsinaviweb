@@ -63,6 +63,26 @@ namespace ODM.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _109_AllAnnotations_Error_16x16_72 {
+            get {
+                object obj = ResourceManager.GetObject("109_AllAnnotations_Error_16x16_72", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _112_RefreshArrow_Blue_16x16_72 {
+            get {
+                object obj = ResourceManager.GetObject("112_RefreshArrow_Blue_16x16_72", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Aralık_İzleme_Sınavı_A5_Dikey {
             get {
                 object obj = ResourceManager.GetObject("Aralık İzleme Sınavı A5 Dikey", resourceCulture);
@@ -76,6 +96,16 @@ namespace ODM.Properties {
         internal static System.Drawing.Bitmap Aralık_İzleme_Sınavı_A5_Dikey___Fen_Bilimleri {
             get {
                 object obj = ResourceManager.GetObject("Aralık İzleme Sınavı A5 Dikey - Fen Bilimleri", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Aralık_İzleme_Sınavı_A5_Dikey___Fen_Bilimleri1 {
+            get {
+                object obj = ResourceManager.GetObject("Aralık İzleme Sınavı A5 Dikey - Fen Bilimleri1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -116,6 +146,16 @@ namespace ODM.Properties {
         internal static System.Drawing.Bitmap ayarlar {
             get {
                 object obj = ResourceManager.GetObject("ayarlar", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Back {
+            get {
+                object obj = ResourceManager.GetObject("Back", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -183,6 +223,56 @@ namespace ODM.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap FavoriteStar_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("FavoriteStar_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap forward {
+            get {
+                object obj = ResourceManager.GetObject("forward", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Go {
+            get {
+                object obj = ResourceManager.GetObject("Go", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap HomeHS {
+            get {
+                object obj = ResourceManager.GetObject("HomeHS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_plus_16 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-plus-16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap move1 {
             get {
                 object obj = ResourceManager.GetObject("move1", resourceCulture);
@@ -206,6 +296,36 @@ namespace ODM.Properties {
         internal static System.Drawing.Bitmap qr_kod_olustur {
             get {
                 object obj = ResourceManager.GetObject("qr_kod_olustur", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Save_icon {
+            get {
+                object obj = ResourceManager.GetObject("Save-icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap search_glyph {
+            get {
+                object obj = ResourceManager.GetObject("search_glyph", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap settings_16 {
+            get {
+                object obj = ResourceManager.GetObject("settings_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -6,17 +6,17 @@ namespace ODM.Kutuphanem
 {
     public static class IniIslemleri
     {
-        static string _dosyaAdi = "C:\\ODM25\\ayarlar.ini";
+        static string dosyaAdi = "C:\\ODM25\\ayarlar.ini";
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString, string lpFileName);
-        public static bool VeriYaz(string kategori, string anaktar, string deger)
+        public static bool VeriYaz(string kategori, string anahtar, string deger)
         {
             string dosyaYolu = "C:\\ODM25";
             if (!DizinIslemleri.DizinKontrol(dosyaYolu))
                 DizinIslemleri.DizinOlustur(dosyaYolu);
 
-            bool Return = WritePrivateProfileString(kategori, anaktar, deger, _dosyaAdi);
+            bool Return = WritePrivateProfileString(kategori, anahtar, deger, dosyaAdi);
             return Return;
         }
 
@@ -24,7 +24,7 @@ namespace ODM.Kutuphanem
         {
             StringBuilder sb = new StringBuilder(500);
 
-            GetPrivateProfileString(kategori, anahtar, "", sb, sb.Capacity, _dosyaAdi);
+            GetPrivateProfileString(kategori, anahtar, "", sb, sb.Capacity, dosyaAdi);
             string veri = sb.ToString();
             sb.Clear();
             return veri;

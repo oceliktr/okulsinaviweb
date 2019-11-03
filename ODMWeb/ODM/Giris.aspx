@@ -6,7 +6,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div class="content-wrapper">
         <section class="content-header">
-            <h1>Erzurum Ölçeme Değerlendirme Merkezi
+            <h1>Erzurum Ölçme Değerlendirme Merkezi
         <small>
             <asp:Literal ID="ltrDonemAdi" runat="server"></asp:Literal></small>
             </h1>
@@ -24,7 +24,7 @@
                                 <div class="box box-solid box-default">
                                     <div class="box-header with-border">
                                         <i class="fa fa-plus-square"></i>
-                                        <h3 class="box-title">Erzurum Ölçeme Değerlendirme Merkezi</h3>
+                                        <h3 class="box-title">Erzurum Ölçme Değerlendirme Merkezi</h3>
                                     </div>
                                     <div class="box-body">
                                         <p>
@@ -42,7 +42,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-6" id="divPuanlamaGrafik" runat="server" Visible="False">
                                 <div class="box box-solid box-default">
                                     <div class="box-header with-border">
                                         <i class="fa fa-bar-chart-o"></i>
@@ -79,7 +79,7 @@
                                     </div>
                                     <div class="box-body">
                                         <p><strong>ÖLÇME DEĞERLENDİRME MERKEZİ</strong></p>
-                                        <p><strong>Adres : </strong> Murat Paşa Mahallesi Erzincan Kapı Caddesi No 73 Yakutiye ERZURUM (Yakutiye Rehberlik ve Araştırma Merkezi Binası)</p>
+                                        <p><strong>Adres : </strong> Yukarı Mumcu Cad. Atatürk Evi Sok. No:1 Kat:5-6 Yakutiye/Erzurum</p>
                                         <p><strong>Tlf :</strong></p>
                                         <p><strong>E-posta:</strong> odm25@meb.gov.tr</p>
                                         <p><strong>EKİP ÜYELERİ İLETİŞİM BİLGİLERİ</strong></p>
@@ -95,32 +95,32 @@
                                                 <tr role="row" class="odd">
                                                     <td>Abdulkerim Adıgüzel</td>
                                                     <td>kerimadiguzel25@gmail.com</td>
-                                                    <td>+90 506 587 16 81</td>
+                                                    <td>0 506 587 16 81</td>
                                                 </tr>
                                                 <tr role="row" class="even">
                                                     <td>Abdusselam Koçak</td>
                                                     <td>aselam_25@hotmail.com</td>
-                                                    <td>+90 535 888 67 90</td>
+                                                    <td>0 535 888 67 90</td>
                                                 </tr>
                                                 <tr role="row" class="odd">
                                                     <td>M. Said Adıyaman</td>
                                                     <td>msaitadiyaman@gmail.com</td>
-                                                    <td>+90 536 273 5187	</td>
+                                                    <td>0 536 273 5187	</td>
                                                 </tr>
                                                 <tr role="row" class="even">
                                                     <td>Murat Ömer Yeşiloğlu</td>
                                                     <td>muratomeryesiloglu@hotmail.com</td>
-                                                    <td>+90 543 268 8597</td>
+                                                    <td>0 543 268 8597</td>
                                                 </tr>
                                                 <tr role="row" class="odd">
                                                     <td>Mustafa Uğurlu	</td>
-                                                    <td>m.ugurlu87@hotmail.com</td>
-                                                    <td>+90 536 667 5602	</td>
+                                                    <td>m.ugurlu87@gmail.com</td>
+                                                    <td>0 536 667 5602	</td>
                                                 </tr>
                                                 <tr role="row" class="even">
                                                     <td>Osman Çelik	</td>
                                                     <td>osmanceliktr@gmail.com</td>
-                                                    <td>+90 554 115 8818	</td>
+                                                    <td>0 554 115 8818	</td>
                                                 </tr>
                                             </tbody>
                                         </table>

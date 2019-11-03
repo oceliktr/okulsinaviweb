@@ -39,11 +39,12 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>6</LangVersion>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -59,10 +60,11 @@
     <ApplicationIcon>Resources\Odm_logo_seffaf.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>7C836C6BE5FCCEA415D0359A87594AB59025CE7E</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>68F9C9207F5B53E63790A71957B78986E41D57F7</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>ODM_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -107,18 +109,31 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AForge">
+      <HintPath>..\AForge.NET\AForge.dll</HintPath>
+    </Reference>
     <Reference Include="AForge.Imaging">
-      <HintPath>F:\Programlama\Kaynak\AforgeNet\Release\AForge.Imaging.dll</HintPath>
+      <HintPath>..\AForge.NET\AForge.Imaging.dll</HintPath>
+    </Reference>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" />
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" />
+    <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="FlashControlV71, Version=1.0.3187.32366, Culture=neutral, PublicKeyToken=692fbea5521e1304" />
+    <Reference Include="itextsharp">
+      <HintPath>..\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.7.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="OMR">
-      <HintPath>F:\Programlama\Kaynak\OMR\OMR.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -128,14 +143,30 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Tesseract, Version=3.0.2.0, Culture=neutral, PublicKeyToken=ebeb3d86bef60cbe, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Osman Çelik\Google Drive\ODMSinav\ODM\bin\x64\Release\Tesseract.dll</HintPath>
+      <HintPath>..\packages\Tesseract.3.0.2.0\lib\net45\Tesseract.dll</HintPath>
     </Reference>
     <Reference Include="ThoughtWorks.QRCode">
       <HintPath>..\ThoughtWorks.QRCode.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connected Services\AktifSinavServisRef\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="FormBranslar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormBranslar.Designer.cs">
+      <DependentUpon>FormBranslar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormCevaplar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormCevaplar.Designer.cs">
+      <DependentUpon>FormCevaplar.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormCKHazirla.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -148,11 +179,41 @@
     <Compile Include="FormExcel.Designer.cs">
       <DependentUpon>FormExcel.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormIlceler.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormIlceler.Designer.cs">
+      <DependentUpon>FormIlceler.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormKarekodKontrol.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormKarekodKontrol.Designer.cs">
       <DependentUpon>FormKarekodKontrol.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormKarne.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormKarne.Designer.cs">
+      <DependentUpon>FormKarne.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormKutukDbAktar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormKutukDbAktar.Designer.cs">
+      <DependentUpon>FormKutukDbAktar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormKutukIslemleri.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormKutukIslemleri.Designer.cs">
+      <DependentUpon>FormKutukIslemleri.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormRapor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormRapor.Designer.cs">
+      <DependentUpon>FormRapor.cs</DependentUpon>
     </Compile>
     <Compile Include="FormSinifListesi.cs">
       <SubType>Form</SubType>
@@ -160,6 +221,19 @@
     <Compile Include="FormSinifListesi.Designer.cs">
       <DependentUpon>FormSinifListesi.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormTextAl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormTextAl.Designer.cs">
+      <DependentUpon>FormTextAl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KazanimKarneRapor.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>KazanimKarneRapor.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Kutuphanem\AgIslemleri.cs" />
     <Compile Include="Kutuphanem\CKKonumIslemleri.cs" />
     <Compile Include="FormAyarlar.cs">
       <SubType>Form</SubType>
@@ -185,23 +259,35 @@
     <Compile Include="FormGiris.Designer.cs">
       <DependentUpon>FormGiris.cs</DependentUpon>
     </Compile>
-    <Compile Include="Kutuphanem\ControlMoverOrResizer.cs" />
+    <Compile Include="Kutuphanem\ImageProcessing.cs" />
+    <Compile Include="Model\DiziSecenekler.cs" />
     <Compile Include="Kutuphanem\EgimiDuzeltveBoyutlandir.cs" />
     <Compile Include="Kutuphanem\GenelIslemler.cs" />
     <Compile Include="Kutuphanem\IniIslemleri.cs" />
+    <Compile Include="Model\KitapcikTuru.cs" />
     <Compile Include="Kutuphanem\Ocr.cs" />
-    <Compile Include="Kutuphanem\OgrKayit.cs" />
+    <Compile Include="Model\Kordinat.cs" />
+    <Compile Include="Model\OgrKayit.cs" />
     <Compile Include="Kutuphanem\Sifreleme.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormAyarlar.resx">
       <DependentUpon>FormAyarlar.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormBranslar.resx">
+      <DependentUpon>FormBranslar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormCevaplar.resx">
+      <DependentUpon>FormCevaplar.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormCKHazirla.resx">
       <DependentUpon>FormCKHazirla.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormExcel.resx">
       <DependentUpon>FormExcel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormIlceler.resx">
+      <DependentUpon>FormIlceler.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormKarekodKontrol.resx">
       <DependentUpon>FormKarekodKontrol.cs</DependentUpon>
@@ -215,8 +301,27 @@
     <EmbeddedResource Include="FormGiris.resx">
       <DependentUpon>FormGiris.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormKarne.resx">
+      <DependentUpon>FormKarne.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormKutukDbAktar.resx">
+      <DependentUpon>FormKutukDbAktar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormKutukIslemleri.resx">
+      <DependentUpon>FormKutukIslemleri.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRapor.resx">
+      <DependentUpon>FormRapor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormSinifListesi.resx">
       <DependentUpon>FormSinifListesi.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormTextAl.resx">
+      <DependentUpon>FormTextAl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KazanimKarneRapor.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>KazanimKarneRapor.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -226,8 +331,16 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ODM_TemporaryKey.pfx" />
-    <None Include="packages.config" />
+    <None Include="Connected Services\AktifSinavServisRef\AktifSinav.wsdl" />
+    <None Include="Connected Services\AktifSinavServisRef\ODM.AktifSinavServisRef.GuncelSinavResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\AktifSinavServisRef\ODM.AktifSinavServisRef.HelloWorldResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -245,6 +358,37 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Connected Services\AktifSinavServisRef\AktifSinav.disco" />
+    <None Include="Connected Services\AktifSinavServisRef\configuration91.svcinfo" />
+    <None Include="Connected Services\AktifSinavServisRef\configuration.svcinfo" />
+    <None Include="Connected Services\AktifSinavServisRef\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Resources\109_AllAnnotations_Error_16x16_72.png" />
+    <Content Include="Resources\109_AllAnnotations_Help_16x16_72.png" />
+    <Content Include="Resources\112_RefreshArrow_Blue_16x16_72.png" />
+    <Content Include="Resources\Back.png" />
+    <Content Include="Resources\FavoriteStar_16x16.png" />
+    <Content Include="Resources\forward.png" />
+    <Content Include="Resources\Go.png" />
+    <Content Include="Resources\HomeHS.png" />
+    <None Include="Resources\Save-icon.png" />
+    <None Include="Resources\icons8-plus-16.png" />
+    <Content Include="Resources\search_glyph.png" />
+    <Content Include="Resources\settings_16.png" />
+    <Content Include="x64\liblept172.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x64\libtesseract304.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\liblept172.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\libtesseract304.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\sınav yoklama .jpg" />
     <None Include="Resources\yardim.png" />
     <None Include="Resources\qr_kod_olustur.png" />
@@ -289,7 +433,15 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\AktifSinavServisRef\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

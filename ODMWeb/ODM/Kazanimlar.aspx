@@ -119,7 +119,8 @@
                                                                     <td>
                                                                         <asp:Label ID="lblSira" runat="server" Text="Label"></asp:Label></td>
                                                                     <td>
-                                                                        <asp:Literal ID="ltrBransHarfi" runat="server" Text=""></asp:Literal>.<%#Eval("Sinif") %>.<%#Eval("OgrenmeAlani") %>.<%#Eval("AltOgrenmeAlani") %>.<%#Eval("KazanimNo") %></td>
+                                                                        <asp:Literal ID="ltrKazanimNo" runat="server" Text=""></asp:Literal>
+                                                                    </td>
                                                                     <td><%#Eval("Kazanim") %></td>
                                                                     <td>
                                                                         <asp:LinkButton ID="lnkDuzenle" runat="server" CommandName="Duzenle" CommandArgument='<%#Eval("Id") %>'><i class="glyphicon glyphicon-edit"></i></asp:LinkButton>
@@ -192,7 +193,7 @@
                                                                 <td>
                                                                     <asp:Label ID="lblSira" runat="server" Text="Label"></asp:Label></td>
                                                                 <td>
-                                                                    <asp:Literal ID="ltrBransHarfi" runat="server" Text=""></asp:Literal>.<%#Eval("Sinif") %><asp:Literal ID="ltrAnaKat" runat="server"></asp:Literal>.<%#Eval("AlanNo") %></td>
+                                                                    <asp:Literal ID="ltrKazanimNo" runat="server" Text=""></asp:Literal></td>
                                                                 <td>
                                                                     <asp:Literal ID="ltrOgrenmeAlani" runat="server"></asp:Literal></td>
                                                                 <td>

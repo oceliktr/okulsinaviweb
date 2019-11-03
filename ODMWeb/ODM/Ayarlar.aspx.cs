@@ -19,8 +19,6 @@ namespace ODM
                     AyarlarDb veriDb = new AyarlarDb();
                     AyarlarInfo info = veriDb.KayitBilgiGetir(1);
                     txtSiteAdi.Text = info.SiteAdi;
-                    txtDescription.Text = info.Description;
-                    txtKeywords.Text = info.Keywords;
 
                     txtEpostaServer.Text = info.EpostaServer;
                     txtEpostaGonderenAdres.Text = info.EpostaGonderenAdres;
@@ -33,8 +31,6 @@ namespace ODM
                     txtEpostaAliciAdres.Text = info.EpostaAliciAdres;
 
                     txtAdres.Text = info.SiteAdres;
-                    txtTelefon.Text = info.SiteTelefon;
-                    txtFax.Text = info.SiteFax;
                
                 }
                 catch (Exception ex)
@@ -45,17 +41,7 @@ namespace ODM
 
             }
         }
-        private void XmlCikar()
-        {
-            string xmlDosyalari = Server.MapPath("../xml/Ayarlar.xml");
-            XmlAyarlar(xmlDosyalari);
-        }
-        public static void XmlAyarlar(string xmlDizinAdresi)
-        {
-            AyarlarXml yeni = new AyarlarXml();
-            List<AyarlarInfo> kayit = yeni.KayitlariAl();
-            yeni.XmlSerilestir(kayit, xmlDizinAdresi);
-        }
+
         protected void btnKaydet_Click(object sender, EventArgs e)
         {
 
@@ -65,11 +51,7 @@ namespace ODM
                 AyarlarInfo info = new AyarlarInfo
                 {
                     SiteAdi = txtSiteAdi.Text,
-                    Description = txtDescription.Text,
-                    Keywords = txtKeywords.Text,
                     SiteAdres = txtAdres.Text,
-                    SiteTelefon = txtTelefon.Text,
-                    SiteFax = txtFax.Text,
                     EpostaServer = txtEpostaServer.Text,
                     EpostaGonderenAdres = txtEpostaGonderenAdres.Text,
                     EpostaReply = "",
@@ -83,8 +65,6 @@ namespace ODM
                 };
 
                 veriDb.KayitGuncelle(info);
-                XmlCikar();
-
                 Master.UyariIslemTamam("Site ayarları kaydedildi.", phUyari);
             }
             catch (Exception ex)

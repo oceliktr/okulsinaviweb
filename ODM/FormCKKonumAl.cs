@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
-using AForge.Imaging.Filters;
 using DAL;
 using ODM.Kutuphanem;
-using ThoughtWorks.QRCode.Codec;
-using ThoughtWorks.QRCode.Codec.Data;
 
 namespace ODM
 {
@@ -58,7 +54,7 @@ namespace ODM
             CKKonumKayitlari();
             BranslariGetir("au");
             SoruNumaralari();
-            SayfaYuzu();
+            Oturumlar();
 
             SinavlarDb snvDb = new SinavlarDb();
             SinavlarInfo snvInfo = snvDb.AktifSinavAdi();
@@ -82,12 +78,12 @@ namespace ODM
                 {
                     string dosya = ckDizini + d.DosyaAdi;
                     pcCk.ImageLocation = dosya;
-                    cbSayfaYuzu.Enabled = true;
+                    cbOturum.Enabled = true;
                     cbSecenekler.Enabled = false;
                     cbSoruNo.Enabled = true;
                     btnKaydet.Enabled = true;
                     cbBrans.Enabled = true;
-                    cbSayfaYuzu.SelectedIndex = 0;
+                    cbOturum.SelectedIndex = 0;
                 }
             }
             else
@@ -100,89 +96,71 @@ namespace ODM
         private void btnKaydet_Click(object sender, EventArgs e)
         {
             ComboboxItem soruNoItem = cbSoruNo.SelectedItem as ComboboxItem;
-            ComboboxItem syfYuzuItem = cbSayfaYuzu.SelectedItem as ComboboxItem;
+            ComboboxItem oturumItem = cbOturum.SelectedItem as ComboboxItem;
             ComboboxItem secenekItem = cbSecenekler.SelectedItem as ComboboxItem;
 
             if (cbBrans.SelectedIndex == 0)
                 lblBilgi.Text = @"Branş seçmediniz.";
             else if (soruNoItem != null && soruNoItem.Value.ToString() == "0")
                 lblBilgi.Text = @"Soru numarasını seçmediniz.";
-            else if (syfYuzuItem != null && syfYuzuItem.Value.ToString() == "0")
-                lblBilgi.Text = "Sayfa yüzü seçmediniz.";
+            else if (oturumItem != null && oturumItem.Value.ToString() == "0")
+                lblBilgi.Text = "Oturum seçmediniz.";
             else if ((secenekItem != null && secenekItem.Value.ToString() == "0") && rbOptik.Checked)
                 lblBilgi.Text = "Seçenek seçmediniz.";
             else
             {
                 string grup = rbAcikUclu.Checked ? "au" : "optik";
 
-                int syfYuzu = syfYuzuItem.Value.ToInt32();
+                int oturum = oturumItem.Value.ToInt32();
                 string secenek = rbOptik.Checked ? secenekItem.Value.ToString() : "";
                 int soruNo = soruNoItem.Value.ToInt32();
                 int bransId = cbBrans.SelectedValue.ToInt32();
-                int soruPuani = cbDogruSecenek.Checked ? txtPuan.Text.ToInt32() : 0;
 
                 KonumlarDB knmDb = new KonumlarDB();
-                if (knmDb.DogruCevapSayiKontrol(sinavId, soruNo, bransId, syfYuzu, secenek) && cbDogruSecenek.Checked)
+
+                if (knmDb.KayitKontrol(sinavId, soruNo, bransId, oturum, secenek, grup))
                 {
-                    MessageBox.Show("Konum kaydedilmedi. Bu soru için diğer seçeneklerde doğru cevap işaretlenmiş.",
-                        "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DialogResult dialog =
+                        MessageBox.Show("Bu soru için daha önce kayıt yapılmış. Değiştirilmesini istiyor musunuz?",
+                            @"Bilgi", MessageBoxButtons.YesNo);
+                    if (dialog == DialogResult.Yes)
+                    {
+                        KonumlarInfo knmInfo = new KonumlarInfo
+                        {
+                            BransId = bransId,
+                            Grup = grup,
+                            SoruNo = soruNo,
+                            W = ndW.Value.ToInt32(),
+                            H = ndH.Value.ToInt32(),
+                            X1 = ndX.Value.ToInt32(),
+                            Y1 = ndY.Text.ToInt32(),
+                            Oturum = oturum,
+                            Secenek = secenek,
+                            SinavId = sinavId
+                        };
+                        knmDb.KayitGuncelle(knmInfo);
+                        lblBilgi.Text = string.Format("{0} {1} için değişiklikler kaydedildi.", cbOturum.Text,
+                            cbSoruNo.Text);
+                    }
                 }
                 else
                 {
-                    if (soruPuani == 0 && cbDogruSecenek.Checked)
+                    KonumlarInfo knmInfo = new KonumlarInfo
                     {
-                        MessageBox.Show("Doğru cevap puanını girmediniz.","Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                        txtPuan.Focus();
-                    }
-                    else
-                    {
-                        if (knmDb.KayitKontrol(sinavId, soruNo, bransId, syfYuzu, secenek, grup))
-                        {
-                            DialogResult dialog =
-                                MessageBox.Show("Bu soru için daha önce kayıt yapılmış. Değiştirilmesini istiyor musunuz?",
-                                    @"Bilgi", MessageBoxButtons.YesNo);
-                            if (dialog == DialogResult.Yes)
-                            {
-                                KonumlarInfo knmInfo = new KonumlarInfo
-                                {
-                                    BransId = bransId,
-                                    Grup = grup,
-                                    SoruNo = soruNo,
-                                    W = ndW.Value.ToInt32(),
-                                    H = ndH.Value.ToInt32(),
-                                    X1 = ndX.Value.ToInt32(),
-                                    Y1 = ndY.Text.ToInt32(),
-                                    SyfYuzu = syfYuzu,
-                                    Secenek = secenek,
-                                    SinavId = sinavId,
-                                    SoruPuani = soruPuani
-                                };
-                                knmDb.KayitGuncelle(knmInfo);
-                                lblBilgi.Text = string.Format("{0} {1} için değişiklikler kaydedildi.", cbSayfaYuzu.Text,
-                                    cbSoruNo.Text);
-                            }
-                        }
-                        else
-                        {
-                            KonumlarInfo knmInfo = new KonumlarInfo
-                            {
-                                BransId = bransId,
-                                Grup = grup,
-                                SoruNo = soruNo,
-                                W = ndW.Value.ToInt32(),
-                                H = ndH.Value.ToInt32(),
-                                X1 = ndX.Value.ToInt32(),
-                                Y1 = ndY.Text.ToInt32(),
-                                SyfYuzu = syfYuzu,
-                                Secenek = secenek,
-                                SinavId = sinavId,
-                                SoruPuani = soruPuani
-                            };
-                            knmDb.KayitEkle(knmInfo);
+                        BransId = bransId,
+                        Grup = grup,
+                        SoruNo = soruNo,
+                        W = ndW.Value.ToInt32(),
+                        H = ndH.Value.ToInt32(),
+                        X1 = ndX.Value.ToInt32(),
+                        Y1 = ndY.Text.ToInt32(),
+                        Oturum = oturum,
+                        Secenek = secenek,
+                        SinavId = sinavId
+                    };
+                    knmDb.KayitEkle(knmInfo);
 
-                            lblBilgi.Text = string.Format("{0} {1} kaydedildi.", cbSayfaYuzu.Text, cbSoruNo.Text);
-                        }
-                    }
+                    lblBilgi.Text = string.Format("{0} {1} kaydedildi.", cbOturum.Text, cbSoruNo.Text);
                 }
             }
             CKKonumKayitlari();
@@ -322,25 +300,25 @@ namespace ODM
             cbSecenekler.Items.Add(item);
             cbSecenekler.SelectedIndex = 0;
         }
-        private void SayfaYuzu()
+        private void Oturumlar()
         {
-            cbSayfaYuzu.Items.Clear();
+            cbOturum.Items.Clear();
 
             ComboboxItem item = new ComboboxItem { Text = "Seçiniz", Value = "0" };
-            cbSayfaYuzu.Items.Add(item);
-            item = new ComboboxItem { Text = "Ön Yüzü", Value = "1" };
-            cbSayfaYuzu.Items.Add(item);
-            item = new ComboboxItem { Text = "Arka Yüzü", Value = "2" };
-            cbSayfaYuzu.Items.Add(item);
-            item = new ComboboxItem { Text = "Ön Yüzü 2", Value = "3" };
-            cbSayfaYuzu.Items.Add(item);
-            item = new ComboboxItem { Text = "Arka Yüzü 2", Value = "4" };
-            cbSayfaYuzu.Items.Add(item);
-            item = new ComboboxItem { Text = "Ön Yüzü 3", Value = "5" };
-            cbSayfaYuzu.Items.Add(item);
-            item = new ComboboxItem { Text = "Arka Yüzü 3", Value = "6" };
-            cbSayfaYuzu.Items.Add(item);
-            cbSayfaYuzu.SelectedIndex = 0;
+            cbOturum.Items.Add(item);
+            item = new ComboboxItem { Text = "1. Oturum", Value = "1" };
+            cbOturum.Items.Add(item);
+            item = new ComboboxItem { Text = "2. Oturum", Value = "2" };
+            cbOturum.Items.Add(item);
+            item = new ComboboxItem { Text = "3. Oturum", Value = "3" };
+            cbOturum.Items.Add(item);
+            item = new ComboboxItem { Text = "4. Oturum", Value = "4" };
+            cbOturum.Items.Add(item);
+            item = new ComboboxItem { Text = "5. Oturum", Value = "5" };
+            cbOturum.Items.Add(item);
+            item = new ComboboxItem { Text = "3. Oturum", Value = "6" };
+            cbOturum.Items.Add(item);
+            cbOturum.SelectedIndex = 0;
         }
         private void Koordinatlar()
         {
@@ -381,40 +359,43 @@ namespace ODM
         }
         private void CKKonumKayitlari()
         {
+
+            ComboboxItem oturumItem = cbOturum.SelectedItem as ComboboxItem;
+            int oturum = 0;
+            if(oturumItem!=null)
+             oturum=   oturumItem.Value.ToInt32();
+
             KonumlarDB knmDb = new KonumlarDB();
             string grup = rbAcikUclu.Checked ? "au" : "optik";
-            dataGridView1.DataSource = knmDb.KayitlariGetir(sinavId, grup);
+            dataGridView1.DataSource = knmDb.KayitlariGetir(sinavId,oturum, grup);
 
+            //SinavId,Oturum,SoruNo,BransAdi,Id,Secenek
             if (grup == "au")
             {
-                dataGridView1.Columns[0].HeaderText = "S. No";
+                dataGridView1.Columns[0].HeaderText = "Sınav No";
                 dataGridView1.Columns[0].Width = 90;
-                dataGridView1.Columns[1].HeaderText = "S. Yüzü";
+                dataGridView1.Columns[1].HeaderText = "Oturum";
                 dataGridView1.Columns[1].Width = 90;
-                dataGridView1.Columns[2].HeaderText = "Soru No";
-                dataGridView1.Columns[2].Width = 90;
-                dataGridView1.Columns[5].HeaderText = "Ders Adı";
-                dataGridView1.Columns[5].Width = 160;
+                dataGridView1.Columns[2].HeaderText = "Ders Adı";
+                dataGridView1.Columns[2].Width = 150;
+                dataGridView1.Columns[4].HeaderText = "Soru No";
+                dataGridView1.Columns[4].Width = 80;
 
                 dataGridView1.Columns["Secenek"].Visible = false;
-                dataGridView1.Columns["SoruPuani"].Visible = false;
             }
             else
             {
-                dataGridView1.Columns[0].HeaderText = "S. No";
+                dataGridView1.Columns[0].HeaderText = "Sınav No";
                 dataGridView1.Columns[0].Width = 60;
-                dataGridView1.Columns[1].HeaderText = "S. Yüzü";
+                dataGridView1.Columns[1].HeaderText = "Oturum";
                 dataGridView1.Columns[1].Width = 60;
-                dataGridView1.Columns[2].HeaderText = "Soru No";
-                dataGridView1.Columns[2].Width = 60;
-                dataGridView1.Columns[3].HeaderText = "Seçenek";
-                dataGridView1.Columns[3].Width = 60;
-                dataGridView1.Columns[4].HeaderText = "Puanı";
+                dataGridView1.Columns[2].HeaderText = "Ders Adı";
+                dataGridView1.Columns[2].Width = 150;
+                dataGridView1.Columns[4].HeaderText = "Soru No";
                 dataGridView1.Columns[4].Width = 60;
-                dataGridView1.Columns[5].HeaderText = "Ders Adı";
-                dataGridView1.Columns[5].Width = 130;
+                dataGridView1.Columns[5].HeaderText = "Seçenek";
+                dataGridView1.Columns[5].Width = 60;
                 dataGridView1.Columns["Secenek"].Visible = true;
-                dataGridView1.Columns["SoruPuani"].Visible = true;
             }
             dataGridView1.Columns["Id"].Visible = false;
         }
@@ -424,12 +405,16 @@ namespace ODM
             {
                 Close();
             }
+            if (e.KeyCode == Keys.F2)
+            {
+                btnKaydet.PerformClick();
+            }
         }
         private void karekodKonumunuKaydetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ComboboxItem sayfaYuzuItem = cbSayfaYuzu.SelectedItem as ComboboxItem;
-            int sayfaYuzu = sayfaYuzuItem.Value.ToInt32();
-            if (sayfaYuzu == 0)
+            ComboboxItem oturumItem = cbOturum.SelectedItem as ComboboxItem;
+            int oturum = oturumItem.Value.ToInt32();
+            if (oturum == 0)
             {
                 MessageBox.Show("Karekod konumu hangi sayfaya ait olduğunu seçiniz.", @"Bilgi", MessageBoxButtons.OK);
             }
@@ -437,8 +422,8 @@ namespace ODM
             {
                 KonumlarDB knmDb = new KonumlarDB();
                 string grup = "karekod";
-                KonumlarInfo knmInfo = DBTabloAlanlar(grup, sayfaYuzu);
-                if (knmDb.KayitKontrol(sinavId, 0, 0, sayfaYuzu, "", grup))
+                KonumlarInfo knmInfo = DBTabloAlanlar(grup, oturum);
+                if (knmDb.KayitKontrol(sinavId, 0, 0, oturum, "", grup))
                 {
                     DialogResult dialog =
                         MessageBox.Show("Karekod konumu zaten kayıtlı. Değiştirilmesini istiyor musunuz?", @"Bilgi",
@@ -462,9 +447,9 @@ namespace ODM
         }
         private void oCRKonumunuKaydetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ComboboxItem sayfaYuzuItem = cbSayfaYuzu.SelectedItem as ComboboxItem;
-            int sayfaYuzu = sayfaYuzuItem.Value.ToInt32();
-            if (sayfaYuzu == 0)
+            ComboboxItem oturumItem = cbOturum.SelectedItem as ComboboxItem;
+            int oturum = oturumItem.Value.ToInt32();
+            if (oturum == 0)
             {
                 MessageBox.Show("OCR konumu hangi sayfaya ait olduğunu seçiniz.", @"Bilgi", MessageBoxButtons.OK);
             }
@@ -472,9 +457,9 @@ namespace ODM
             {
                 KonumlarDB knmDb = new KonumlarDB();
                 const string grup = "ocr";
-                KonumlarInfo knmInfo = DBTabloAlanlar(grup, sayfaYuzu);
+                KonumlarInfo knmInfo = DBTabloAlanlar(grup, oturum);
 
-                if (knmDb.KayitKontrol(sinavId, 0, 0, sayfaYuzu, "", grup))
+                if (knmDb.KayitKontrol(sinavId, 0, 0, oturum, "", grup))
                 {
                     DialogResult dialog = MessageBox.Show("OCR konumu zaten kayıtlı. Değiştirilmesini istiyor musunuz?", @"Bilgi", MessageBoxButtons.YesNo);
                     if (dialog == DialogResult.Yes)
@@ -496,9 +481,9 @@ namespace ODM
         private void sınavaGirmediKonumuKaydetToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
-            ComboboxItem sayfaYuzuItem = cbSayfaYuzu.SelectedItem as ComboboxItem;
-            int sayfaYuzu = sayfaYuzuItem.Value.ToInt32();
-            if (sayfaYuzu == 0)
+            ComboboxItem oturumItem = cbOturum.SelectedItem as ComboboxItem;
+            int oturum = oturumItem.Value.ToInt32();
+            if (oturum == 0)
             {
                 MessageBox.Show("Sınava girmedi konumu hangi sayfaya ait olduğunu seçiniz.", @"Bilgi", MessageBoxButtons.OK);
             }
@@ -506,9 +491,9 @@ namespace ODM
             {
                 KonumlarDB knmDb = new KonumlarDB();
                 const string grup = "girmedi";
-                KonumlarInfo knmInfo = DBTabloAlanlar(grup, sayfaYuzu);
+                KonumlarInfo knmInfo = DBTabloAlanlar(grup, oturum);
 
-                if (knmDb.KayitKontrol(sinavId, 0, 0, sayfaYuzu, "", grup))
+                if (knmDb.KayitKontrol(sinavId, 0, 0, oturum, "", grup))
                 {
                     DialogResult dialog = MessageBox.Show("Sınava girmedi  konumu zaten kayıtlı. Değiştirilmesini istiyor musunuz?", @"Bilgi", MessageBoxButtons.YesNo);
                     if (dialog == DialogResult.Yes)
@@ -532,9 +517,9 @@ namespace ODM
         /// Kayıt yapılacak alanların tanımlanmasını yapan metod
         /// </summary>
         /// <param name="grup">au=açık uclu optik=optik formu</param>
-        /// <param name="sayfaYuzu"></param>
+        /// <param name="oturum"></param>
         /// <returns></returns>
-        private KonumlarInfo DBTabloAlanlar(string grup, int sayfaYuzu)
+        private KonumlarInfo DBTabloAlanlar(string grup, int oturum)
         {
             KonumlarInfo knmInfo = new KonumlarInfo
             {
@@ -545,25 +530,20 @@ namespace ODM
                 W = ndW.Value.ToInt32(),
                 X1 = ndX.Value.ToInt32(),
                 Y1 = ndY.Value.ToInt32(),
-                SyfYuzu = sayfaYuzu,
+                Oturum = oturum,
                 Secenek = "",
                 SinavId = sinavId
             };
             return knmInfo;
         }
-        /// <summary>
-        /// Comboboxa branşları getirir.
-        /// </summary>
-        /// <param name="grup">grup optik ise tüm branşlar değerini ekler</param>
-         //TODO seçeneklerin sayısını ayarlardan arttırılabilir.
+
+        //TODO seçeneklerin sayısını ayarlardan arttırılabilir.
         private void rbAcikUclu_CheckedChanged(object sender, EventArgs e)
         {
             BranslariGetir("au");
             cbSecenekler.Enabled = false;
-            SayfaYuzu();
             CKKonumKayitlari();
-            cbDogruSecenek.Visible = txtPuan.Visible = false;
-            txtPuan.Text = "0";
+        //    Oturumlar();
             btnSonrakiSoru.Enabled = btnOncekiSoru.Enabled = btnSonrakiSecenek.Enabled = btnOncekiSecenek.Enabled = false;
         }
         private void rbOptik_CheckedChanged(object sender, EventArgs e)
@@ -571,11 +551,9 @@ namespace ODM
             BranslariGetir("optik");
 
             cbSecenekler.Enabled = true;
-            Secenekler();
             CKKonumKayitlari();
+            Secenekler();
 
-            cbDogruSecenek.Visible = true;
-            if (cbDogruSecenek.Checked) txtPuan.Visible = true;
             if (cbTasima.Checked)
                 btnSonrakiSoru.Enabled = btnOncekiSoru.Enabled = btnSonrakiSecenek.Enabled = btnOncekiSecenek.Enabled = true;
         }
@@ -695,9 +673,6 @@ namespace ODM
         }
         private void işaretçiyiTaşıToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ComboboxItem soruNoItem = cbSoruNo.SelectedItem as ComboboxItem;
-            ComboboxItem syfYuzuItem = cbSayfaYuzu.SelectedItem as ComboboxItem;
-            ComboboxItem secenekItem = cbSecenekler.SelectedItem as ComboboxItem;
 
             int id = dataGridView1.Rows[dataGridView1.SelectedRows[0].Index].Cells["Id"].Value.ToInt32();
             KonumlarDB veriDb = new KonumlarDB();
@@ -719,7 +694,7 @@ namespace ODM
                 Koordinatlar();
             }
             cbBrans.SelectedValue = info.BransId;
-            cbSayfaYuzu.SelectedIndex = info.SyfYuzu;
+            cbOturum.SelectedIndex = info.Oturum;
             cbSoruNo.SelectedIndex = info.SoruNo;
             if (rbOptik.Checked)
             {
@@ -741,20 +716,6 @@ namespace ODM
                         cbSecenekler.SelectedIndex = 5;
                         break;
                 }
-
-                if (info.SoruPuani != 0)
-                {
-                    cbDogruSecenek.Checked=true;
-                    txtPuan.Text = info.SoruPuani.ToString();
-                    txtPuan.Visible = true;
-                }
-                else
-                {
-
-                    cbDogruSecenek.Checked = false;
-                    txtPuan.Text = "0";
-                    txtPuan.Visible = false;
-                }
             }
         }
 
@@ -768,18 +729,9 @@ namespace ODM
 
             if (o.ShowDialog() == DialogResult.OK)
             {
-                pcCk.Image = Siyahla(new Bitmap(o.FileName));
+                pcCk.Image = ImageProcessing.Blacken(new Bitmap(o.FileName));
             }
 
-        }
-        private static Bitmap Siyahla(Bitmap bmpx)
-        {
-            OtsuThreshold otsuFiltre = new OtsuThreshold();
-            Bitmap filtreliResim =
-                otsuFiltre.Apply(bmpx.PixelFormat != PixelFormat.Format8bppIndexed
-                    ? Grayscale.CommonAlgorithms.BT709.Apply(bmpx)
-                    : bmpx);
-            return filtreliResim;
         }
         private void siyahlariSayToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -800,15 +752,83 @@ namespace ODM
             MessageBox.Show(a.ToString());
         }
 
-        private void txtPuan_KeyPress(object sender, KeyPressEventArgs e)
+        private void kitapçıkTürüAToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            e.Handled = !char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar);
+            ComboboxItem oturumItem = cbOturum.SelectedItem as ComboboxItem;
+            int oturum = oturumItem.Value.ToInt32();
+            if (oturum == 0)
+            {
+                MessageBox.Show("Kitapçık türü -A- konumu hangi sayfaya ait olduğunu seçiniz.", @"Bilgi", MessageBoxButtons.OK);
+            }
+            else
+            {
+                KonumlarDB knmDb = new KonumlarDB();
+                const string grup = "A";
+                KonumlarInfo knmInfo = DBTabloAlanlar(grup, oturum);
+
+                if (knmDb.KayitKontrol(sinavId, 0, 0, oturum, "", grup))
+                {
+                    DialogResult dialog = MessageBox.Show("Kitapçık türü -A- konumu zaten kayıtlı. Değiştirilmesini istiyor musunuz?", @"Bilgi", MessageBoxButtons.YesNo);
+                    if (dialog == DialogResult.Yes)
+                    {
+                        knmDb.KayitGuncelle(knmInfo);
+                        lblBilgi.Text = "Kitapçık türü -A- konumu için değişiklikler kaydedildi.";
+                        MessageBox.Show(lblBilgi.Text, @"Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    knmDb.KayitEkle(knmInfo);
+
+                    lblBilgi.Text = "Kitapçık türü -A- konumu kaydedildi.";
+                    MessageBox.Show(lblBilgi.Text, @"Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
 
-        private void cbDogruSecenek_CheckedChanged(object sender, EventArgs e)
+        private void kitapçıkTürüBToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            txtPuan.Visible = cbDogruSecenek.Checked;
+            ComboboxItem oturumItem = cbOturum.SelectedItem as ComboboxItem;
+            int oturum = oturumItem.Value.ToInt32();
+            if (oturum == 0)
+            {
+                MessageBox.Show("Kitapçık türü -B- konumu hangi sayfaya ait olduğunu seçiniz.", @"Bilgi", MessageBoxButtons.OK);
+            }
+            else
+            {
+                KonumlarDB knmDb = new KonumlarDB();
+                const string grup = "B";
+                KonumlarInfo knmInfo = DBTabloAlanlar(grup, oturum);
+
+                if (knmDb.KayitKontrol(sinavId, 0, 0, oturum, "", grup))
+                {
+                    DialogResult dialog = MessageBox.Show("Kitapçık türü -B- konumu zaten kayıtlı. Değiştirilmesini istiyor musunuz?", @"Bilgi", MessageBoxButtons.YesNo);
+                    if (dialog == DialogResult.Yes)
+                    {
+                        knmDb.KayitGuncelle(knmInfo);
+                        lblBilgi.Text = "Kitapçık türü -B- konumu için değişiklikler kaydedildi.";
+                        MessageBox.Show(lblBilgi.Text, @"Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    knmDb.KayitEkle(knmInfo);
+
+                    lblBilgi.Text = "Kitapçık türü -B- konumu kaydedildi.";
+                    MessageBox.Show(lblBilgi.Text, @"Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
         }
 
-     }
+        private void cbOturum_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            CKKonumKayitlari();
+        }
+
+        private void FormCkKonumAl_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

@@ -9,9 +9,6 @@ namespace ODM
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack) return;
-            string sPath = HttpContext.Current.Request.Url.AbsolutePath;
-            if (sPath == "/SPVeri/Kurumlar.aspx")
-                liKurumlar.Attributes.Add("class", "treeview active");
 
             if (Request.Cookies["uyeCookie"] == null) return;
             int uyeId = Request.Cookies["uyeCookie"]["UyeId"].ToInt32();
@@ -19,31 +16,60 @@ namespace ODM
             KullanicilarDb kDb = new KullanicilarDb();
             KullanicilarInfo kInfo = kDb.KayitBilgiGetir(uyeId);
 
-            if (kInfo.Yetki.Contains("Admin"))
+
+            if (kInfo.Yetki.Contains("Root"))
             {
+                liBaranslar.Visible = true;
                 liKurumlar.Visible = true;
                 liKullanicilar.Visible = true;
-                liPuanlayciIslemleri.Visible = true;
+                liCkDataYukle.Visible = true;
                 liSinavlar.Visible = true;
-                liDegerlendirme.Visible = true;
-                liRubrik.Visible = true;
-                liDegerlendirmeUst.Visible = true;
                 liSinavEvraklari.Visible = true;
-                liSinavSonuclari.Visible = true;
-                liKazanim.Visible = true;
-                liOgrenciVeri.Visible = true;
+                liLgsSoruBankasi.Visible = true;
+                liLgsKazanimKarne.Visible = true;
+                liCkDataYukle.Visible = true;
             }
-            if (kInfo.Yetki.Contains("Ogretmen|"))
+
+            if (kInfo.Yetki.Contains("Admin"))
             {
+                liBaranslar.Visible = true;
+                liKurumlar.Visible = true;
+                liKullanicilar.Visible = true;
+                liSinavEvraklari.Visible = true;
+                liLgsSoruBankasi.Visible = true;
+                liLgsKazanimKarne.Visible = true;
+            }
+            else if (kInfo.Yetki.Contains("Ogretmen|"))
+            {
+                liSoruBankasi.Visible = true;
+                liLgsSoruBankasi.Visible = false;
                 liDegerlendirme.Visible = true;
             }
-            if (kInfo.Yetki.Contains("UstDegerlendirici|"))
+            else if (kInfo.Yetki.Contains("UstDegerlendirici|"))
             {
+                liSoruBankasi.Visible = true;
+                liLgsSoruBankasi.Visible = false;
                 liDegerlendirmeUst.Visible = true;
             }
-            if (kInfo.Yetki.Contains("OkulYetkilisi"))
+            else if (kInfo.Yetki.Contains("OkulYetkilisi"))
             {
                 liSinavEvraklari.Visible = true;
+                liSoruBankasi.Visible = false;
+                liLgsSoruBankasi.Visible = false;
+              //  liKazanimKarne.Visible = true;
+                liLgsKazanimKarne.Visible = true;
+            }
+            else if (kInfo.Yetki.Contains("IlceMEMYetkilisi"))
+            {
+                liSoruBankasi.Visible = false;
+                liLgsSoruBankasi.Visible = false;
+              //  liKazanimKarne.Visible = true;
+                liLgsKazanimKarne.Visible = true;
+            }
+            else if(kInfo.Yetki.Contains("LgsIlKomisyonu"))
+            {
+                liLgsKazanimKarne.Visible = true;
+
             }
         }
     }

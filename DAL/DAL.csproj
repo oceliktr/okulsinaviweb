@@ -67,18 +67,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnketDB.cs" />
     <Compile Include="AyarlarDB.cs" />
-    <Compile Include="AyarlarXML.cs" />
     <Compile Include="BranslarDB.cs" />
-    <Compile Include="CevaplarDB.cs" />
-    <Compile Include="CkkontrolDB.cs" />
+    <Compile Include="CkDosyalarDB.cs" />
+    <Compile Include="CkKarne\CkkarnebranslarDB.cs" />
+    <Compile Include="CkKarne\CkkarnecevaptxtDB.cs" />
+    <Compile Include="CkKarne\CkkarnedogrucevaplarDB.cs" />
+    <Compile Include="CkKarne\CkkarnekarnesonuclariDB.cs" />
+    <Compile Include="CkKarne\CkkarnekazanimlarDB.cs" />
+    <Compile Include="CkKarne\CkkarnekutukDB.cs" />
+    <Compile Include="CkKarne\CksinavadiDB.cs" />
+    <Compile Include="KarneRaporDB.cs" />
+    <Compile Include="KazanimKarneDB.cs" />
+    <Compile Include="KitapcikCevapDB.cs" />
+    <Compile Include="KutukIslemleriDB.cs" />
+    <Compile Include="LgsSoruBankasi\LgsSorularDB.cs" />
+    <Compile Include="SoruBankasi\SbMaddeKokleriDB.cs" />
+    <Compile Include="SoruBankasi\SbSeceneklerDB.cs" />
+    <Compile Include="SinifKarneDB.cs" />
+    <Compile Include="SonucAuDB.cs" />
     <Compile Include="DizinIslemleri.cs" />
     <Compile Include="EPosta.cs" />
     <Compile Include="KazanimlarDB.cs" />
     <Compile Include="KOgrenmeAlanlariDB.cs" />
     <Compile Include="KonumlarDB.cs" />
     <Compile Include="OgrenciKarneDB.cs" />
-    <Compile Include="OptikSonucDB.cs" />
+    <Compile Include="SonucOptikDB.cs" />
     <Compile Include="RubrikDB.cs" />
     <Compile Include="SinavEvrakDB.cs" />
     <Compile Include="SinavEvrakGelenDB.cs" />
@@ -91,6 +106,7 @@
     <Compile Include="OzelIsler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

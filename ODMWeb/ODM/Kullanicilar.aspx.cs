@@ -11,10 +11,9 @@ namespace ODM
         {
             if (!IsPostBack)
             {
-                if (!Master.Yetki().Contains("Admin"))
+                if (!Master.Yetki().Contains("Root"))
                     Response.Redirect("Giris.aspx");
-
-               
+                
                 IlcelerDb ilcelerDb = new IlcelerDb();
                 ddlIlce.DataSource = ilcelerDb.KayitlariGetir();
                 ddlIlce.DataValueField = "Id";
@@ -84,6 +83,9 @@ namespace ODM
                 KurumlariGetir(info.IlceId);
                 hfId.Value = info.Id.ToString();
                 txtAdiSoyadi.Text = info.AdiSoyadi;
+                txtCepTlf.Text = info.CepTlf;
+                txtTcKimlik.Text = info.TcKimlik;
+
                 ddlIlce.SelectedValue = info.IlceId.ToString();
                 try
                 {
@@ -103,6 +105,8 @@ namespace ODM
                 }
                 txtEpostaAdresi.Text = info.Email;
 
+                if (info.Yetki.Contains("Root"))
+                    cbRoot.Checked = true;
                 if (info.Yetki.Contains("Admin"))
                     cbAdmin.Checked = true;
                 if (info.Yetki.Contains("IlceMEMYetkilisi"))
@@ -113,11 +117,24 @@ namespace ODM
                     cbUstDegerlendirici.Checked = true;
                 if (info.Yetki.Contains("Ogretmen"))
                     cbOgretmen.Checked = true;
-            
+                if (info.Yetki.Contains("SoruYazari"))
+                    cbSoruYazari.Checked = true;
+                if (info.Yetki.Contains("LgsYazari"))
+                    cbLgsYazari.Checked = true;
+                if (info.Yetki.Contains("LgsIlKomisyonu"))
+                    cbLgsIlKomisyonu.Checked = true;
+                if (info.Yetki.Contains("Puanlayici"))
+                    cbPuanlayici.Checked = true;
+
 
                 btnKaydet.Text = "Bilgileri Değiştir";
                 ltrKayitBilgi.Text = string.Format("Kullanıcı Bilgilerini Düzenleme Formu [{0}]", info.AdiSoyadi);
                 Master.UyariBilgilendirme("Şifre değiştirilmeyecekse boş bırakınız.", phUyari);
+
+                tabliSayfalar.Attributes.Add("class", "");
+                Sayfalar.Attributes.Add("class", "tab-pane ");
+                tabliKayit.Attributes.Add("class", "active");
+                Kayit.Attributes.Add("class", "tab-pane active");
             }
         }
         protected void btnKaydet_Click(object sender, EventArgs e)
@@ -128,8 +145,11 @@ namespace ODM
             int brans = ddlBrans.SelectedValue.ToInt32();
             string email = txtEpostaAdresi.Text;
             string tcKimlik = txtTcKimlik.Text;
+            string cepTlf = txtCepTlf.Text;
 
             string yetki = "";
+            if (cbRoot.Checked)
+                yetki += "Root|";
             if (cbAdmin.Checked)
                 yetki += "Admin|";
             if (cbIlceMEMYetkilisi.Checked)
@@ -140,6 +160,14 @@ namespace ODM
                 yetki += "UstDegerlendirici|";
             if (cbOgretmen.Checked)
                 yetki += "Ogretmen|";
+            if (cbSoruYazari.Checked)
+                yetki += "SoruYazari|";
+            if (cbLgsYazari.Checked)
+                yetki += "LgsYazari|";
+            if (cbLgsIlKomisyonu.Checked)
+                yetki += "LgsIlKomisyonu|";
+            if (cbPuanlayici.Checked)
+                yetki += "Puanlayici|";
 
             int ilce = ddlIlce.SelectedValue.ToInt32();
             int id = hfId.Value.ToInt32();
@@ -152,7 +180,8 @@ namespace ODM
                 KurumKodu = kurumkodu,
                 Bransi = brans,
                 Yetki = yetki,
-                Email = email
+                Email = email,
+                CepTlf = cepTlf
             };
             if (sifre != "")
             {
@@ -165,7 +194,7 @@ namespace ODM
             }
             if (tcKimlik != "")
             {
-                info.TcKimlik = tcKimlik.Md5Sifrele();
+                info.TcKimlik = tcKimlik;
             }
             else
             {
@@ -177,11 +206,11 @@ namespace ODM
             {
                 if (sifre != "")
                 {
-                    if (veriDb.KayitKontrol(tcKimlik.Md5Sifrele(), 0))
+                    if (veriDb.KayitKontrol(tcKimlik, 0))
                         Master.UyariTuruncu("Bu Tc Kimlik zaten kayıtlı.", phUyari);
                     else
                     {
-                        info.TcKimlik = tcKimlik.Md5Sifrele();
+                        info.TcKimlik = tcKimlik;
                         veriDb.KayitEkle(info);
                         Master.UyariIslemTamam("Yeni bir kullanıcı eklendi.", phUyari);
                         FormuTemizle();
@@ -200,6 +229,11 @@ namespace ODM
                 FormuTemizle();
             }
             KayitlariListele();
+
+            tabliSayfalar.Attributes.Add("class", "active");
+            Sayfalar.Attributes.Add("class", "tab-pane active");
+            tabliKayit.Attributes.Add("class", "");
+            Kayit.Attributes.Add("class", "tab-pane ");
         }
         protected void btnVazgec_Click(object sender, EventArgs e)
         {
@@ -214,13 +248,20 @@ namespace ODM
             txtSifre.Text = "";
             ddlIlce.SelectedValue = "";
             txtTcKimlik.Text = "";
+            txtCepTlf.Text = "";
 
             cbOgretmen.Checked = false;
             cbOkulYetkilisi.Checked = false;
             cbIlceMEMYetkilisi.Checked = false;
             cbAdmin.Checked = false;
 
+            btnKaydet.Text = "Kaydet";
             ltrKayitBilgi.Text = "Yeni Kullanıcı Kayıt Formu";
+
+            tabliSayfalar.Attributes.Add("class", "active");
+            Sayfalar.Attributes.Add("class", "tab-pane active");
+            tabliKayit.Attributes.Add("class", "");
+            Kayit.Attributes.Add("class", "tab-pane ");
         }
         protected void ddlIlceler_OnSelectedIndexChanged(object sender, EventArgs e)
         {
@@ -231,15 +272,19 @@ namespace ODM
             ddlKurumlar.DataTextField = "KurumAdi";
             ddlKurumlar.DataBind();
             ddlKurumlar.Items.Insert(0, new ListItem("Kurum Seçiniz", ""));
-        }
-        protected void ddlYetkiler_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            KayitlariListele();
+
+
         }
         protected void ddlIlce_OnSelectedIndexChanged(object sender, EventArgs e)
         {
             int ilce = ddlIlce.SelectedValue.ToInt32();
             KurumlariGetir(ilce);
+
+
+            tabliSayfalar.Attributes.Add("class", "");
+            Sayfalar.Attributes.Add("class", "tab-pane ");
+            tabliKayit.Attributes.Add("class", "active");
+            Kayit.Attributes.Add("class", "tab-pane active");
         }
         private void KurumlariGetir(int ilce)
         {
@@ -260,7 +305,7 @@ namespace ODM
             if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
             {
                 string kurumKodu = DataBinder.Eval(e.Item.DataItem, "KurumKodu").ToString();
-                Literal ltrKurumAdi = (Literal) e.Item.FindControl("ltrKurumAdi");
+                Literal ltrKurumAdi = (Literal)e.Item.FindControl("ltrKurumAdi");
 
                 KurumlarDb kDb = new KurumlarDb();
                 ltrKurumAdi.Text = kDb.KayitBilgiGetir(kurumKodu).KurumAdi;

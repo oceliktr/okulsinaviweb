@@ -261,8 +261,9 @@ namespace ODM
         private void KayitlariListele()
         {
             int sinavId = ddlSinavId.SelectedValue.ToInt32();
+            string kitapcikTuru = ddlKitapcikTuru.SelectedValue;
             RubrikDb rDb = new RubrikDb();
-            rptKayitlar.DataSource = rDb.KayitlariGetir(sinavId);
+            rptKayitlar.DataSource = rDb.KayitlariGetir(sinavId,kitapcikTuru);
             rptKayitlar.DataBind();
         }
         protected void ddlOgrenmeAlani_OnSelectedIndexChanged(object sender, EventArgs e)
@@ -285,6 +286,7 @@ namespace ODM
             ddlAltOgrenmeAlani.DataTextField = "OgrenmeAlani";
             ddlAltOgrenmeAlani.DataBind();
             ddlAltOgrenmeAlani.Items.Insert(0, new ListItem("Seçiniz", ""));
+            ddlAltOgrenmeAlani.Items.Insert(1, new ListItem("Genel", "0"));
         }
 
         protected void blnSecileniEkle_OnClick(object sender, EventArgs e)
@@ -407,6 +409,11 @@ namespace ODM
             TablariKapat();
             tabliKayit.Attributes.Add("class", "active");
             Kayit.Attributes.Add("class", "tab-pane active");
+        }
+
+        protected void ddlKitapcikTuru_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            KayitlariListele();
         }
     }
 }

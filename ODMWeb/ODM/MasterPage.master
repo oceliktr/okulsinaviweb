@@ -1,7 +1,7 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="ODM.AdminMasterPage" %>
 
 <%@ Register Src="AdminMenu.ascx" TagPrefix="uc1" TagName="AdminMenu" %>
-<%@ Register Src="Uyarilar.ascx" TagPrefix="uc2" TagName="Uyarilar" %>
+<%@ Register Src="~/Kutuphaneler/Uyarilar.ascx" TagPrefix="uc2" TagName="Uyarilar" %>
 
 
 <!DOCTYPE html>
@@ -12,11 +12,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Erzurum Ölçme Değerlendirme Merkezi</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
-    <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker-bs3.css" />
-    <link rel="stylesheet" href="dist/css/AdminLTE.min.css" />
+    <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker-bs3.css" />
+    <link rel="stylesheet" href="/dist/css/AdminLTE.min.css" />
     <asp:Literal ID="ltrSitil" runat="server"></asp:Literal>
 
     <!--[if lt IE 9]>
@@ -32,7 +32,7 @@
             <header class="main-header">
 
                 <a href="/ODM" class="logo">
-                    <img src="images/web_sayfa_logo.jpg" alt="Erzurum ODM" />
+                    <img src="/images/web_sayfa_logo.jpg" alt="Erzurum ODM" />
                 </a>
 
                 <nav class="navbar navbar-static-top" role="navigation">
@@ -62,7 +62,7 @@
                                     </li>
                                     <li class="user-footer">
                                         <div class="pull-right">
-                                            <a href="Cikis.aspx" class="btn btn-default btn-flat">Çıkış</a>
+                                            <a href="/ODM/Cikis.aspx" class="btn btn-default btn-flat">Çıkış</a>
                                         </div>
                                     </li>
                                 </ul>
@@ -70,7 +70,7 @@
                             <li><a href="Giris.aspx" title="Giriş" class="fa fa-home"></a></li>
                             <li id="liAyarlar" runat="server"><a href="Ayarlar.aspx" title="Ayarlar" class="fa fa-gears"></a></li>
                             <li id="liKullanicilar" runat="server"><a href="Kullanicilar.aspx" title="Kurumlar" class="fa fa-users"></a></li>
-                            <li><a href="Cikis.aspx" title="Çıkış" class="fa fa-sign-out"></a></li>
+                            <li><a href="/ODM/Cikis.aspx" title="Çıkış" class="fa fa-sign-out"></a></li>
                         </ul>
                     </div>
                 </nav>
@@ -98,16 +98,16 @@
                 <div class="pull-right hidden-xs">
                     Her hakkı saklıdır. 
                 </div>
-                <strong>Copyright © 2016</strong>
+                <strong>Copyright © 2019</strong>
             </footer>
             <div class="control-sidebar-bg"></div>
         </div>
-        <script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
-        <script src="bootstrap/js/bootstrap.min.js"></script>
-        <script src="dist/js/app.min.js"></script>
-        <script src="plugins/select2/select2.full.min.js"></script>
-        <script src="plugins/input-mask/jquery.inputmask.js"></script>
-        <script src="plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+        <script src="/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/dist/js/app.min.js"></script>
+        <script src="/plugins/select2/select2.full.min.js"></script>
+        <script src="/plugins/input-mask/jquery.inputmask.js"></script>
+        <script src="/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
         <script>
             $(function () {
                 //Initialize Select2 Elements

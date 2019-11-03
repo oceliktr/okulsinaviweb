@@ -42,6 +42,13 @@
                                                     <div class="col-sm-2">
                                                         <asp:DropDownList ID="ddlSinavId" CssClass="form-control" runat="server" ValidationGroup="form" AutoPostBack="True" OnSelectedIndexChanged="ddlSinavId_OnSelectedIndexChanged"></asp:DropDownList>
                                                     </div>
+                                                    <div class="col-sm-2">
+                                                        <asp:DropDownList ID="ddlKitapcikTuru" CssClass="form-control" runat="server" ValidationGroup="form" AutoPostBack="True" OnSelectedIndexChanged="ddlKitapcikTuru_OnSelectedIndexChanged">
+                                                            <asp:ListItem Value="">Kitapçık Türünü Seçiniz</asp:ListItem>
+                                                            <asp:ListItem Value="A">A Kitapçığı</asp:ListItem>
+                                                            <asp:ListItem Value="B">B Kitapçığı</asp:ListItem>
+                                                        </asp:DropDownList>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="box-body">
@@ -51,6 +58,7 @@
                                                             <th>Sınıf</th>
                                                             <th>Ders Adı</th>
                                                             <th>Kazanım</th>
+                                                            <th>Kitapçık</th>
                                                             <th>Soru No</th>
                                                             <th>Doğru Cevap</th>
                                                             <th>Kısmi Puan</th>
@@ -62,11 +70,12 @@
                                                         <asp:Repeater ID="rptKayitlar" runat="server" OnItemCommand="rptKayitlar_OnItemCommand" OnItemDataBound="rptKayitlar_OnItemDataBound">
                                                             <ItemTemplate>
                                                                 <tr role="row" class="odd">
-                                                                    <td><%#Eval("Sinif")%></td>
+                                                                    <td><%#Eval("Id")%></td>
                                                                     <td>
                                                                         <asp:Literal ID="ltrBrans" runat="server"></asp:Literal></td>
                                                                     <td>
                                                                         <asp:Literal ID="ltrKazanim" runat="server"></asp:Literal></td>
+                                                                    <td><%#Eval("KitapcikTuru")%></td>
                                                                     <td><%#Eval("SoruNo")%></td>
                                                                     <td>
                                                                         <asp:LinkButton ID="lnkKazanim" CommandName="Kazanim" CommandArgument='<%#Eval("Id") %>' ToolTip="Kazanım Ekle" runat="server"><span class="glyphicon glyphicon-transfer"></span></asp:LinkButton>
@@ -247,7 +256,7 @@
     </div>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="footer" runat="server">
-    <script src="plugins/ckeditor/ckeditor.js"></script>
+    <script src="/ckeditor/ckeditor.js"></script>
     <script>
         $(function () {
             // Replace the <textarea id="editor1"> with a CKEditor

@@ -29,7 +29,7 @@ namespace ODM
             KullanicilarDb kDb = new KullanicilarDb();
             KullanicilarInfo ki = kDb.KayitBilgiGetir(uyeId);
 
-            CevaplarDb veriDb = new CevaplarDb();
+            SonucAuDB veriDb = new SonucAuDB();
             int atananCkSayisiUp = veriDb.UstPCKSayisi(snvInfo.SinavId, ki.Bransi);
             int cevaplananCkSayisiUp = veriDb.UstPCevaplananCKSayisi(snvInfo.SinavId, ki.Bransi);
 
@@ -46,7 +46,7 @@ namespace ODM
             ltrKalanCKSayisi.Text = (cevaplananCkSayisiUp+1).ToString();
 
 
-            CevaplarInfo info = veriDb.KayitBilgiGetirUstDegerlendirici(snvInfo.SinavId, ki.Bransi);
+            SonucAuInfo info = veriDb.KayitBilgiGetirUstDegerlendirici(snvInfo.SinavId, ki.Bransi);
             hfId.Value = info.Id.ToString();
         
             imgDosya.ImageUrl = string.Format("Cevaplar/{0}/{1}", snvInfo.SinavId, info.Dosya);
@@ -100,8 +100,8 @@ namespace ODM
             {
                 int id = hfId.Value.ToInt32();
 
-                CevaplarDb veriDb = new CevaplarDb();
-                CevaplarInfo info = veriDb.KayitBilgiGetir(id);
+                SonucAuDB veriDb = new SonucAuDB();
+                SonucAuInfo info = veriDb.KayitBilgiGetir(id);
 
 
                 RubrikDb rbDb = new RubrikDb();

@@ -16,6 +16,9 @@ namespace DAL
         public string Email { get; set; }
         public string CepTlf { get; set; }
         public int IlceId { get; set; }
+        public string IlceAdi { get; set; } //detaylý bilgi sorgusu için
+        public string KurumAdi { get; set; }//detaylý bilgi sorgusu için
+        public string BransAdi { get; set; }//detaylý bilgi sorgusu için
         public int Bransi { get; set; }
         public string Yetki { get; set; }
         public string Grup { get; set; }
@@ -33,24 +36,32 @@ namespace DAL
             Grup = grup;
             Yetki = yetki;
         }
+        public KullanicilarInfo(string kurumKodu)
+        {
+            Yetki = kurumKodu;
+        }
     }
     public class KullanicilarDb
     {
         readonly HelperDb _helper = new HelperDb();
 
-        public DataTable OgretmenleriGetir(int brans)
+        //public DataTable OgretmenleriGetir(int brans)
+        //{
+        //    const string sql = "select * from kullanicilar where Yetki like '%Ogretmen|%' and Bransi=?Bransi order by Bransi,Grup asc";
+        //    MySqlParameter p = new MySqlParameter("?Bransi", MySqlDbType.Int32)
+        //    {
+        //        Value = brans
+        //    }; 
+        //    return _helper.ExecuteDataSet(sql,p).Tables[0];
+        //}
+        public DataTable OgretmenleriGetir(string yetki,int bransId)
         {
-            const string sql = "select * from kullanicilar where Yetki like '%Ogretmen|%' and Bransi=?Bransi order by Bransi,Grup asc";
+            string sql = $"select * from kullanicilar where Yetki like '%{yetki}%'  and Bransi=?Bransi order by Bransi,AdiSoyadi asc";
             MySqlParameter p = new MySqlParameter("?Bransi", MySqlDbType.Int32)
             {
-                Value = brans
-            }; 
-            return _helper.ExecuteDataSet(sql,p).Tables[0];
-        }
-        public DataTable OgretmenleriGetir()
-        {
-            const string sql = "select * from kullanicilar where Yetki like '%Ogretmen|%' order by Bransi asc";
-            return _helper.ExecuteDataSet(sql).Tables[0];
+                Value = bransId
+            };
+            return _helper.ExecuteDataSet(sql, p).Tables[0];
         }
         public DataTable KayitlariGetir(int ilceId, string kurumKodu, int brans)
         {
@@ -66,8 +77,7 @@ namespace DAL
                 sql = "select * from kullanicilar where IlceId=?IlceId and Bransi=?Bransi and KurumKodu=?KurumKodu order by Id asc";
             if (ilceId == 0 && kurumKodu == "" && brans != 0)
                 sql = "select * from kullanicilar where Bransi=?Bransi order by Id asc";
-
-
+            
             MySqlParameter[] p = 
             {
                new MySqlParameter("?IlceId", MySqlDbType.Int32),
@@ -79,6 +89,15 @@ namespace DAL
             p[1].Value = kurumKodu;
             p[2].Value = brans;
             return _helper.ExecuteDataSet(sql, p).Tables[0];
+        }
+        public List<KullanicilarInfo> KayitlariDiziyeGetir(string yetki)
+        {
+            string sql = "select * from kullanicilar where Yetki like Concat('%',?Yetki,'%')";
+            MySqlParameter p = new MySqlParameter("?Yetki", MySqlDbType.String) {Value = yetki};
+           
+            DataTable veriler = _helper.ExecuteDataSet(sql, p).Tables[0];
+
+            return (from DataRow row in veriler.Rows select new KullanicilarInfo(row["KurumKodu"].ToString())).ToList();
         }
         public List<KullanicilarInfo> KayitlariDiziyeGetir(int bransi, string yetki)
         {
@@ -124,18 +143,20 @@ namespace DAL
 
             return info;
         }
-        public KullanicilarInfo KayitBilgiGetir(int ilce, int kurumId, string uyeKurumKodu)
+        public KullanicilarInfo KayitBilgiGetir(int ilce, int kurumId, string uyeKurumKodu,string tcKimlik)
         {
-            const string sqlText = "select * from kullanicilar where (IlceId=?IlceId and Id=?Id and KurumKodu=?KurumKodu)";
+            const string sqlText = "select * from kullanicilar INNER JOIN kurumlar on kurumlar.Id=?Id where (kullanicilar.IlceId=?IlceId and kullanicilar.KurumKodu=?KurumKodu and kullanicilar.TcKimlik=?TcKimlik)";
             MySqlParameter[] p =
             {
                 new MySqlParameter("?IlceId", MySqlDbType.Int32),
                 new MySqlParameter("?Id", MySqlDbType.Int32),
-                new MySqlParameter("?KurumKodu", MySqlDbType.String)
+                new MySqlParameter("?KurumKodu", MySqlDbType.String),
+                new MySqlParameter("?TcKimlik", MySqlDbType.String)
             };
             p[0].Value = ilce;
             p[1].Value = kurumId;
             p[2].Value = uyeKurumKodu;
+            p[3].Value = tcKimlik;
             MySqlDataReader dr = _helper.ExecuteReader(sqlText, p);
             KullanicilarInfo info = TabloAlanlar(dr);
 
@@ -144,6 +165,19 @@ namespace DAL
         public KullanicilarInfo KayitBilgiGetir(int id)
         {
             string cmdText = "select * from kullanicilar where Id=?Id";
+            MySqlParameter param = new MySqlParameter("?Id", MySqlDbType.Int32) { Value = id };
+            MySqlDataReader dr = _helper.ExecuteReader(cmdText, param);
+            KullanicilarInfo info = TabloAlanlar(dr);
+
+            return info;
+        }
+        public KullanicilarInfo KayitBilgiGetir(int id,bool detayli)
+        {
+            string cmdText = @"SELECT i.IlceAdi,k.KurumAdi, b.BransAdi,usr.* FROM kullanicilar AS usr
+                                left JOIN branslar AS b ON usr.Bransi = b.Id
+                                left JOIN kurumlar AS k ON k.KurumKodu = usr.KurumKodu
+                                left JOIN ilceler AS i ON i.Id = k.IlceId
+                                WHERE usr.Id =?Id";
             MySqlParameter param = new MySqlParameter("?Id", MySqlDbType.Int32) { Value = id };
             MySqlDataReader dr = _helper.ExecuteReader(cmdText, param);
             KullanicilarInfo info = TabloAlanlar(dr);
@@ -184,6 +218,10 @@ namespace DAL
                 info.OncekiGiris = dr.GetMyTarih("OncekiGiris");
                 info.SonGiris = dr.GetMyTarih("SonGiris");
                 info.GirisSayisi = dr.GetMySayi("GirisSayisi");
+
+                info.IlceAdi = dr.GetMyMetin("IlceAdi");
+                info.BransAdi = dr.GetMyMetin("BransAdi");
+                info.KurumAdi = dr.GetMyMetin("KurumAdi");
             }
             dr.Close();
             return info;
@@ -196,7 +234,7 @@ namespace DAL
         }
         public void KayitEkle(KullanicilarInfo info)
         {
-            const string sql = @"insert into kullanicilar (TcKimlik,Sifre,KurumKodu,Email,IlceId,Yetki,AdiSoyadi,Bransi) values (?TcKimlik,?Sifre,?KurumKodu,?Email,?IlceId,?Yetki,?AdiSoyadi,?Bransi)";
+            const string sql = @"insert into kullanicilar (TcKimlik,Sifre,KurumKodu,Email,IlceId,Yetki,AdiSoyadi,Bransi,CepTlf) values (?TcKimlik,?Sifre,?KurumKodu,?Email,?IlceId,?Yetki,?AdiSoyadi,?Bransi,?CepTlf)";
             MySqlParameter[] pars = 
             {
              new MySqlParameter("?TcKimlik", MySqlDbType.String),
@@ -206,7 +244,8 @@ namespace DAL
              new MySqlParameter("?IlceId", MySqlDbType.Int32),
              new MySqlParameter("?Yetki", MySqlDbType.String),
              new MySqlParameter("?AdiSoyadi", MySqlDbType.String),
-             new MySqlParameter("?Bransi", MySqlDbType.String)
+             new MySqlParameter("?Bransi", MySqlDbType.String),
+             new MySqlParameter("?CepTlf", MySqlDbType.String)
             };
             pars[0].Value = info.TcKimlik;
             pars[1].Value = info.Sifre;
@@ -216,11 +255,12 @@ namespace DAL
             pars[5].Value = info.Yetki;
             pars[6].Value = info.AdiSoyadi;
             pars[7].Value = info.Bransi;
+            pars[8].Value = info.CepTlf;
             _helper.ExecuteNonQuery(sql, pars);
         }
         public void KayitGuncelle(KullanicilarInfo info)
         {
-            const string sql = @"update kullanicilar set Sifre=?Sifre,KurumKodu=?KurumKodu,Email=?Email,IlceId=?IlceId,Yetki=?Yetki,AdiSoyadi=?AdiSoyadi,Bransi=?Bransi,TcKimlik=?TcKimlik where Id=?Id";
+            const string sql = @"update kullanicilar set Sifre=?Sifre,KurumKodu=?KurumKodu,Email=?Email,IlceId=?IlceId,Yetki=?Yetki,AdiSoyadi=?AdiSoyadi,Bransi=?Bransi,TcKimlik=?TcKimlik,CepTlf=?CepTlf where Id=?Id";
             MySqlParameter[] pars = 
             {
              new MySqlParameter("?Sifre", MySqlDbType.String),
@@ -231,6 +271,7 @@ namespace DAL
              new MySqlParameter("?AdiSoyadi", MySqlDbType.String),
              new MySqlParameter("?Bransi", MySqlDbType.String),
              new MySqlParameter("?TcKimlik", MySqlDbType.String),
+             new MySqlParameter("?CepTlf", MySqlDbType.String),
              new MySqlParameter("?Id", MySqlDbType.Int32)
             };
             pars[0].Value = info.Sifre;
@@ -241,24 +282,27 @@ namespace DAL
             pars[5].Value = info.AdiSoyadi;
             pars[6].Value = info.Bransi;
             pars[7].Value = info.TcKimlik;
-            pars[8].Value = info.Id;
+            pars[8].Value = info.CepTlf;
+            pars[9].Value = info.Id;
             _helper.ExecuteNonQuery(sql, pars);
 
         }
         public void KullaniciBilgiGuncelle(KullanicilarInfo info)
         {
-            const string sql = @"update kullanicilar set Sifre=?Sifre,Email=?Email,CepTlf=?CepTlf where Id=?Id";
+            const string sql = @"update kullanicilar set Sifre=?Sifre,Email=?Email,CepTlf=?CepTlf,AdiSoyadi=?AdiSoyadi where Id=?Id";
             MySqlParameter[] pars = 
             {
              new MySqlParameter("?Sifre", MySqlDbType.String),
              new MySqlParameter("?Email", MySqlDbType.String),
-             new MySqlParameter("?CepTlf", MySqlDbType.String),
+                new MySqlParameter("?CepTlf", MySqlDbType.String),
+                new MySqlParameter("?AdiSoyadi", MySqlDbType.String),
              new MySqlParameter("?Id", MySqlDbType.Int32)
             };
             pars[0].Value = info.Sifre;
             pars[1].Value = info.Email;
             pars[2].Value = info.CepTlf;
-            pars[3].Value = info.Id;
+            pars[3].Value = info.AdiSoyadi;
+            pars[4].Value = info.Id;
             _helper.ExecuteNonQuery(sql, pars);
 
         }
@@ -278,13 +322,27 @@ namespace DAL
             pars[3].Value = id;
             _helper.ExecuteNonQuery(sql, pars);
         }
+        public void KayitGuncelle(int id,string tcKimlik, string sifre)
+        {
+            const string sql = @"update kullanicilar set TcKimlik=?TcKimlik,Sifre=?Sifre where Id=?Id";
+            MySqlParameter[] pars =
+            {
+                new MySqlParameter("?TcKimlik", MySqlDbType.String),
+                new MySqlParameter("?Sifre", MySqlDbType.String),
+             new MySqlParameter("?Id", MySqlDbType.Int32)
+            };
+            pars[0].Value = tcKimlik;
+            pars[1].Value = sifre;
+            pars[2].Value = id;
+            _helper.ExecuteNonQuery(sql, pars);
+        }
         public void KayitGuncelle(int id, string sifre)
         {
             const string sql = @"update kullanicilar set Sifre=?Sifre where Id=?Id";
             MySqlParameter[] pars =
             {
-             new MySqlParameter("?Sifre", MySqlDbType.String),
-             new MySqlParameter("?Id", MySqlDbType.Int32)
+                new MySqlParameter("?Sifre", MySqlDbType.String),
+                new MySqlParameter("?Id", MySqlDbType.Int32)
             };
             pars[0].Value = sifre;
             pars[1].Value = id;

@@ -45,7 +45,7 @@ public partial class ODM_Kazanimlar : System.Web.UI.Page
         KOgrenmeAlanlariDB uoaDb = new KOgrenmeAlanlariDB();
         ddlKazanimOgrenmeAlani.DataSource = ddlAnaKat.DataSource = uoaDb.KayitlariGetir(0, brans, sinif);
         ddlKazanimOgrenmeAlani.DataValueField = ddlAnaKat.DataValueField = "AlanNo";
-        ddlKazanimOgrenmeAlani.DataTextField = ddlAnaKat.DataTextField = "OgrenmeAlani";
+        ddlKazanimOgrenmeAlani.DataTextField = ddlAnaKat.DataTextField = "NoOgrenmeAlani";
         ddlAnaKat.DataBind();
         ddlKazanimOgrenmeAlani.DataBind();
         ddlAnaKat.Items.Insert(0, new ListItem("Seçiniz", ""));
@@ -131,25 +131,24 @@ public partial class ODM_Kazanimlar : System.Web.UI.Page
         {
             GenelIslemler.SiraNumarasiForRepeater(e, "lblSira");
 
-            Literal ltrBransHarfi = (Literal)e.Item.FindControl("ltrBransHarfi");
-            Literal ltrAnaKat = (Literal)e.Item.FindControl("ltrAnaKat");
+            Literal ltrKazanimNo = (Literal)e.Item.FindControl("ltrKazanimNo");
             Literal ltrOgrenmeAlani = (Literal)e.Item.FindControl("ltrOgrenmeAlani");
 
             int bransId = DataBinder.Eval(e.Item.DataItem, "BransId").ToInt32();
+            int sinif = DataBinder.Eval(e.Item.DataItem, "Sinif").ToInt32();
             int anaKat = DataBinder.Eval(e.Item.DataItem, "AnaKat").ToInt32();
+            int alanNo = DataBinder.Eval(e.Item.DataItem, "AlanNo").ToInt32();
+
             string ogrenmeAlani = DataBinder.Eval(e.Item.DataItem, "OgrenmeAlani").ToString();
-            if (anaKat != 0)
-            {
-                ltrOgrenmeAlani.Text =ogrenmeAlani ;
-                ltrAnaKat.Text = "." + anaKat;
-            }
-            else
-            {
-                ltrOgrenmeAlani.Text = string.Concat("<strong>",ogrenmeAlani,"</strong>");
-            }
+
+            ltrOgrenmeAlani.Text = anaKat != 0 ? ogrenmeAlani : string.Concat("<strong>",ogrenmeAlani,"</strong>");
+
             BranslarDb brnsDb = new BranslarDb();
             BranslarInfo info = brnsDb.KayitBilgiGetir(bransId);
-            ltrBransHarfi.Text = info.BransAdi.Substring(0, 1);
+
+            string anaKatStr = anaKat == 0 ? "" : anaKat + ".";
+            string alanNoStr = alanNo == 0 ? "" : alanNo + ".";
+            ltrKazanimNo.Text =string.Format("{0}.{1}.{2}{3}", info.BransAdi.Substring(0, 1),sinif,anaKatStr,alanNo);
         }
     }
     protected void ddlSinif_OnSelectedIndexChanged(object sender, EventArgs e)
@@ -266,7 +265,7 @@ public partial class ODM_Kazanimlar : System.Web.UI.Page
         KOgrenmeAlanlariDB uoaDb = new KOgrenmeAlanlariDB();
         ddlKazanimAltOgrenmeAlani.DataSource = uoaDb.KayitlariGetir(ogrenmeAlani, brans, sinif);
         ddlKazanimAltOgrenmeAlani.DataValueField = ddlAnaKat.DataValueField = "AlanNo";
-        ddlKazanimAltOgrenmeAlani.DataTextField = ddlAnaKat.DataTextField = "OgrenmeAlani";
+        ddlKazanimAltOgrenmeAlani.DataTextField = ddlAnaKat.DataTextField = "NoOgrenmeAlani";
         ddlKazanimAltOgrenmeAlani.DataBind();
         ddlKazanimAltOgrenmeAlani.Items.Insert(0, new ListItem("Seçiniz", ""));
     }
@@ -338,11 +337,21 @@ public partial class ODM_Kazanimlar : System.Web.UI.Page
         if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
         {
             GenelIslemler.SiraNumarasiForRepeater(e, "lblSira");
-            Literal ltrBransHarfi = (Literal)e.Item.FindControl("ltrBransHarfi");
+            Literal ltrKazanimNo = (Literal)e.Item.FindControl("ltrKazanimNo");
             int bransId = DataBinder.Eval(e.Item.DataItem, "BransId").ToInt32();
+            int sinif = DataBinder.Eval(e.Item.DataItem, "Sinif").ToInt32();
+            int ogrenmeAlani = DataBinder.Eval(e.Item.DataItem, "OgrenmeAlani").ToInt32();
+            int altOgrenmeAlani = DataBinder.Eval(e.Item.DataItem, "AltOgrenmeAlani").ToInt32();
+            int kazanimNo = DataBinder.Eval(e.Item.DataItem, "KazanimNo").ToInt32();
+           
             BranslarDb brnsDb = new BranslarDb();
             BranslarInfo info = brnsDb.KayitBilgiGetir(bransId);
-            ltrBransHarfi.Text = info.BransAdi.Substring(0, 1);
+
+            string ogrenmeAlaniStr = ogrenmeAlani == 0 ? "" : ogrenmeAlani + ".";
+            string altOgrenmeAlaniStr = altOgrenmeAlani == 0 ? "" : altOgrenmeAlani + ".";
+            string kazanimNoStr = kazanimNo == 0 ? "" : kazanimNo.ToString();
+            ltrKazanimNo.Text = string.Format("{0}.{1}.{2}{3}{4}", info.BransAdi.Substring(0, 1), sinif, ogrenmeAlaniStr, altOgrenmeAlaniStr, kazanimNoStr);
+
         }
     }
     protected void rptKazanimlar_OnItemCommand(object source, RepeaterCommandEventArgs e)

@@ -30,7 +30,7 @@ namespace ODM
             SinavlarInfo snvInfo = snv.AktifSinavAdi();
             if (snvInfo.VeriGirisi == 0) Response.Redirect("Giris.aspx");
 
-            CevaplarDb veriDb = new CevaplarDb();
+            SonucAuDB veriDb = new SonucAuDB();
 
             int atananCkSayisi = ki.Grup == "A" ? veriDb.CevaplanacakCkSayisiA(snvInfo.SinavId, uyeId) : veriDb.CevaplanacakCkSayisiB(snvInfo.SinavId, uyeId);
             int cevaplananCkSayisi = ki.Grup == "A" ? veriDb.CevaplananCkSayisiA(snvInfo.SinavId, uyeId) : veriDb.CevaplananCkSayisiB(snvInfo.SinavId, uyeId);
@@ -47,7 +47,7 @@ namespace ODM
             ltrAtananCKSayisi.Text = atananCkSayisi.ToString();
             ltrKalanCKSayisi.Text = cevaplananCkSayisi.ToString();
 
-            CevaplarInfo info = veriDb.KayitBilgiGetirDegerlendirici(snvInfo.SinavId, uyeId, ki.Grup);
+            SonucAuInfo info = veriDb.KayitBilgiGetirDegerlendirici(snvInfo.SinavId, uyeId, ki.Grup);
             hfId.Value = info.Id.ToString();
 
             btnKaydet.Text = info.Id.ToString();
@@ -84,8 +84,8 @@ namespace ODM
                 KullanicilarDb kDb = new KullanicilarDb();
                 KullanicilarInfo ki = kDb.KayitBilgiGetir(uyeId);
 
-                CevaplarDb veriDb = new CevaplarDb();
-                CevaplarInfo info = veriDb.KayitBilgiGetir(id);
+                SonucAuDB veriDb = new SonucAuDB();
+                SonucAuInfo info = veriDb.KayitBilgiGetir(id);
 
                 RubrikDb rbDb = new RubrikDb();
                 RubrikInfo rinf = rbDb.KayitBilgiGetir(info.SinavId, info.SoruNo);

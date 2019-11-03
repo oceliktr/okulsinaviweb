@@ -28,7 +28,9 @@
                                         <table class="table table-bordered table-hover dataTable" id="sinavlar" role="grid">
                                             <thead>
                                                 <tr role="row">
+                                                    <th>Id</th>
                                                     <th>Sınavlar</th>
+                                                    <th>Dönem</th>
                                                     <th>İşlem</th>
                                                 </tr>
                                             </thead>
@@ -36,7 +38,9 @@
                                                 <asp:Repeater ID="rptKayitlar" runat="server" OnItemCommand="rptKayitlar_ItemCommand">
                                                     <ItemTemplate>
                                                         <tr role="row" class="odd">
+                                                            <td><%#Eval("Id") %></td>
                                                             <td><%#Eval("SinavAdi") %></td>
+                                                            <td><%#Eval("DonemAdi") %></td>
                                                             <td>
                                                                 <asp:LinkButton ID="lnkDuzenle" runat="server" CommandName="Duzenle" CommandArgument='<%#Eval("Id") %>'><i class="glyphicon glyphicon-edit"></i></asp:LinkButton>
                                                                 <asp:LinkButton ID="lnkSil" runat="server" CommandName="Sil" OnClientClick="return confirm('Silmek istediğinizden emin misiniz?');" CommandArgument='<%#Eval("Id") %>'><i class="glyphicon glyphicon-trash"></i></asp:LinkButton>
@@ -64,13 +68,11 @@
                                                                     <asp:RequiredFieldValidator ControlToValidate="txtSinav" ValidationGroup="form" ID="RequiredFieldValidator1" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
                                                         <div class="col-sm-4">
                                                             <asp:TextBox ID="txtSinav" CssClass="form-control" runat="server" placeholder="Sınav adını giriniz" ValidationGroup="form"></asp:TextBox>
-                                                        </div>
-                                                          <label class="col-sm-2 control-label">
-                                                            Tarihi
-                                                                    <asp:RequiredFieldValidator ControlToValidate="txtTarih" ValidationGroup="form" ID="RequiredFieldValidator2" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
+                                                        </div><label class="col-sm-2 control-label">
+                                                            Dönem Adı
+                                                            <asp:RequiredFieldValidator ControlToValidate="txtDonem" ValidationGroup="form" ID="RequiredFieldValidator3" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
                                                         <div class="col-sm-4">
-                                                       
-                                                            <asp:TextBox ID="txtTarih" CssClass="form-control" runat="server" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask placeholder="Sınav tarihini giriniz" ValidationGroup="form"></asp:TextBox>
+                                                            <asp:TextBox ID="txtDonem" CssClass="form-control" runat="server" placeholder="Dönem adını giriniz" ValidationGroup="form"></asp:TextBox>
                                                         </div>
                                                     </div>
                                                     <div class="box-footer">

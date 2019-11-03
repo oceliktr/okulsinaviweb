@@ -22,6 +22,7 @@ namespace DAL
         public string YanlisCevap { get; set; }
         public string KismiCevap { get; set; }
         public string BransAdi { get; set; }
+        public string KitapcikTuru { get; set; }
         public RubrikInfo()
         { }
 
@@ -29,6 +30,29 @@ namespace DAL
         {
             BransId = bransId;
             BransAdi = bransAdi;
+        }
+        public RubrikInfo(int bransId, string kazanimlar, int sinavId,int sinif,int soruNo,string kitapcikTuru)
+        {
+            BransId = bransId;
+            Kazanimlar = kazanimlar;
+            SinavId = sinavId;
+            Sinif = sinif;
+            SoruNo = soruNo;
+            KitapcikTuru = kitapcikTuru;
+        }
+        public RubrikInfo(int soruNo)
+        {
+            SoruNo = soruNo;
+        }
+        public RubrikInfo(int soruNo, string kitapcikTuru,int bransId)
+        {
+            SoruNo = soruNo;
+            KitapcikTuru = kitapcikTuru;
+            BransId = bransId;
+        }
+        public RubrikInfo(string kazanimlar)
+        {
+            Kazanimlar = kazanimlar;
         }
     }
     public class RubrikDb
@@ -47,20 +71,114 @@ namespace DAL
         public DataTable KayitlariGetir(int sinavId)
         {
             const string sql = "select * from rubrik where SinavId=?SinavId order by SoruNo asc";
-            MySqlParameter param = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
+            MySqlParameter[] param =
+            {
+                new MySqlParameter("?SinavId", MySqlDbType.Int32)
+            };
+            param[0].Value = sinavId;
+
             return helper.ExecuteDataSet(sql,param).Tables[0];
         }
+        public DataTable KayitlariGetir(int sinavId, string kitapcikTuru)
+        {
+            const string sql = "select * from rubrik where SinavId=?SinavId and KitapcikTuru=?KitapcikTuru order by BransId,SoruNo asc";
+            MySqlParameter[] param =
+            {
+                new MySqlParameter("?SinavId", MySqlDbType.Int32),
+                new MySqlParameter("?KitapcikTuru", MySqlDbType.String)
+            };
+            param[0].Value = sinavId;
+            param[1].Value = kitapcikTuru;
 
+            return helper.ExecuteDataSet(sql, param).Tables[0];
+        }
+        public List<RubrikInfo> KayitlariGetir(int sinavId, int sinif, int brans,string kitapcikTuru)
+        {
+            const string sql = @"Select * from rubrik
+            where rubrik.SinavId =?SinavId and rubrik.Sinif=?Sinif and rubrik.BransId=?BransId and rubrik.KitapcikTuru=?KitapcikTuru order by rubrik.SoruNo asc";
+
+            MySqlParameter[] param =
+            {
+                new MySqlParameter("?SinavId", MySqlDbType.Int32),
+                new MySqlParameter("?Sinif", MySqlDbType.Int32),
+                new MySqlParameter("?BransId", MySqlDbType.Int32),
+                new MySqlParameter("?KitapcikTuru", MySqlDbType.String)
+            };
+            param[0].Value = sinavId;
+            param[1].Value = sinif;
+            param[2].Value = brans;
+            param[3].Value = kitapcikTuru;
+            DataTable veriler = helper.ExecuteDataSet(sql, param).Tables[0];
+
+            return (from DataRow row in veriler.Rows select new RubrikInfo(Convert.ToInt32(row["BransId"]), row["Kazanimlar"].ToString(), Convert.ToInt32(row["SinavId"]), Convert.ToInt32(row["Sinif"]), Convert.ToInt32(row["SoruNo"]), row["KitapcikTuru"].ToString())).ToList();
+
+        }
         public List<RubrikInfo> SinavdakiBranslar(int sinavId)
         {
             const string sql = @"Select DISTINCT rubrik.BransId,branslar.BransAdi from rubrik
                                 INNER JOIN branslar ON rubrik.BransId = branslar.Id
-                                 where rubrik.SinavId = ?SinavId order by rubrik.SoruNo asc";
+                                 where rubrik.SinavId = ?SinavId order by rubrik.BransId asc";
+
             MySqlParameter param = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
             
             DataTable veriler = helper.ExecuteDataSet(sql, param).Tables[0];
 
             return (from DataRow row in veriler.Rows select new RubrikInfo(Convert.ToInt32(row["BransId"]), row["BransAdi"].ToString())).ToList();
+
+        }
+        public List<RubrikInfo> SinavdakiKazanimlar(int sinavId,int brans)
+        {
+            const string sql = @"Select DISTINCT(rubrik.Kazanimlar) from rubrik
+                                where rubrik.SinavId =?SinavId and rubrik.BransId=?BransId order by rubrik.Kazanimlar asc";
+            MySqlParameter[] param =
+            {
+                new MySqlParameter("?SinavId", MySqlDbType.Int32),
+                new MySqlParameter("?BransId", MySqlDbType.Int32)
+            };
+            param[0].Value = sinavId;
+            param[1].Value = brans;
+            DataTable veriler = helper.ExecuteDataSet(sql, param).Tables[0];
+
+            return (from DataRow row in veriler.Rows select new RubrikInfo(row["Kazanimlar"].ToString())).ToList();
+        }
+        public List<RubrikInfo> SinavdakiSoruNolar(int sinavId,int sinif,int brans)
+        {
+            const string sql = @"Select rubrik.SoruNo from rubrik
+            where rubrik.SinavId =?SinavId and rubrik.Sinif=?Sinif and rubrik.BransId=?BransId order by rubrik.SoruNo asc";
+
+            MySqlParameter[] param =
+            {
+                new MySqlParameter("?SinavId", MySqlDbType.Int32),
+                new MySqlParameter("?Sinif", MySqlDbType.Int32),
+                new MySqlParameter("?BransId", MySqlDbType.Int32)
+            };
+            param[0].Value = sinavId;
+            param[1].Value = sinif;
+            param[2].Value = brans;
+            DataTable veriler = helper.ExecuteDataSet(sql, param).Tables[0];
+
+            return (from DataRow row in veriler.Rows select new RubrikInfo(Convert.ToInt32(row["SoruNo"]))).ToList();
+
+        }
+        public List<RubrikInfo> KazanimdakiSoruNolar(string kazanimNo,int sinavId, int sinif, int brans)
+        {
+            const string sql = @"Select SoruNo,KitapcikTuru from rubrik
+            where Kazanimlar=?Kazanimlar and SinavId=?SinavId and Sinif=?Sinif and BransId=?BransId order by SoruNo asc";
+
+            MySqlParameter[] param =
+            {
+                new MySqlParameter("?SinavId", MySqlDbType.Int32),
+                new MySqlParameter("?Sinif", MySqlDbType.Int32),
+                new MySqlParameter("?BransId", MySqlDbType.Int32),
+                new MySqlParameter("?Kazanimlar", MySqlDbType.String)
+            };
+            param[0].Value = sinavId;
+            param[1].Value = sinif;
+            param[2].Value = brans;
+            param[3].Value = kazanimNo;
+            DataTable veriler = helper.ExecuteDataSet(sql, param).Tables[0];
+
+            return (from DataRow row in veriler.Rows select new RubrikInfo(Convert.ToInt32(row["SoruNo"]), row["KitapcikTuru"].ToString(),0)).ToList();
 
         }
         public RubrikInfo KayitBilgiGetir(int id)

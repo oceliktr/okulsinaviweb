@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Cikis.aspx.cs" Inherits="ODM.AdminCikis" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Cikis.aspx.cs" Inherits="ODM.Cikis" %>
 
 <!DOCTYPE html>
 

@@ -38,7 +38,7 @@ namespace ODM
             int brans = ddlBranslar.SelectedValue.ToInt32();
 
             KullanicilarDb veriDb = new KullanicilarDb();
-            rptKullanicilar.DataSource = veriDb.OgretmenleriGetir(brans);
+            rptKullanicilar.DataSource = veriDb.OgretmenleriGetir("Ogretmen",brans);
             rptKullanicilar.DataBind();
 
         }
@@ -68,7 +68,7 @@ namespace ODM
                 IlcelerDb iDb = new IlcelerDb();
                 ltrIlce.Text = iDb.KayitBilgiGetir(ilceId).IlceAdi;
 
-                CevaplarDb cvpDb = new CevaplarDb();
+                SonucAuDB cvpDb = new SonucAuDB();
                 Literal ltrOkunacakCevapSayisi = (Literal)e.Item.FindControl("ltrOkunacakCevapSayisi");
                 ltrOkunacakCevapSayisi.Text = grup=="A" ? cvpDb.CevaplanacakCkSayisiA(sinavId, ogretmenId).ToString() : cvpDb.CevaplanacakCkSayisiB(sinavId, ogretmenId).ToString();
 
@@ -96,9 +96,9 @@ namespace ODM
             else
             {
                 KullanicilarDb veriDb = new KullanicilarDb();
-                CevaplarDb cDb = new CevaplarDb();
+                SonucAuDB cDb = new SonucAuDB();
 
-                List<CevaplarInfo> dersler = cDb.DersleriDiziyeGetir(sinavId); //sınavda sorulacak dersler.
+                List<SonucAuInfo> dersler = cDb.DersleriDiziyeGetir(sinavId); //sınavda sorulacak dersler.
                 if (dersler.Count > 0)
                 {
                     foreach (var drs in dersler)
@@ -114,7 +114,7 @@ namespace ODM
                             veriDb.KayitGrupGuncelle(grp.Id, hrf);
                         }
 
-                        List<CevaplarInfo> cevaplar = cDb.KayitlariDiziyeGetir(sinavId, drs.BransId);
+                        List<SonucAuInfo> cevaplar = cDb.KayitlariDiziyeGetir(sinavId, drs.BransId);
 
                         if (cevaplar.Count > 0)
                         {

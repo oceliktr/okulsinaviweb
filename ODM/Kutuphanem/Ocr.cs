@@ -11,6 +11,16 @@ namespace ODM.Kutuphanem
             Turkce,
             Ingilizce
         }
+
+        public static string OcrOku(string ocrDosyaAdresi, out int ogrenciNo)
+        {
+            string ocrTxt = OcrCevir(ocrDosyaAdresi, Dil.Turkce);
+            string oturum = ocrTxt.Substring(0, 1);
+            ogrenciNo = ocrTxt.Substring(1, ocrTxt.Length - 1).ToInt32();
+            //ilk karekterden sonrası
+            return oturum;
+        }
+
         public static string OcrCevir(string imagePath, Dil dil)
         {
             string taz = "";
@@ -36,11 +46,10 @@ namespace ODM.Kutuphanem
             catch (Exception e)
             {
                 Trace.TraceError(e.ToString());
-                taz += string.Format("Beklenmeyen hata: {0}\n", e.Message);
-                taz += string.Format("Detaylar: {0}", e);
+                taz += String.Format("Beklenmeyen hata: {0}\n", e.Message);
+                taz += String.Format("Detaylar: {0}", e);
                 return taz;
             }
         }
-
     }
 }

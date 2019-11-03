@@ -9,7 +9,7 @@
         <section class="content-header">
             <h1>Sýnav Evraklarý</h1>
             <ol class="breadcrumb">
-                <li><a href="Giris.aspx"><i class="fa fa-home"></i>Yönetim Giriþ</a></li>
+                <li><a href="Giris.aspx"><i class="fa fa-home"></i>Giriþ</a></li>
             </ol>
         </section>
         <section class="content">
@@ -22,7 +22,7 @@
                                 <ul class="nav nav-tabs">
                                     <li id="tabliSayfalar" runat="server" class="active"><a href="#ContentPlaceHolder1_Sayfalar" data-toggle="tab" aria-expanded="true"><i class="fa fa-fw fa-list-alt"></i>Evrak Ýndir</a></li>
                                     <li id="tabliKayit" runat="server"><a href="#ContentPlaceHolder1_Kayit" data-toggle="tab" aria-expanded="false"><i class="fa fa-fw fa-edit"></i>Kayýt Formu</a></li>
-                                    <li id="tabliEvrakGonder" runat="server"><a href="#ContentPlaceHolder1_EvrakGonder" data-toggle="tab" aria-expanded="false"><i class="fa fa-fw fa-edit"></i>Sýnav Evraký Gönder</a></li>
+                                    <li id="tabliEvrakGonder" runat="server" Visible="False"><a href="#ContentPlaceHolder1_EvrakGonder" data-toggle="tab" aria-expanded="false"><i class="fa fa-fw fa-edit"></i>Sýnav Evraký Gönder</a></li>
                                     <li id="tabliEvrakGelenler" runat="server"><a href="#ContentPlaceHolder1_EvrakGelenler" data-toggle="tab" aria-expanded="false"><i class="fa fa-fw fa-edit"></i>Gelen Evraklar</a></li>
                                 </ul>
                                 <div class="tab-content">

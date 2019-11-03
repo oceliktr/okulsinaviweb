@@ -34,12 +34,19 @@ namespace ODM
 
         protected void btnGiris_Click(object sender, EventArgs e)
         {
-            string tckimlik = txtKullaniciAdi.Text.ToTemizMetin().Md5Sifrele();
-            string sifre = txtSifre.Text.ToTemizMetin().Md5Sifrele();
-           
+            //if (string.IsNullOrEmpty(txtKullaniciAdi.Text.ToTemizMetin()) || string.IsNullOrEmpty(txtSifre.Text.ToTemizMetin()))
+            //{
+            //    ltrHata.Text = "Kullanıcı adı ve şifrenizi giriniz.";
+            //    divHata.Visible = true;
+            //}
+            //else
+            //{
+            string tckimlik = txtKullaniciAdi.Text.ToTemizMetin();
+            string sifre = txtSifre.Text.ToTemizMetin();
+
             KullanicilarDb veriDb = new KullanicilarDb();
             KullanicilarInfo info = veriDb.KayitBilgiGetir(tckimlik);
-            if (string.IsNullOrEmpty(info.Sifre)&&info.Id!=0)
+            if (string.IsNullOrEmpty(info.Sifre) && info.Id != 0)
             {
                 divGiris.Visible = false;
                 divSifreDegis.Visible = true;
@@ -51,11 +58,11 @@ namespace ODM
             {
                 try
                 {
-                    bool giris = veriDb.KayitKontrol(tckimlik, sifre);
+                    bool giris = veriDb.KayitKontrol(tckimlik, sifre.Md5Sifrele());
 
                     if (giris)
                     {
-                        KullanicilarInfo infoGiris = veriDb.KayitBilgiGetir(tckimlik, sifre);
+                        KullanicilarInfo infoGiris = veriDb.KayitBilgiGetir(tckimlik, sifre.Md5Sifrele());
                         int girisSayisi = infoGiris.GirisSayisi + 1;
                         int uyeId = infoGiris.Id;
                         string yetki = infoGiris.Yetki;
@@ -69,7 +76,10 @@ namespace ODM
                         uyeCookie.Expires = cbBeniHatirla.Checked ? DateTime.Now.AddDays(1) : DateTime.Now.AddMinutes(20);
                         Response.Cookies.Add(uyeCookie);
 
-                        Response.Redirect("Giris.aspx");
+                        if (yetki.Contains("LgsYazari|"))
+                            Response.Redirect("/LgsSoruBank");
+                        else
+                            Response.Redirect("Giris.aspx");
                     }
                     else
                     {
@@ -79,9 +89,10 @@ namespace ODM
                 }
                 catch (Exception ex)
                 {
-                    ltrHata.Text = string.Format("Üzgünüm bir hata oluştu. Hata (2): {0}", ex.Message);
+                    ltrHata.Text = string.Format("Üzgünüm bir hata oluştu. Hata : {0}", ex.Message);
                     divHata.Visible = true;
                 }
+                //}
             }
         }
 
@@ -93,6 +104,7 @@ namespace ODM
             {
                 int id = hfId.Value.ToInt32();
                 string sifre = yeniSifre.Md5Sifrele();
+                string tcKimlik = txtKurumKodu.Text;
                 KullanicilarDb veriDb = new KullanicilarDb();
                 veriDb.KayitGuncelle(id, sifre);
                 ltrHata.Text = "Şifreniz oluşturuldu. Yeni şifre ile giriş yapabilirsiniz.";
@@ -112,22 +124,24 @@ namespace ODM
             string kurumKodu = txtKurumKodu.Text.ToTemizMetin();
             int ilce = ddlIlce.SelectedValue.ToInt32();
             int kurumId = ddlKurumAdi.SelectedValue.ToInt32();
+            string tcKimlik = txtKullaniciAdi2.Text.ToTemizMetin();
 
             KullanicilarDb veriDb = new KullanicilarDb();
-            KullanicilarInfo info = veriDb.KayitBilgiGetir(ilce, kurumId, kurumKodu);
+            KullanicilarInfo info = veriDb.KayitBilgiGetir(ilce, kurumId, kurumKodu, tcKimlik);
             if (info.Id != 0)
             {
-                string yeniSifre = GenelIslemler.RastgeleMetinUret(12);
-                veriDb.YeniSifreOlustur(info.Id, yeniSifre);
+                //string yeniSifre = GenelIslemler.RastgeleMetinUret(12);
+                //veriDb.YeniSifreOlustur(info.Id, yeniSifre);
 
                 divSifreDegis.Visible = true;
                 hfId.Value = info.Id.ToString();
                 divsifreUnuttum.Visible = false;
+                divHata.Visible = false;
             }
             else
             {
                 divHata.Visible = true;
-                ltrHata.Text = "Kurum eşleşmesi bulunamadı. <br>Bilgilerin doğruluğundan eminseniz İl Milli Eğitim Müdürlüğü Strateji Geliştirme Şubesi ile irtibata geçiniz.<br> Tlf : 0442 234 48 00 - Dahili 175";
+                ltrHata.Text = "Kurum ve kullanıcı eşleşmesi bulunamadı. <br><br>Bilgilerin doğruluğundan eminseniz Ölçme Değerlendirme Merkezi ile irtibata geçiniz.<br><br> Tlf : 0554 115 88 18 (Osman ÇELİK)";
             }
         }
 

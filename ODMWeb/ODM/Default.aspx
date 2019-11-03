@@ -8,11 +8,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Erzurum Ölçme Değerlendirme Merkezi</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
-    <link rel="stylesheet" href="dist/css/AdminLTE.min.css" />
-    <link rel="stylesheet" href="plugins/iCheck/square/blue.css" />
+    <link rel="stylesheet" href="/dist/css/AdminLTE.min.css" />
+    <link rel="stylesheet" href="/plugins/iCheck/square/blue.css" />
 
     <!--[if lt IE 9]>
   <script src="js/html5shiv.min.js"></script>
@@ -24,7 +24,7 @@
         <div class="wrapper">
             <p></p>
             <div class="login-logo">
-                <img src="images/logo.png" alt="Erzurum İl Milli Eğitim Müdürlüğü Ölçme Değerlendirme Merkezi" />
+                <img src="/images/logo.png" alt="Erzurum İl Milli Eğitim Müdürlüğü Ölçme Değerlendirme Merkezi" />
             </div>
             <div runat="server" id="divHata" visible="false" class="alert alert-danger alert-dismissible login-box">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -36,7 +36,7 @@
                 <div class="login-box-body">
                     <p class="login-box-msg">Kullanıcı Girişi</p>
                     <div class="form-group has-feedback">
-                        <asp:TextBox ID="txtKullaniciAdi" CssClass="form-control" runat="server" placeholder="Tc Kimlik No"></asp:TextBox>
+                        <asp:TextBox ID="txtKullaniciAdi" CssClass="form-control" runat="server" placeholder="Kullanıcı Adı"></asp:TextBox>
                         <span class="glyphicon glyphicon-user form-control-feedback"></span>
                     </div>
                     <div class="form-group has-feedback">
@@ -75,13 +75,16 @@
                         <asp:DropDownList ID="ddlKurumAdi" CssClass="form-control" runat="server"></asp:DropDownList>
                     </div>
                     <div class="form-group has-feedback">
-                        <asp:TextBox ID="txtKurumKodu" CssClass="form-control" runat="server" placeholder="Kurum kodunu giriniz"></asp:TextBox>
+                        <asp:TextBox ID="txtKurumKodu" CssClass="form-control" runat="server" placeholder="Okulunuz kurum kodunu giriniz"></asp:TextBox>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <asp:TextBox ID="txtKullaniciAdi2" CssClass="form-control" runat="server" placeholder="Kullanıcı adını giriniz"></asp:TextBox>
                     </div>
                     <div class="row">
                         <div class="col-xs-4">
                         </div>
                         <div class="col-xs-8">
-                            <asp:Button ID="btnSifreUnuttum" runat="server" Text="Yeni Şifre Oluştur" CssClass="btn btn-primary btn-block btn-flat" OnClick="btnSifreUnuttum_OnClick" />
+                            <asp:Button ID="btnSifreUnuttum" runat="server" Text="Giriş" CssClass="btn btn-primary btn-block btn-flat" OnClick="btnSifreUnuttum_OnClick" />
                         </div>
                     </div>
                 </div>
@@ -93,7 +96,7 @@
                     <div class="form-group has-feedback">
                         <asp:HiddenField ID="hfId" runat="server" />
                         <asp:TextBox ID="txtYeniSifre" CssClass="form-control" TextMode="Password" runat="server" placeholder="Yeni Şifre"></asp:TextBox>
-                        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                     </div>
                     <div class="form-group has-feedback">
                         <asp:TextBox ID="txtYeniSifre2" runat="server" TextMode="Password" CssClass="form-control" placeholder="Yeni Şifre Tekrar"></asp:TextBox>
@@ -126,9 +129,9 @@
                 </div>
             </footer>
         </div>
-        <script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
-        <script src="bootstrap/js/bootstrap.min.js"></script>
-        <script src="plugins/iCheck/icheck.min.js"></script>
+        <script src="/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/plugins/iCheck/icheck.min.js"></script>
         <script>
             $(function () {
                 $('input').iCheck({

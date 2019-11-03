@@ -12,8 +12,9 @@ public partial class OdmBilgilerim : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            if (!Master.Yetki().Contains("Admin"))
-                Response.Redirect("Giris.aspx");
+            //Soru Bankasındaki dosya ile aynıdır
+            //if (!Master.Yetki().Contains("Admin"))
+            //    Response.Redirect("Giris.aspx");
 
 
             IlcelerDb ilcelerDb = new IlcelerDb();
@@ -67,14 +68,16 @@ public partial class OdmBilgilerim : System.Web.UI.Page
         string sifre = txtSifre.Text.ToTemizMetin();
         string email = txtEpostaAdresi.Text.ToTemizMetin();
         string gsm = txtGsm.Text.ToTemizMetin();
-       
+        string adiSoyadi = txtAdiSoyadi.Text.ToTemizMetin();
+
         int id = hfId.Value.ToInt32();
 
         KullanicilarDb veriDb = new KullanicilarDb();
         KullanicilarInfo info = new KullanicilarInfo
         {
             Email = email,
-            CepTlf = gsm
+            CepTlf = gsm,
+            AdiSoyadi = adiSoyadi
         };
         if (sifre != "")
         {

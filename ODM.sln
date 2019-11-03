@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODM", "ODM\ODM.csproj", "{2DE6A001-C7AE-4B37-B540-C72122780645}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -13,7 +13,7 @@ EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ODMWeb", "http://localhost:54471", "{0416A261-8657-4A97-A163-9D6D11F589C9}"
 	ProjectSection(WebsiteProperties) = preProject
 		UseIISExpress = "true"
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6"
 		ProjectReferences = "{ff2848a3-1035-4ef0-a233-9a45bf5db404}|DAL.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_54471"
 		Debug.AspNetCompiler.PhysicalPath = "ODMWeb\"
@@ -32,6 +32,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ODMWeb", "http://localhost:
 		SlnRelativePath = "ODMWeb\"
 		DefaultWebSiteLanguage = "Visual C#"
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODM.CKYazdirDb", "CKYazdirDb\ODM.CKYazdirDb.csproj", "{82C6F869-0FB4-4AFE-B92D-D2BFF99F2BE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,8 +67,19 @@ Global
 		{0416A261-8657-4A97-A163-9D6D11F589C9}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{0416A261-8657-4A97-A163-9D6D11F589C9}.Release|x64.ActiveCfg = Debug|Any CPU
 		{0416A261-8657-4A97-A163-9D6D11F589C9}.Release|x64.Build.0 = Debug|Any CPU
+		{82C6F869-0FB4-4AFE-B92D-D2BFF99F2BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82C6F869-0FB4-4AFE-B92D-D2BFF99F2BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82C6F869-0FB4-4AFE-B92D-D2BFF99F2BE5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{82C6F869-0FB4-4AFE-B92D-D2BFF99F2BE5}.Debug|x64.Build.0 = Debug|Any CPU
+		{82C6F869-0FB4-4AFE-B92D-D2BFF99F2BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82C6F869-0FB4-4AFE-B92D-D2BFF99F2BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82C6F869-0FB4-4AFE-B92D-D2BFF99F2BE5}.Release|x64.ActiveCfg = Release|Any CPU
+		{82C6F869-0FB4-4AFE-B92D-D2BFF99F2BE5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B200ABD8-0671-484D-8F0D-760FCB149737}
 	EndGlobalSection
 EndGlobal

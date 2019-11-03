@@ -11,7 +11,7 @@ namespace ODM
             if (!IsPostBack)
             {
 
-                if (!Master.Yetki().Contains("Admin")) 
+                if (!Master.Yetki().Contains("Root"))
                     Response.Redirect("Giris.aspx");
 
                 SinavVerileriniSil();
@@ -19,6 +19,13 @@ namespace ODM
                 KayitlariListele();
 
                 SinavleriListele();
+
+
+                SinavlarDb sDb = new SinavlarDb();
+                SinavlarInfo sinf = sDb.AktifSinavAdi();
+
+
+                ddlAktifSinav.SelectedValue = sinf.SinavId.ToString();
             }
         }
 
@@ -33,7 +40,9 @@ namespace ODM
 
             AyarlarDb aDb = new AyarlarDb();
             AyarlarInfo info = aDb.KayitBilgiGetir(1);
-            ddlAktifSinav.SelectedValue = info.SinavId.ToString();
+            if (ddlAktifSinav.SelectedValue != "")
+                ddlAktifSinav.SelectedValue = info.SinavId.ToString();
+
             hfAktifSinav.Value = info.SinavId.ToString();
             if (info.VeriGirisi == 1)
                 cbVeriGirisi.Checked = true;
@@ -51,7 +60,7 @@ namespace ODM
                         {
                             int sinavId = Request.QueryString["id"].ToInt32();
                             SinavlarDb dnmDb = new SinavlarDb();
-                        
+
                             dnmDb.KayitSil(sinavId);
                             Master.UyariIslemTamam("Döneme ait kayıtlar başarıyla silindi.", phUyari);
                         }
@@ -80,7 +89,7 @@ namespace ODM
                 }
                 else
                 {
-                    CevaplarDb cvbDb = new CevaplarDb();
+                    SonucAuDB cvbDb = new SonucAuDB();
                     if (cvbDb.KayitKontrol(id))
                     {
                         Master.UyariKirmizi(string.Format("Bu döneme ait kayıt olduğu için silinmesi durumunda geriye dönüşü mümkün olmayacaktır. <a href=Sinavlar.aspx?del=ok&id={0}>Yinede silmek istiyor musunuz?</a>", id), phUyari);
@@ -101,7 +110,7 @@ namespace ODM
                 SinavlarInfo info = veriDb.KayitBilgiGetir(id);
                 hfId.Value = info.Id.ToString();
                 txtSinav.Text = info.SinavAdi;
-                txtTarih.Text = info.Tarihi.TarihYaz();
+                txtDonem.Text = info.DonemAdi;
 
                 btnKaydet.Text = "Bilgileri Değiştir";
                 ltrKayitBilgi.Text = "Sınav bilgisi düzenleme formu";
@@ -110,14 +119,14 @@ namespace ODM
         protected void btnKaydet_Click(object sender, EventArgs e)
         {
             string sinavAdi = txtSinav.Text;
-            DateTime tarih = txtTarih.Text.ToDateTime();
+            string donemAdi = txtDonem.Text;
             int id = hfId.Value.ToInt32();
 
             SinavlarDb veriDb = new SinavlarDb();
             SinavlarInfo info = new SinavlarInfo
             {
                 SinavAdi = sinavAdi,
-                Tarihi = tarih
+                DonemAdi = donemAdi
             };
 
             // Yeni bir kayıt ise.
@@ -147,7 +156,8 @@ namespace ODM
         {
             hfId.Value = "0";
             txtSinav.Text = "";
-            txtTarih.Text = "";
+            txtDonem.Text = "";
+            btnKaydet.Text = "Kaydet";
             ltrKayitBilgi.Text = "Yeni Sınav Kayıt Formu";
         }
 
@@ -167,7 +177,7 @@ namespace ODM
 
                 AyarlarDb veriDb = new AyarlarDb();
                 veriDb.KayitGuncelle(aktifSinav, veriGirisi);
-           
+
                 Master.UyariIslemTamam("Değişiklikler kaydedildi.", phUyari);
 
                 ddlAktifSinav.SelectedValue = aktifSinav.ToString();

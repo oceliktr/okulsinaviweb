@@ -1,26 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
-using AForge.Imaging.Filters;
+using ODM.Model;
 
 namespace ODM.Kutuphanem
 {
-    public class Koordinat
-    {
-        public int KrdX { get; set; }
-        public int KrdY { get; set; }
-        public Koordinat()
-        { }
 
-        public Koordinat(int krdX, int krdY)
-        {
-            KrdX = krdX;
-            KrdY = krdY;
-        }
-    }
     public class EgimiDuzeltveBoyutlandir
     {
         static string dosyaAdi;
@@ -43,46 +30,54 @@ namespace ODM.Kutuphanem
         public static void Kaydet(string ilkResimAdresi, string yeniDosyaAdresi, int imgWidth, int imgHeight)
         {
             dosyaAdi = ilkResimAdresi;
-            bmp = Siyahla(new Bitmap(dosyaAdi));
+            bmp = ImageProcessing.Blacken(new Bitmap(dosyaAdi));
 
             UstXY();
             AltXY();
             pikselFarki = ustX - altX;
 
-            // Baþlangýç için bir açý deðeri tanýmladým. Manuel denemelerde cevap kaðýtlarýnýn açýsý -0,50 derecelerde olduðundan varsayýlan olarak bunu atadým.
-            aci = (float)Convert.ToDecimal("-0,50"); //varsayýlan açý
-            //piksel farký 0 olana kadar döngü çalýþsýn
-            //TODO:Sonsuz döngüye düþmemesi için döngü sayýsý verilebilir.
-            while (pikselFarki != 0)
+            //Piksel farký sýfýr ise açýyý 0 olarak al yoksa döngüye sok.
+            if (pikselFarki == 0)
             {
-                /* açýyý hesapla
-                 * her döngüde piksel farkýna göre açýyý 0,10 oranýnda artýrýr veya azaltýr 
-                 * eðer piksel farký 4ten az ise daha hassas açý için açýyý 0,01 oranýnda artýrýr veya azaltýr
-                 */
-                aci = pikselFarki > 0
-                    ? (pikselFarki > 4
-                        ? aci - (float)Convert.ToDecimal("0,10")
-                        : aci - (float)Convert.ToDecimal("0,01"))
-                    : (pikselFarki < -4
-                        ? (float)Convert.ToDecimal("0,10") + aci
-                        : (float)Convert.ToDecimal("0,01") + aci);
-                //Resmi çevir
-                using (Image newImage = RotateImage(new Bitmap(dosyaAdi), aci, ustX, ustY))
+                aci = 0;
+            }
+            else
+            {
+                // Baþlangýç için bir açý deðeri tanýmladým. Manuel denemelerde cevap kaðýtlarýnýn açýsý -0,50 derecelerde olduðundan varsayýlan olarak bunu atadým.
+                aci = (float)Convert.ToDecimal("-0,50"); //varsayýlan açý
+                //piksel farký 0 olana kadar döngü çalýþsýn
+                int a = 0;
+                while (pikselFarki != 0 && a < 20)
                 {
-                    bmp = Siyahla(new Bitmap(newImage));
-                }
-                AltXY();
+                     a++;
+                    /* açýyý hesapla
+                     * her döngüde piksel farkýna göre açýyý 0,10 oranýnda artýrýr veya azaltýr 
+                     * eðer piksel farký 4ten az ise daha hassas açý için açýyý 0,01 oranýnda artýrýr veya azaltýr
+                     */
+                    aci = pikselFarki > 0
+                        ? (pikselFarki > 4
+                            ? aci - (float)Convert.ToDecimal("0,10")
+                            : aci - (float)Convert.ToDecimal("0,01"))
+                        : (pikselFarki < -4
+                            ? (float)Convert.ToDecimal("0,10") + aci
+                            : (float)Convert.ToDecimal("0,01") + aci);
+                    //Resmi çevir
+                    using (Image newImage = ImageProcessing.RotateImage(new Bitmap(dosyaAdi), aci, ustX, ustY))
+                    {
+                        bmp = ImageProcessing.Blacken(new Bitmap(newImage));
+                    }
+                    AltXY();
 
+
+                    Application.DoEvents();
+
+                    pikselFarki = ustX - altX;
+                }
 
                 Application.DoEvents();
-
-                pikselFarki = ustX - altX;
             }
-
-            Application.DoEvents();
-
             //Açý bulunduktan sonra üst ve alt noktadaki piksel farký 0 dan farklý ise ayný açýda çevir
-            Image newImage2 =  RotateImage(new Bitmap(dosyaAdi), aci, ustX, ustY);
+            Image newImage2 = ImageProcessing.RotateImage(new Bitmap(dosyaAdi), aci, ustX, ustY);
             Bitmap orjBmp = new Bitmap(newImage2);
 
             using (Bitmap currentTile = new Bitmap(imgWidth, imgHeight))
@@ -96,9 +91,6 @@ namespace ODM.Kutuphanem
                 }
                 currentTile.Save(yeniDosyaAdresi);
             }
-
-            
-
         }
         //Resmin en üst noktasýndaki siyah þeklin konumunu bulur
         private static void UstXY()
@@ -214,65 +206,6 @@ namespace ODM.Kutuphanem
 
             Application.DoEvents();
         }
-        /// <summary>
-        /// Eðimi bulmak için döngü ile açýyý hesaplama metodu 
-        /// </summary>
-        private static void ResimdekiAciyiBul()
-        {
 
-        }
-        private static void ResmiKirp(int w, int h, string yeniDosyaAdresi)
-        {
-
-        }
-        /// <summary>
-        /// Resmi belli açýya göre çevirme metodu
-        /// </summary>
-        /// <param name="image"></param>
-        /// <param name="aciDerece">Açý</param>
-        /// <param name="x">X koordinatý</param>
-        /// <param name="y">Y koordinatý</param>
-        /// <returns></returns>
-        private static Bitmap RotateImage(Image image, float aciDerece, int x, int y)
-        {
-            if (image == null)
-                throw new ArgumentNullException(nameof(image));
-            PointF offset = new PointF(x, y);
-
-            //döndürülmüþ görüntüyü tutmak için yeni bir boþ bitmap oluþtur
-            Bitmap rotatedBmp = new Bitmap(image.Width, image.Height);
-
-            rotatedBmp.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            //boþ bitmapten bir grafik nesnesi hazýrla
-            using (Graphics g = Graphics.FromImage(rotatedBmp))
-            {
-                //Resim belirlenene açýda döndükten sonra taþan alanlarý beyaza boya
-                g.Clear(Color.White);
-
-                //Put the rotation point in the center of the image
-                g.TranslateTransform(offset.X, offset.Y);
-
-                //resmi çevir
-                g.RotateTransform(aciDerece);
-
-                //move the image back
-                g.TranslateTransform(-offset.X, -offset.Y);
-
-                //draw passed in image onto graphics object
-                g.DrawImage(image, new PointF(0, 0));
-            }
-            return rotatedBmp;
-        }
-        private static Bitmap Siyahla(Bitmap bmpx)
-        {
-            //otsu filitresi uygulayarak resmi siyahla.
-            OtsuThreshold otsuFiltre = new OtsuThreshold();
-            Bitmap filtreliResim =
-                otsuFiltre.Apply(bmpx.PixelFormat != PixelFormat.Format8bppIndexed
-                    ? Grayscale.CommonAlgorithms.BT709.Apply(bmpx)
-                    : bmpx);
-            return filtreliResim;
-        }
     }
 }

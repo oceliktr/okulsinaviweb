@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using MySql.Data.MySqlClient;
 
 namespace DAL
@@ -14,6 +16,23 @@ namespace DAL
         public string KurumTuru { get; set; }
         public string Tur { get; set; }
         public string IlceAdi { get; set; }
+
+        public KurumlarInfo()
+        {
+                
+        }
+
+        public KurumlarInfo(string kurumKodu, string kurumAdi, int ilceId, string ilceAdi)
+        {
+            KurumKodu = kurumKodu;
+            KurumAdi = kurumAdi;
+            IlceId = ilceId;
+            IlceAdi = ilceAdi;
+        }
+        public KurumlarInfo(string kurumKodu)
+        {
+            KurumKodu = kurumKodu;
+        }
     }
     public class KurumlarDb
     {
@@ -32,12 +51,52 @@ namespace DAL
         }
         public DataTable SinavaGirenOkullariGetir(int sinavId)
         {
-            string sql = @"SELECT DISTINCT ogrenciler.KurumKodu ,kurumlar.KurumAdi,ilceler.IlceAdi, CONCAT(ilceler.IlceAdi,' - ',kurumlar.KurumAdi) as IlceOkul FROM ogrenciler
+            string sql = @"SELECT DISTINCT ogrenciler.KurumKodu ,kurumlar.KurumAdi,ilceler.Id,ilceler.IlceAdi, CONCAT(ilceler.IlceAdi,' - ',kurumlar.KurumAdi) as IlceOkul FROM ogrenciler
                             INNER JOIN Kurumlar ON ogrenciler.KurumKodu = kurumlar.KurumKodu
                             INNER JOIN ilceler ON ilceler.Id = kurumlar.IlceId
                             WHERE ogrenciler.SinavId = ?SinavId and kurumlar.KurumKodu IS NOT NULL order by ilceler.IlceAdi,kurumlar.KurumAdi asc";
             MySqlParameter pars = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
             return _helper.ExecuteDataSet(sql, pars).Tables[0];
+        }
+        public DataTable SinavaGirenOkullariGetir(int sinavId,int ilceId)
+        {
+            string sql = @"SELECT DISTINCT ogrenciler.KurumKodu ,kurumlar.KurumAdi FROM ogrenciler
+                            INNER JOIN Kurumlar ON ogrenciler.KurumKodu = kurumlar.KurumKodu and kurumlar.IlceId=?IlceId
+                            WHERE ogrenciler.SinavId =?SinavId and kurumlar.KurumKodu IS NOT NULL order by kurumlar.KurumAdi asc";
+            MySqlParameter[] p =
+            {
+                new MySqlParameter("?SinavId", MySqlDbType.Int32),
+                new MySqlParameter("?IlceId", MySqlDbType.Int32)
+            };
+            p[0].Value = sinavId;
+            p[1].Value = ilceId;
+            return _helper.ExecuteDataSet(sql, p).Tables[0];
+        }
+        public List<KurumlarInfo> SinavaGirenOkullariDiziyeGetir(int sinavId, int ilceId)
+        {
+            string sql = @"SELECT DISTINCT ogrenciler.KurumKodu ,kurumlar.KurumAdi,ilceler.IlceAdi, kurumlar.IlceId, CONCAT(ilceler.IlceAdi,' - ',kurumlar.KurumAdi) as IlceOkul FROM ogrenciler
+                            INNER JOIN Kurumlar ON ogrenciler.KurumKodu = kurumlar.KurumKodu and kurumlar.IlceId=?IlceId
+                            INNER JOIN ilceler ON ilceler.Id = kurumlar.IlceId
+                            WHERE ogrenciler.SinavId = ?SinavId and kurumlar.KurumKodu IS NOT NULL order by ilceler.IlceAdi,kurumlar.KurumAdi asc";
+            MySqlParameter[] p =
+            {
+                new MySqlParameter("?SinavId", MySqlDbType.Int32),
+                new MySqlParameter("?IlceId", MySqlDbType.Int32)
+            };
+            p[0].Value = sinavId;
+            p[1].Value = ilceId;
+            DataTable veriler = _helper.ExecuteDataSet(sql, p).Tables[0];
+            return (from DataRow row in veriler.Rows select new KurumlarInfo(row["KurumKodu"].ToString(),row["KurumAdi"].ToString(),Convert.ToInt32(row["IlceId"]),row["IlceAdi"].ToString())).ToList();
+        }
+        public List<KurumlarInfo> SinavaGirenOkullariDiziyeGetir(int sinavId)
+        {
+            string sql = @"SELECT DISTINCT ogrenciler.KurumKodu ,kurumlar.KurumAdi,ilceler.IlceAdi, kurumlar.IlceId, CONCAT(ilceler.IlceAdi,' - ',kurumlar.KurumAdi) as IlceOkul FROM ogrenciler
+                            INNER JOIN Kurumlar ON ogrenciler.KurumKodu = kurumlar.KurumKodu
+                            INNER JOIN ilceler ON ilceler.Id = kurumlar.IlceId
+                            WHERE ogrenciler.SinavId = ?SinavId and kurumlar.KurumKodu IS NOT NULL order by ilceler.IlceAdi,kurumlar.KurumAdi asc";
+            MySqlParameter pars = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
+            DataTable veriler = _helper.ExecuteDataSet(sql, pars).Tables[0];
+            return (from DataRow row in veriler.Rows select new KurumlarInfo(row["KurumKodu"].ToString(), row["KurumAdi"].ToString(), Convert.ToInt32(row["IlceId"]), row["IlceAdi"].ToString())).ToList();
         }
         public DataTable IlceveOkuluBirlestirGetir()
         {
@@ -89,7 +148,20 @@ namespace DAL
 
             return info;
         }
-
+        public string KurumAdi(int kurumKodu)
+        {
+            string cmdText = "select * from kurumlar where KurumKodu=?KurumKodu";
+            MySqlParameter param = new MySqlParameter("?KurumKodu", MySqlDbType.VarChar) { Value = kurumKodu };
+            MySqlDataReader dr = _helper.ExecuteReader(cmdText, param);
+            KurumlarInfo info = new KurumlarInfo();
+            while (dr.Read())
+            {
+                info.KurumAdi = dr.GetMyMetin("KurumAdi");
+            }
+            dr.Close();
+            
+            return info.KurumAdi;
+        }
         private static KurumlarInfo TabloAlanlar(MySqlDataReader dr)
         {
             KurumlarInfo info = new KurumlarInfo();

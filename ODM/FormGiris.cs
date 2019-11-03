@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
-using AForge.Imaging.Filters;
 using DAL;
 using ODM.Kutuphanem;
 using ThoughtWorks.QRCode.Codec;
@@ -17,128 +16,122 @@ namespace ODM
 {
     public partial class FormGiris : Form
     {
-        public class DiziSecenekler
-        {
-            public DiziSecenekler()
-            { }
-
-            public DiziSecenekler(int ogrenciId, int soruNo, string secenek, byte r, byte g, byte b, int x, int y, string dosya)
-            {
-                OgrenciId = ogrenciId;
-                SoruNo = soruNo;
-                Secenek = secenek;
-                R = r;
-                G = g;
-                B = b;
-                X = x;
-                Y = y;
-                Dosya = dosya;
-            }
-
-            public int OgrenciId { get; set; }
-            public int SoruNo { get; set; }
-            public string Secenek { get; set; }
-            public byte R { get; set; }
-            public byte G { get; set; }
-            public byte B { get; set; }
-            public int X { get; set; }
-            public int Y { get; set; }
-            public string Dosya { get; set; }
-        }
 
         private static readonly string ckDizin = IniIslemleri.VeriOku("CKDizinKontrol", "CKBulunduguAdres");
-        private readonly string kareKodDizin = ckDizin + @"\KareKod\";
         private readonly string ocrDizin = ckDizin + @"\Ocr\";
         private readonly string cevapKagitlari = ckDizin + @"\CevapKagitlari\";
-        private readonly string okunmayanlar = ckDizin + @"\Okunmadi\";
         private readonly string cevapDizin = ckDizin + @"\Cevaplar\";
-        private readonly List<string> _aList = new List<string>();
-        private static int _sinavId;
+        private static int sinavId;
         private string _seciliDizin = "";
-
-        readonly KonumlarDB knmDb = new KonumlarDB();
+        private int ikinciyogunluk = 650;
+        private int yogunluk = 900;
+        private int kitapikinciyogunluk = 1050;
+        private int kitapyogunluk = 1500;
+        private readonly string kitapcikTurleri;
         public FormGiris()
         {
             CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
             SinavlarDb snvDb = new SinavlarDb();
             SinavlarInfo sinfo = snvDb.AktifSinavAdi();
-            _sinavId = sinfo.SinavId;
-            this.Height = 317;
-            this.Width = 815;
-
-
-            dgvHata.ColumnCount = 2;
-            dgvHata.Columns[0].Name = "DosyaAdi";
-            dgvHata.Columns[1].Name = "Hata";
+            sinavId = sinfo.SinavId;
+            kitapcikTurleri = sinfo.KitapcikTurleri;
 
         }
-        /// <summary>
-        /// Görüntüyü Otsu Threshold sınıfı ile siyah beyaz renge ceçirir
-        /// </summary>
-        /// <param name="bmpx">Resim dosyası</param>
-        /// <returns></returns>
-        private static Bitmap Siyahla(Bitmap bmpx)
-        {
-            OtsuThreshold otsuFiltre = new OtsuThreshold();
-            Bitmap filtreliResim =
-                otsuFiltre.Apply(bmpx.PixelFormat != PixelFormat.Format8bppIndexed
-                    ? Grayscale.CommonAlgorithms.BT709.Apply(bmpx)
-                    : bmpx);
-            return filtreliResim;
-        }
-        private static void ResimKirp(string path, int width, int height, int x, int y, string kirpilanDosyaAdresi)
-        {
-            using (Bitmap absentRectangleImage = (Bitmap)Image.FromFile(path))
-            {
-                using (Bitmap currentTile = new Bitmap(width, height))
-                {
-                    currentTile.SetResolution(absentRectangleImage.HorizontalResolution,
-                        absentRectangleImage.VerticalResolution);
-                    using (Graphics currentTileGraphics = Graphics.FromImage(currentTile))
-                    {
-                        currentTileGraphics.Clear(Color.Black);
-                        Rectangle absentRectangleArea = new Rectangle(x, y, width, height);
-                        currentTileGraphics.DrawImage(absentRectangleImage, 0, 0, absentRectangleArea,
-                            GraphicsUnit.Pixel);
-                    }
-                    currentTile.Save(kirpilanDosyaAdresi);
-                }
-            }
-        }
+
 
         #region Dizin Seç Butonu
-
         private void pbDizinSec_Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+            CkDosyalarDB dsyDb = new CkDosyalarDB();
+            List<CkDosyalarInfo> ckDosyalar = dsyDb.KayitlariDiziyeGetir(sinavId);
+            int dsyAdet = (from d in ckDosyalar where d.Boyutlandir == 0 select d).Count();
+
+            if (dsyAdet > 0)
             {
-                folderDialog.ShowNewFolderButton = false; //yeni klasör oluşturmayı kapat
-                folderDialog.RootFolder = Environment.SpecialFolder.Desktop;
-                folderDialog.SelectedPath = AppDomain.CurrentDomain.BaseDirectory; //başlangıç dizini
-                folderDialog.Description = @"Kontrol edilecek sınav kağıdı evraklarının bulunduğu dizini seçiniz.";
-                if (folderDialog.ShowDialog() == DialogResult.OK)
+                DialogResult dialog = MessageBox.Show(@"Daha önceden tamamlanmamış işlem bulunmaktadır. " + "\n" + "Tamamlamak için Evet, " + "\n" + "Yeniden başlamak için Hayır, " + "\n" + "Vazgeçmek için İptal butonuna tıklayın.", @"Bilgi", MessageBoxButtons.YesNoCancel);
+                if (dialog == DialogResult.Yes)
                 {
-                    _seciliDizin = folderDialog.SelectedPath;
-                    if (DizinIslemleri.DizinKontrol(ckDizin))
-                    {
-                        if (!DizinIslemleri.DizinKontrol(cevapKagitlari)) DizinIslemleri.DizinOlustur(cevapKagitlari); else DizinIslemleri.DizinIceriginiSil(cevapKagitlari);
-                        //  if (!DizinIslemleri.DizinKontrol(ckYeniBoyutlar)) DizinIslemleri.DizinOlustur(ckYeniBoyutlar); else DizinIslemleri.DizinIceriginiSil(ckYeniBoyutlar);
-
-                        bgwDizinSec.RunWorkerAsync();
-
-                    }
-                    else
-                    {
-                        MessageBox.Show(@"Öncelikle ayarlar bölümünden Cevap kağıtlarının tutulacağı dizini seçiniz.",
-                            @"Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        FormAyarlar frm = new FormAyarlar();
-                        frm.ShowDialog();
-                    }
+                    // Eğer kalan işlemin tamamlanmasını istiyorsa 
+                    bgwDizinSec.RunWorkerAsync();
                 }
+                else if (dialog == DialogResult.No)
+                {
+                    DizinSecmeIslemleri(dsyDb);
+                }
+            }
+            else if (dsyAdet == 0)
+            {
+                DialogResult dialog = MessageBox.Show(@"Tamamlanacak işlem yok yeni bir dizin seçmek ister misiniz?", @"Bilgi", MessageBoxButtons.YesNo);
+                if (dialog == DialogResult.Yes)
+                {
+                    DizinSecmeIslemleri(dsyDb);
+                }
+            }
+            else
+            {
+                DizinSecmeIslemleri(dsyDb);
             }
         }
 
+        private void DizinSecmeIslemleri(CkDosyalarDB dsyDb)
+        {
+            //Cevap kağıtlarının tutulacağı dizinin varlığını kontrol et.
+            if (DizinIslemleri.DizinKontrol(ckDizin))
+            {
+                using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+                {
+                    folderDialog.ShowNewFolderButton = false; //yeni klasör oluşturmayı kapat
+                    folderDialog.RootFolder = Environment.SpecialFolder.Desktop;
+                    folderDialog.SelectedPath = AppDomain.CurrentDomain.BaseDirectory; //başlangıç dizini
+                    folderDialog.Description = @"Kontrol edilecek sınav kağıdı evraklarının bulunduğu dizini seçiniz.";
+                    if (folderDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        _seciliDizin = folderDialog.SelectedPath;
+
+                        //Hafızada olan eski dosyaları silelim.
+                        dsyDb.KayitSil(sinavId);
+
+                        List<DosyaInfo> dsy = DizinIslemleri.DizindekiDosyalariListele(_seciliDizin);
+                        //Dizindeki dosyaları hafızaya al.
+
+                        progressBar1.Maximum = dsy.Count;
+                        progressBar1.Value = 0;
+                        lblBilgi.Text = "Cevap kağıtları hafızaya alınıyor";
+                        foreach (DosyaInfo x in dsy)
+                        {
+                            string kalsor = x.DizinAdresi.Replace(_seciliDizin, "").Replace(@"\", "");
+                            string yeniDosyaAdresi = kalsor + "_" + x.DosyaAdi;
+
+                            string uzanti = Path.GetExtension(x.DosyaAdi);
+                            if (uzanti != null && GenelIslemler.YuklenecekResimler.Contains(uzanti))
+                            {
+                                dsyDb.KayitEkle(x.DizinAdresi + @"\" + x.DosyaAdi, yeniDosyaAdresi, sinavId);
+                            }
+                            progressBar1.PerformStep();
+                        }
+                        Application.DoEvents();
+                        progressBar1.Value = 0;
+                        lblBilgi.Text = "Cevap kağıtları hafızaya alındı";
+
+                        //Cevap kağıtlarının tutulacağı dizin varsa içeriğini sil yoksa oluştur.
+                        if (!DizinIslemleri.DizinKontrol(cevapKagitlari))
+                            DizinIslemleri.DizinOlustur(cevapKagitlari);
+                        else
+                            DizinIslemleri.DizinIceriginiSil(cevapKagitlari);
+
+                        bgwDizinSec.RunWorkerAsync();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show(@"Öncelikle ayarlar bölümünden Cevap kağıtlarının tutulacağı dizini seçiniz.", @"Uyarı",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                FormAyarlar frm = new FormAyarlar();
+                frm.ShowDialog();
+            }
+        }
         /// <summary>
         /// Dizin seç button işlemleri
         /// </summary>
@@ -146,710 +139,636 @@ namespace ODM
         /// <param name="e"></param>
         private void bgwDizinSec_DoWork(object sender, DoWorkEventArgs e)
         {
-            pbOptikOkuma.Enabled = pbDizinSec.Enabled = pbCKKontrol.Enabled = pbAuKirpma.Enabled = false;
-            CKBoyutlandir();
-            pbOptikOkuma.Enabled = pbDizinSec.Enabled = pbCKKontrol.Enabled = pbAuKirpma.Enabled = true;
-        }
-        private void CKBoyutlandir()
-        {
+            pbDizinSec.Enabled = pbCKKontrol.Enabled = false;
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
             lblBilgi.Text = @"Cevap kağıtları düzleştirilip yeniden boyutlandırılıyor.";
             Application.DoEvents();
-
-            List<DosyaInfo> dsy = DizinIslemleri.DizindekiDosyalariListele(_seciliDizin);
 
             int width = IniIslemleri.VeriOku("CKBoyut", "W").ToInt32();
             int height = IniIslemleri.VeriOku("CKBoyut", "H").ToInt32();
 
+            CkDosyalarDB dsyDb = new CkDosyalarDB();
+            List<CkDosyalarInfo> dsyList = dsyDb.KayitlariDiziyeGetir(sinavId);
             int a = 0;
-            progressBar1.Maximum = dsy.Count;
-            foreach (DosyaInfo x in dsy)
+            int islemSayisi = dsyList.Count(x => x.Boyutlandir == 0);
+            progressBar1.Maximum =islemSayisi ;
+            progressBar1.Value = 0;
+            // Henüz işlem görmemiş dosyaları kontrol et.
+            foreach (CkDosyalarInfo x in dsyList.Where(x => x.Boyutlandir == 0))
             {
                 a++;
-                string ilkDizinAdresi = x.DosyaYolu + @"\" + x.DosyaAdi;
+                string sonDosyaAdresi = cevapKagitlari + x.DosyaAdi;
+
                 lblBilgi.Text = @"Cevap kağıtları düzleştirilip yeniden boyutlandırılıyor. İşlem gören dosya: " + x.DosyaAdi;
                 try
                 {
-                    EgimiDuzeltveBoyutlandir.Kaydet(ilkDizinAdresi, cevapKagitlari + x.DosyaAdi.Replace("(", "").Replace(")", ""), width, height);
-                    progressBar1.Value = a;
+                    EgimiDuzeltveBoyutlandir.Kaydet(x.DizinAdresi, sonDosyaAdresi, width, height);
 
-                    //int yuzde = (int)((progressBar1.Value / (double)progressBar1.Maximum) * 100);
-                    progressBar1.PerformStep();
+                    dsyDb.BoyutlandirmaIslemiGordu(x.DizinAdresi, x.DosyaAdi);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    object[] row = { ilkDizinAdresi, ex.Message };
-                    dgvHata.Rows.Add(row);
-                    Application.DoEvents();
+                    //
+                }
+                progressBar1.PerformStep();
+            lblGecenSure.Text = String.Format("{0} saat, {1} dakika, {2} saniye", watch.Elapsed.Hours, watch.Elapsed.Minutes, watch.Elapsed.Seconds);
+
+                try
+                {
+                    int gecenDakika = watch.Elapsed.TotalMinutes.ToInt32();
+                    int islem = islemSayisi * gecenDakika;
+                    double kalanSure = (double)islem / a;
+
+                    double saat = (kalanSure - (kalanSure % 60)) / 60;
+                    double dakika = kalanSure % 60;
+                    lblBitisSuresi.Text = string.Format("Kalan tahmini süre : {0:0} saat, {1:0} dakika", saat, dakika);
+                }
+                catch (Exception)
+                {
+                    lblBitisSuresi.Text = "Hesaplanıyor...";
                 }
             }
-            lblBilgi.Text = @"Cevap kağıdı boyut kontrolü tamamlandı. Şimdi Karekod,Ocr ve varsa açık uclu cevapların konumlarını belirleyiniz. Ardından Cevap kağıdı kontrolünü yapınız.";
-            Application.DoEvents();
-            progressBar1.Value = 0;
 
+            lblBilgi.Text = @"Cevap kağıdı boyut kontrolü tamamlandı. Şimdi 'CK Konum Al' butonundan cevap kağıdına ait konumları belirleyiniz. Ardından Cevap kağıdı kontrolünü yapınız.";
+            
+            progressBar1.Value = 0;
+            Application.DoEvents();
+            watch.Stop();
+
+            pbDizinSec.Enabled = pbCKKontrol.Enabled = true;
+
+            //İşaretliyse CK Kontrol butonunu çalıştır.
+            if (cbCkKontrolDevamEt.Checked)
+                pbCKKontrol_Click(sender, e);
         }
         #endregion
-        #region Karekod Ocr Kontrol Butonu
 
+        #region CK KONTROL BUTONU
         private void pbCKKontrol_Click(object sender, EventArgs e)
         {
-            //////////////////////KareKodveOcrKirpmaIslemleri
+            KonumlarDB knmDb = new KonumlarDB();
 
-            List<KonumlarInfo> knm = knmDb.KayitlariDiziyeGetir(_sinavId);
+            List<KonumlarInfo> knm = knmDb.KayitlariDiziyeGetir(sinavId);
             List<KonumlarInfo> xsQr = (from cust in knm where cust.Grup == "karekod" select cust).ToList();
             List<KonumlarInfo> xsOcr = (from cust in knm where cust.Grup == "ocr" select cust).ToList();
             List<KonumlarInfo> xsGirmediKonumu = (from cust in knm where cust.Grup == "girmedi" select cust).ToList();
-            int wQr = xsQr[0].W;
-            int wOcr = xsOcr[0].W;
-
-            if (wQr <= 1)
+            
+            if (xsQr.Count < 1)
             {
-                MessageBox.Show(
-                    @"Karekod konum ayarı yapılmamış. Cevap kağıdı konum al menüsünden konum ayarını yapınız.",
-                    @"Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(@"Karekod konum ayarı yapılmamış. Cevap kağıdı konum al menüsünden konum ayarını yapınız.", @"Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 FormCkKonumAl frm = new FormCkKonumAl();
                 frm.ShowDialog();
             }
-            else if (wOcr <= 1)
+            else if (xsOcr.Count < 1)
             {
-                MessageBox.Show(
-                    @"OCR konum ayarı yapılmamış. Cevap kağıdı konum al menüsünden konum ayarını yapınız.",
-                    @"Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(@"OCR konum ayarı yapılmamış. Cevap kağıdı konum al menüsünden konum ayarını yapınız.", @"Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 FormCkKonumAl frm = new FormCkKonumAl();
                 frm.ShowDialog();
             }
             else if (xsGirmediKonumu.Count == 0)
             {
-                MessageBox.Show(
-                    @"Sınava girmedi konum ayarı yapılmamış. Cevap kağıdı konum al menüsünden konum ayarını yapınız.",
-                    @"Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Sınava girmedi konum ayarı yapılmamış. Cevap kağıdı konum al menüsünden konum ayarını yapınız.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 FormCkKonumAl frm = new FormCkKonumAl();
                 frm.ShowDialog();
             }
             else
             {
-                //Dizin kontrol ve silme işlemleri.
-                if (!DizinIslemleri.DizinKontrol(kareKodDizin)) DizinIslemleri.DizinOlustur(kareKodDizin);
-                else DizinIslemleri.DizinIceriginiSil(kareKodDizin);
-                if (!DizinIslemleri.DizinKontrol(ocrDizin)) DizinIslemleri.DizinOlustur(ocrDizin);
-                else DizinIslemleri.DizinIceriginiSil(ocrDizin);
-                lblBilgi.Text = @"KareKod/OCR işlemleri başladı.";
+                CkDosyalarDB dsyDb = new CkDosyalarDB();
+                List<CkDosyalarInfo> ckDosyalar = dsyDb.KayitlariDiziyeGetir(sinavId);
+                int ckKontrolYapilmadi = (from d in ckDosyalar where d.CkKontrol == 0 select d).Count();
+                int ckKontrolYapildi = (from d in ckDosyalar where d.CkKontrol == 1 select d).Count();
 
-                bgwKarekodOcrKontrol.RunWorkerAsync();
-            }
-        }
-        /// <summary>
-        /// Karekod Ocr kontrol button işlemleri
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void bgwKarekodOcrKontrol_DoWork(object sender, DoWorkEventArgs e)
-        {
-            pbOptikOkuma.Enabled = pbDizinSec.Enabled = pbCKKontrol.Enabled = pbAuKirpma.Enabled = false;
-            KarekodKirp();
-            OcrKirp();
-
-            CkkontrolDb veriDb = new CkkontrolDb();
-            veriDb.KayitSil();
-
-            OgrencilerDb ogDb = new OgrencilerDb();
-            ogDb.CkKontroTemizle(_sinavId);
-
-            List<DosyaInfo> cKagitlari = DizinIslemleri.DizindekiDosyalariListele(cevapKagitlari);
-            progressBar1.Maximum = cKagitlari.Count;
-            progressBar1.Value = 0;
-
-            List<OgrenciKayit> ogKayits = new List<OgrenciKayit>();
-            int a = 0;
-            lblBilgi.Text = @"Karekod / OCR ile öğrenci bilgileri eşleştiriliyor.";
-            Application.DoEvents();
-            foreach (DosyaInfo ck in cKagitlari)
-            {
-                a++;
-                string kareKoddosyaAdresi = kareKodDizin + ck.DosyaAdi;
-                string ocrdosyaAdresi = ocrDizin + ck.DosyaAdi;
-
-                if (DizinIslemleri.DosyaKontrol(kareKoddosyaAdresi))
+                if (ckKontrolYapilmadi > 0 && ckKontrolYapildi > 0)
                 {
-                    try
+                    DialogResult dialog = MessageBox.Show(@"Daha önceden tamamlanmamış işlem bulunmaktadır."+"\n"+ "Tamamlamak için Evet, " + "\n" + "Yeniden başlamak için Hayır, " + "\n" + "Vazgeçmek için İptal butonuna tıklayın.", @"Bilgi", MessageBoxButtons.YesNoCancel);
+                    if (dialog == DialogResult.Yes)
                     {
-                        QRCodeDecoder decoder = new QRCodeDecoder();
-                        string kareKod = decoder.decode(new QRCodeBitmapImage(new Bitmap(kareKoddosyaAdresi)));
-                        string sayfaYuzu = kareKod.Substring(0, 1);
-                        int ogrenciNo = kareKod.Substring(1, kareKod.Length - 1).ToInt32();
-
-                        if (!sayfaYuzu.IsInteger())
-                        {
-                            sayfaYuzu = OcrOku(ocrdosyaAdresi, out ogrenciNo);
-                        }
-                        if (ogrenciNo == 0)
-                        {
-                            sayfaYuzu = OcrOku(ocrdosyaAdresi, out ogrenciNo);
-                        }
-                        ogKayits.Add(new OgrenciKayit(ogrenciNo, sayfaYuzu, kareKoddosyaAdresi));
-
-                        progressBar1.Value = a;
-
-                        progressBar1.PerformStep();
+                        // Eğer kalan işlemin tamamlanmasını istiyorsa 
+                        bgvCkKontrol.RunWorkerAsync();
                     }
-                    catch (Exception)
+                    else if (dialog == DialogResult.No)
                     {
-                        try
-                        {
-                            var sayfaYuzu = OcrOku(ocrdosyaAdresi, out var ogrenciNo);
-
-                            ogKayits.Add(new OgrenciKayit(ogrenciNo, sayfaYuzu, kareKoddosyaAdresi));
-
-                            progressBar1.Value = a;
-
-                            progressBar1.PerformStep();
-                        }
-                        catch (Exception ex)
-                        {
-                            object[] row = { ocrdosyaAdresi, ex.Message };
-                            dgvHata.Rows.Add(row);
-                            _aList.Add(ck.DosyaAdi);
-                            Application.DoEvents();
-                        }
+                        CkSonuclariTemizle(dsyDb);
+                    }
+                }
+                else if (ckKontrolYapilmadi == 0 && ckKontrolYapildi > 0)
+                {
+                    DialogResult dialog = MessageBox.Show(@"Kontrol edilecek cevap kağıdı bulunamadı. Mevcut kayıtları iptal edip yeniden kontrol edilsin mi?", @"Bilgi", MessageBoxButtons.YesNo);
+                    if (dialog == DialogResult.Yes)
+                    {
+                        CkSonuclariTemizle(dsyDb);
                     }
                 }
                 else
                 {
-                    object[] row = { kareKoddosyaAdresi, "Dosya Yok" };
-                    dgvHata.Rows.Add(row);
-                    Application.DoEvents();
+                    CkSonuclariTemizle(dsyDb);
                 }
             }
-
-            lblBilgi.Text = @"Eşleşmeler veritabanına kaydediliyor.";
-            Application.DoEvents();
-            a = 0;
-            progressBar1.Maximum = ogKayits.Count;
-            progressBar1.Value = 0;
-
-            foreach (OgrenciKayit z in ogKayits)
-            {
-
-                progressBar1.Value = a;
-                veriDb.KayitEkle(z.OgrenciNo, z.SayfaYuzu, z.DosyaAdi);
-            }
-
-
-            lblBilgi.Text = @"Veriler kontrol ediliyor.";
-            Application.DoEvents();
-            VeriKontroluYap();
-            lblBilgi.Text = @"Cevap kağıdı olmayan öğrenci listesi hazırlanıyor.";
-            Application.DoEvents();
-            CkOlmayanOgrencileriGetir(ogDb);
-            Application.DoEvents();
-
-            Application.DoEvents();
-            // Sınava girmeyenlerle ilgili işlemler 
-            SinavaGirmeyenler();
-            // Sınava girmeyenlerle ilgili işlemler bitti.
-
-            lblBilgi.Text = "Cevap kağıdındaki kontroller tamamlandı.";
-            pbOptikOkuma.Enabled = pbDizinSec.Enabled = pbCKKontrol.Enabled = pbAuKirpma.Enabled = true;
-
         }
 
-        private void SinavaGirmeyenler()
+        private void CkSonuclariTemizle(CkDosyalarDB dsyDb)
         {
-            List<DiziSecenekler> secenek = new List<DiziSecenekler>();
-            CkkontrolDb ckDb = new CkkontrolDb();
-
-
-            //Cevap kağıtlarının bulunduğu dizinden dosya bilgilerini diziye al
-            List<DosyaInfo> cevapKagit = DizinIslemleri.DizindekiDosyalariListele(cevapKagitlari);
-            List<KonumlarInfo> knm = knmDb.KayitlariDiziyeGetir(_sinavId);
-            //konumlar tablosundaki konumlardan sınava girmeyenleri seç.
-            List<KonumlarInfo> optikKonumlari = (from x in knm where x.Grup == "girmedi" orderby x.SoruNo ascending select x).ToList();
-
-            //Progres bas için cevap kağıdı ve konum sayıını çarp
-            int a = 0;
-            progressBar1.Maximum = cevapKagit.Count;
-            progressBar1.Value = 0;
-
-            //Öğrenci listesini diziye alalım.
-            OgrencilerDb ogrDb = new OgrencilerDb();
-            List<OgrencilerInfo> ogrList = ogrDb.KayitlariDiziyeGetir(_sinavId);
-
-            //Cevap kağıtlarının bulunduğu dizindeki dosyaları döngüye çağırır
-            foreach (DosyaInfo ck in cevapKagit)
-            {
-                lblBilgi.Text = "Sınava girmedi işaretlenen cevap kağıtları kontrol ediliyor. Kontrol edilen dosya: " +
-                                ck.DosyaAdi;
-                string kareKodDosyaAdresi = kareKodDizin + ck.DosyaAdi;
-                //öğrenci bilgileri için karekod dosya adlarından bilgi al.
-                CkkontrolInfo ckInfo = ckDb.KayitBilgiGetir(kareKodDosyaAdresi);
-
-                //optik okuma için görüntü işleme yaparak rengi siyah beyaza çevir.
-                Bitmap bmap = Siyahla(new Bitmap(cevapKagitlari + ck.DosyaAdi));
-
-                //Veritabanında bulunan optik seçenek konumlarını döngüye çağır
-                foreach (KonumlarInfo x in optikKonumlari)
-                {
-                    a++;
-                    for (int i = x.X1; i <= (x.X1 + x.W); i++)
-                    {
-                        for (int j = x.Y1; j <= (x.Y1 + x.H); j++)
-                        {
-                            Color piksel = bmap.GetPixel(i, j);
-                            //RGB renk değerleri 0 (siyah) olanları seç 
-                            if (piksel.R == 0 && piksel.G == 0 && piksel.B == 0)
-                            {
-                                //Sonraki döngüde OptikSonuc tablosuna kaydetmek için diziye al.
-                                secenek.Add(new DiziSecenekler(ckInfo.OgrId, x.SoruNo, x.Secenek, piksel.R, piksel.G, piksel.B,i, j, ck.DosyaAdi));
-
-                                progressBar1.Value = a;
-
-                                progressBar1.PerformStep();
-                            }
-                        }
-                    }
-                    Application.DoEvents();
-                }
-
-                lblBilgi.Text = "Sınava girmeyenler veritabanına kaydediliyor";
-                foreach (var ogr in ogrList)
-                {
-                    //girmeyenlerin konumlarını say. Diziye alınan siyah noktaları sayrak belirlenen sayıdan fala siyah nokta olanları db'ye kaydet.
-                    List<DiziSecenekler> dsSoru =(from scnk in secenek where scnk.OgrenciId == ogr.OgrenciId && scnk.Dosya == ck.DosyaAdi select scnk).ToList();
-                    //TODO:600 değeri herhangi bir seçenekteki siyahlanmış piksel sayısıdır. Ayarlardan çekilebilir.
-                    try
-                    {
-                        if (dsSoru.Count > 500)
-                        {
-                            ogrDb.SinavaGirmedi(ogr.OgrenciId, ck.DosyaAdi);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                      //  MessageBox.Show(ogr.Id + "-" + ck.DosyaAdi + "-" + ex.Message);
-                    }
-                    Application.DoEvents();
-                }
-            }
-            lblBilgi.Text = "Cevap kağıdındaki sınava girmeyenler işaretlendi.";
-
-            Application.DoEvents();
-            progressBar1.Value = 0;
+            dsyDb.CkKontrolIslemiTemizle(sinavId);
+            SonucAuDB auDb = new SonucAuDB();
+            auDb.CevaplariSil(sinavId);
+            SonucOptikDB optikDb = new SonucOptikDB();
+            optikDb.KayitSil(sinavId);
+            bgvCkKontrol.RunWorkerAsync();
         }
-
-        private static string OcrOku(string ocrdosyaAdresi, out int ogrenciNo)
+        private void bgvCkKontrol_DoWork(object sender, DoWorkEventArgs e)
         {
-            string kareKod = Ocr.OcrCevir(ocrdosyaAdresi, Ocr.Dil.Turkce);
-            string sayfaYuzu = kareKod.Substring(0, 1);
-            ogrenciNo = kareKod.Substring(1, kareKod.Length - 1).ToInt32();
-            //ilk karekterden sonrası
-            return sayfaYuzu;
-        }
+            //Çalışma süresini hesaplamak için.
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
 
-        private void KarekodKirp()
-        {
-            lblBilgi.Text = @"Karekod kırpma işlemleri yapılıyor.";
-            Application.DoEvents();
+            pbDizinSec.Enabled = pbCKKontrol.Enabled = false;
 
-            List<KonumlarInfo> knm = knmDb.KayitlariDiziyeGetir(_sinavId);
+            CkDosyalarDB ckDb = new CkDosyalarDB();
+            List<CkDosyalarInfo> ckList = ckDb.KayitlariDiziyeGetir(sinavId).Where(x => x.CkKontrol == 0).ToList();
+            int ckSayisi = ckList.Count;
+
+            KonumlarDB knmDb = new KonumlarDB();
+            List<KonumlarInfo> knm = knmDb.KayitlariDiziyeGetir(sinavId);
+
             List<KonumlarInfo> xsQr = (from cust in knm where cust.Grup == "karekod" select cust).ToList();
             int wQr = xsQr[0].W;
             int hQr = xsQr[0].H;
             int xQr = xsQr[0].X1;
             int yQr = xsQr[0].Y1;
 
-            List<DosyaInfo> secPath = DizinIslemleri.DizindekiDosyalariListele(cevapKagitlari);
-            progressBar1.Maximum = secPath.Count;
-            int a = 0;
-            foreach (DosyaInfo s in secPath)
-            {
-                a++;
-                string dosyaAdresi = s.DosyaYolu + "\\" + s.DosyaAdi;
-
-                ResimKirp(dosyaAdresi, wQr, hQr, xQr, yQr, kareKodDizin + s.DosyaAdi);
-
-                progressBar1.Value = a;
-
-                progressBar1.PerformStep();
-            }
-            Application.DoEvents();
-        }
-        private void OcrKirp()
-        {
-            lblBilgi.Text = @"OCR kırpma işlemleri yapılıyor.";
-            Application.DoEvents();
-
-            List<KonumlarInfo> knm = knmDb.KayitlariDiziyeGetir(_sinavId);
             List<KonumlarInfo> xsOcr = (from cust in knm where cust.Grup == "ocr" select cust).ToList();
-
             int wOcr = xsOcr[0].W;
             int hOcr = xsOcr[0].H;
             int xOcr = xsOcr[0].X1;
             int yOcr = xsOcr[0].Y1;
 
-            List<DosyaInfo> secPath = DizinIslemleri.DizindekiDosyalariListele(cevapKagitlari);
+            List<KonumlarInfo> girmediKonum = (from cust in knm where cust.Grup == "girmedi" select cust).ToList();
 
-            progressBar1.Maximum = secPath.Count;
+            progressBar1.Maximum = ckSayisi;
+            progressBar1.Value = 0;
             int a = 0;
-
-            foreach (DosyaInfo s in secPath)
+            foreach (CkDosyalarInfo ck in ckList)
             {
                 a++;
-                string dosyaAdresi = s.DosyaYolu + "\\" + s.DosyaAdi;
-                ResimKirp(dosyaAdresi, wOcr, hOcr, xOcr, yOcr, ocrDizin + s.DosyaAdi);
-                progressBar1.Value = a;
+                lblBilgi.Text = string.Concat("Cevap kağıtları kontrol ediliyor. (", a, "/", ckSayisi, ") Kontrol edilen dosya: ", ck.DosyaAdi);
 
-                progressBar1.PerformStep();
-            }
-            Application.DoEvents();
-        }
-        private void VeriKontroluYap()
-        {
-            CkkontrolDb veriDb = new CkkontrolDb();
-
-            List<CkkontrolInfo> aa = veriDb.KayitlariDiziyeGetir();
-
-            int a = 0;
-            progressBar1.Maximum = aa.Count;
-            progressBar1.Value = 0;
-
-            OgrencilerDb ogDb = new OgrencilerDb();
-            try
-            {
-
-                foreach (CkkontrolInfo x in aa)
+                if (DizinIslemleri.DosyaKontrol(cevapKagitlari + ck.DosyaAdi))
                 {
-                    a++;
-                    progressBar1.Value = a;
+                    string dosyaAdresi = cevapKagitlari + ck.DosyaAdi;
+                    string ocrdosyaAdresi = ocrDizin + ck.DosyaAdi;
 
-                    OgrencilerInfo info = ogDb.KayitBilgiGetir(x.OgrId);
-                    string zz = info.CKagitKontrol + x.SayfaYuzu;
-                    ogDb.CKagitKontrol(x.OgrId, zz);
-                }
+                    if (DizinIslemleri.DosyaKontrol(dosyaAdresi))
+                        ImageProcessing.ResimKirp(dosyaAdresi, wOcr, hOcr, xOcr, yOcr, ocrdosyaAdresi);
 
-                progressBar1.Value = 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Veri Kontrol Hata: " + ex.Message);
-            }
-        }
-        private void CkOlmayanOgrencileriGetir(OgrencilerDb ogDb)
-        {
-            List<KonumlarInfo> knm = knmDb.KayitlariDiziyeGetir(_sinavId);
-            //dizideki açık uclu veya optik tanımlı grupları seç
-            IEnumerable<KonumlarInfo> xs = from x in knm where x.Grup == "au" || x.Grup == "optik" select x;
+                    int ckOgrenciNo = 0;
+                    int ckOturumNo = 0;
+                    int girmedi = 0;
+                    string ckKitapcikTuru = "";
 
-            //açık uclu veya optik tanımlı gruplardan kaç sayfa yüzü olduğunu bul.
-            var lstKrdx = (from k in xs orderby k.SyfYuzu ascending select k).GroupBy(i => i.SyfYuzu).Select(x => x.First());
-
-            //cevap kağıdı olmayan öğrencileri sql orgususun oluştur.
-            string sql = lstKrdx.Aggregate("", (current, azs) => current + (" or ogrenciler.CKagitKontrol not like '%" + azs.SyfYuzu + "%'"));
-
-            dgvCKEksikOlanlar.DataSource = ogDb.EksikCKlariGetir(_sinavId, sql);
-
-            lblBilgi.Text = ogDb.EksikCKlariGetir(_sinavId, sql).Rows.Count > 0
-                ? @"Cevapları kırpma işleminden önce listelenen öğrenci bilgilerini güncelleyiniz."
-                : @"İşlem tamamlandı. Cevap kağıdındaki tüm konumlar belirlendiyse şimdi cevapları kırp butonuna tıklayınız.";
-            Application.DoEvents();
-            this.Height = 593;
-        }
-        private void kareKodKontrolToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dgvHata.ColumnCount = 3;
-            dgvHata.Columns[0].Name = "DosyaAdi";
-            dgvHata.Columns[1].Name = "KareKod";
-            dgvHata.Columns[2].Name = "Hata";
-
-            List<DosyaInfo> dsy = DizinIslemleri.DizindekiDosyalariListele(kareKodDizin);
-            foreach (DosyaInfo ck in dsy)
-            {
-                string kareKoddosyaAdresi = kareKodDizin + ck.DosyaAdi;
-                try
-                {
-                    QRCodeDecoder decoder = new QRCodeDecoder();
-                    string kareKod = decoder.decode(new QRCodeBitmapImage(new Bitmap(kareKoddosyaAdresi)));
-
-
-                    object[] row = { kareKoddosyaAdresi, kareKod, "" };
-                    dgvHata.Rows.Add(row);
-                }
-                catch (Exception ex)
-                {
-
-                    object[] row = { kareKoddosyaAdresi, "", ex.Message };
-                    dgvHata.Rows.Add(row);
-                }
-
-            }
-        }
-        #endregion
-        #region Cevapları Kırp Butonu
-
-        private void pbAuKirpma_Click(object sender, EventArgs e)
-        {
-            if (!DizinIslemleri.DizinKontrol(cevapKagitlari))
-                lblBilgi.Text = @"Cevap kağıtlarının bulunduğu dizin bulunamadı. Ayarlardan Cevap kağıtlarının tutulacağı dizini seçiniz.";
-            else if (DizinIslemleri.DizindekiDosyalariListele(cevapKagitlari).Count < 1)
-                lblBilgi.Text = @"Cevap kağıtlarının bulunduğu dizinde dosya bulunamadı.";
-            else
-            {
-                if (!DizinIslemleri.DizinKontrol(cevapDizin)) DizinIslemleri.DizinOlustur(cevapDizin); else DizinIslemleri.DizinIceriginiSil(cevapDizin);
-
-                bgwCKirp.RunWorkerAsync();
-            }
-        }
-        private void bgwCKirp_DoWork(object sender, DoWorkEventArgs e)
-        {
-            pbOptikOkuma.Enabled = pbDizinSec.Enabled = pbCKKontrol.Enabled = pbAuKirpma.Enabled = false;
-            CkkontrolDb ckDb = new CkkontrolDb();
-            if (ckDb.KayitSayisi() == 0)
-            {
-                lblBilgi.Text = @"Karekod / OCR kontrol işlemleri henüz yapılmamış. Önce Karekod / OCR kontrolü yapınız.";
-                MessageBox.Show(lblBilgi.Text, @"Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                OgrencilerDb ogrDb = new OgrencilerDb();
-                List<DosyaInfo> cKagitlari = DizinIslemleri.DizindekiDosyalariListele(cevapKagitlari);
-                List<OgrencilerInfo> sinavaGirmeyenlerList = ogrDb.SinavaGirmeyenleriDiziyeGetir(_sinavId);
-
-                progressBar1.Maximum = cKagitlari.Count;
-                progressBar1.Value = 0;
-
-                CevaplarDb cvp = new CevaplarDb();
-                cvp.CevaplariSil(_sinavId);
-                CevaplarInfo info = new CevaplarInfo();
-                int a = 0;
-
-                lblBilgi.Text = @"Cevap kağıtlarını kırpma işlemi başladı.";
-                Application.DoEvents();
-                foreach (DosyaInfo ck in cKagitlari)
-                {
-                    a++;
-
-                    string dosyaAdresi = ck.DosyaYolu + @"\" + ck.DosyaAdi;
-                    string kareKodDosyaAdresi = kareKodDizin + ck.DosyaAdi;
+                    #region KAREKOD OCR İŞLEMLERİ
 
                     try
                     {
-                        CkkontrolInfo ckInfo = ckDb.KayitBilgiGetir(kareKodDosyaAdresi);
+                        Bitmap qrCopyImage = ImageProcessing.CropBitmap(new Bitmap(dosyaAdresi), xQr, yQr, wQr, hQr);
+                        QRCodeDecoder decoder = new QRCodeDecoder();
+                        string kareKod = decoder.decode(new QRCodeBitmapImage(qrCopyImage));
+                       
+                        ckOturumNo = kareKod.Substring(0, 1).ToInt32();
+                        ckOgrenciNo = kareKod.Substring(1, kareKod.Length - 1).ToInt32();
 
-                        string sayfaYuzu = ckInfo.SayfaYuzu;
-                        int ogrenciNo = ckInfo.OgrId;
-
-                        List<OgrencilerInfo> girmeyenKagit = (from x in sinavaGirmeyenlerList where x.OgrenciId == ogrenciNo select x).ToList();
-
-                        if (girmeyenKagit.Count == 0) //girmeyenKagit.Count == 0 ise sınava girmiştir.
+                        if (!ckOturumNo.IsInteger())
                         {
-                            List<KonumlarInfo> knm = knmDb.KayitlariDiziyeGetir(_sinavId);
-                            IEnumerable<KonumlarInfo> xs = from cust in knm where cust.SyfYuzu == sayfaYuzu.ToInt32() && cust.Grup == "au" select cust;
-
-                            foreach (KonumlarInfo ak in xs)
-                            {
-                                string rndMetin = GenelIslemler.RastgeleMetinUret(8);
-                                string uzanti = Path.GetExtension(dosyaAdresi);
-                                string kirpilacakCevapAdresi = string.Format("{0}_{1}_{2}{3}", ak.SoruNo, ogrenciNo, rndMetin, uzanti);
-                                string kirpilanDosyaAdresi = cevapDizin + kirpilacakCevapAdresi;
-                                info.SoruNo = ak.SoruNo.ToInt32();
-                                info.Dosya = kirpilacakCevapAdresi;
-                                info.OgrenciId = ogrenciNo;
-                                info.SinavId = ak.SinavId.ToInt32();
-                                info.BransId = ak.BransId.ToInt32();
-
-                                cvp.KayitEkle(info);
-
-                                ResimKirp(dosyaAdresi, ak.W.ToInt32(), ak.H.ToInt32(), ak.X1.ToInt32(), ak.Y1.ToInt32(), kirpilanDosyaAdresi);
-                            }
+                            ckOturumNo = Ocr.OcrOku(ocrdosyaAdresi, out ckOgrenciNo).ToInt32();
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        object[] row = { dosyaAdresi, ex.Message };
-                        dgvHata.Rows.Add(row);
+                        if (ckOgrenciNo == 0)
+                        {
+                            ckOturumNo = Ocr.OcrOku(ocrdosyaAdresi, out ckOgrenciNo).ToInt32();
+                        }
                         Application.DoEvents();
                     }
-                    progressBar1.Value = a;
-
-                    progressBar1.PerformStep();
-                }
-                progressBar1.Value = 0;
-                lblBilgi.Text = @"Cevap kağıtlarını kırpma işlemi tamamlandı. Kırpılan dosyaları ve databasede cevaplar tablosunu web sitesine yükleyebilirsiniz.";
-                Application.DoEvents();
-                DialogResult dialog = MessageBox.Show(lblBilgi.Text + "\n" + @"Şimdi cevapların kırpıldığı dizini açmak ister misiniz?", @"Bilgi", MessageBoxButtons.YesNo);
-                if (dialog == DialogResult.Yes) Process.Start("explorer.exe", Path.GetDirectoryName(cevapDizin));
-            }
-
-            pbOptikOkuma.Enabled = pbDizinSec.Enabled = pbCKKontrol.Enabled = pbAuKirpma.Enabled = true;
-        }
-        #endregion
-        #region Optik Okuma İşlemleri
-
-        private void pbOptikOkuma_Click(object sender, EventArgs e)
-        {
-            CkkontrolDb ckDb = new CkkontrolDb();
-            if (ckDb.KayitSayisi() == 0)
-            {
-                lblBilgi.Text = @"Karekod / OCR kontrol işlemleri henüz yapılmamış. Önce Karekod / OCR kontrolü yapınız.";
-                MessageBox.Show(lblBilgi.Text, @"Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                bgwOptikOkuma.RunWorkerAsync();
-            }
-        }
-
-        private void bgwOptikOkuma_DoWork(object sender, DoWorkEventArgs e)
-        {
-            List<DiziSecenekler> secenek = new List<DiziSecenekler>();
-            CkkontrolDb ckDb = new CkkontrolDb();
-
-            pbOptikOkuma.Enabled = pbDizinSec.Enabled = pbCKKontrol.Enabled = pbAuKirpma.Enabled = false;
-
-            //Cevap kağıtlarının bulunduğu dizinden dosya bilgilerini diziye al
-            List<DosyaInfo> cevapKagit = DizinIslemleri.DizindekiDosyalariListele(cevapKagitlari);
-            List<KonumlarInfo> knm = knmDb.KayitlariDiziyeGetir(_sinavId);
-            //konumlar tablosundaki konumlardan sadece optik olanları seç.
-            List<KonumlarInfo> optikKonumlari =
-                (from x in knm where x.Grup == "optik" orderby x.SoruNo ascending select x).ToList();
-
-            //Progres bas için cevap kağıdı ve konum sayıını çarp
-            int ckveKonumSayisi = cevapKagit.Count * optikKonumlari.Count;
-            int a = 0;
-            progressBar1.Maximum = ckveKonumSayisi;
-            progressBar1.Value = 0;
-
-            //bu sınava ait eski optik sonuçlarını sil
-            OptikSonucDB osDb = new OptikSonucDB();
-            osDb.KayitSil(_sinavId, true); //true false farketmez
-
-
-            //Soru sayısını tespit için sadece a seçeneğini seçerek soruları listele.
-            List<KonumlarInfo> sorular =
-                (from x in knm where x.Grup == "optik" && x.Secenek == "A" orderby x.SoruNo select x).ToList();
-            OgrencilerDb ogrDb = new OgrencilerDb();
-            List<OgrencilerInfo> ogrList = ogrDb.KayitlariDiziyeGetir(_sinavId);
-
-            //Girmedi alanı 0 olan yani sınava giren Öğrencilere konumlar tablosundaki soru sayısınca kayıt ekleyelim.
-            foreach (var ogr in ogrList.Where(x=>x.Girmedi==0))
-            {
-                foreach (var soru in sorular)
-                {
-                    OptikSonucInfo osInfo = new OptikSonucInfo
+                    catch (Exception)
                     {
-                        BransId = soru.BransId,
-                        OgrenciId = ogr.OgrenciId,
-                        KurumKodu = ogr.KurumKodu,
-                        Secenek = "",
-                        SoruNo = soru.SoruNo,
-                        SinavId = _sinavId
-                    };
-                    osDb.KayitEkle(osInfo);
-                }
-            }
-
-
-            Application.DoEvents();
-
-            //Sınava girmeyenleri okummamak için önce diziye alalım.
-            List<OgrencilerInfo> sinavaGirmeyenlerList = ogrDb.SinavaGirmeyenleriDiziyeGetir(_sinavId);
-
-            //Cevap kağıtlarının bulunduğu dizindeki dosyaları döngüye çağırır
-            foreach (DosyaInfo ck in cevapKagit)
-            {
-
-
-                lblBilgi.Text = "Cevap kağıdındaki optikler okunuyor. Okunan dosya: " + ck.DosyaAdi;
-                string kareKodDosyaAdresi = kareKodDizin + ck.DosyaAdi;
-                //öğrenci bilgileri için karekod dosya adlarından bilgi al.
-                CkkontrolInfo ckInfo = ckDb.KayitBilgiGetir(kareKodDosyaAdresi);
-
-                List<OgrencilerInfo> girmeyenKagit = (from x in sinavaGirmeyenlerList where x.OgrenciId == ckInfo.OgrId select x).ToList();
-
-                if (girmeyenKagit.Count == 0)
-                {
-
-                    //optik okuma için görüntü işleme yaparak rengi siyah beyaza çevir.
-                    Bitmap bmap = Siyahla(new Bitmap(cevapKagitlari + ck.DosyaAdi));
-
-                    //Veritabanında bulunan optik seçenek konumlarını döngüye çağır
-                    foreach (KonumlarInfo x in optikKonumlari)
-                    {
-                        a++;
-                        for (int i = x.X1; i <= (x.X1 + x.W); i++)
+                        try
                         {
-                            for (int j = x.Y1; j <= (x.Y1 + x.H); j++)
+                            ckOturumNo = Ocr.OcrOku(ocrdosyaAdresi, out ckOgrenciNo).ToInt32();
+                        }
+                        catch (Exception)
+                        {
+                            //
+                        }
+                        Application.DoEvents();
+                    }
+                    ckDb.KayitGuncelle(ck.DizinAdresi, ck.DosyaAdi, ckOturumNo, ckOgrenciNo);
+                    Application.DoEvents();
+
+                    #endregion
+
+                    //Karekod ve ocr okuma işlemlerinde bir problem yoksa (öğrenci ve oturum numarası almışsa)
+                    if (ckOgrenciNo != 0 && ckOturumNo != 0)
+                    {
+                        //optik okuma için görüntü işleme yaparak rengi siyah beyaza çevir.
+                        Bitmap bmap = ImageProcessing.Blacken(new Bitmap(cevapKagitlari + ck.DosyaAdi));
+
+                        #region SINAVA GİRMEDİ OKUMA İŞLEMLERİ
+                        //Girmedi seçeneğini işaretleyenleri alacak olan dizi
+                        List<DiziSecenekler> secenekGirmedi = new List<DiziSecenekler>();
+
+                        //Veritabanında bulunan optik seçenek konumlarını döngüye çağır
+                        foreach (KonumlarInfo x in girmediKonum)
+                        {
+                            for (int i = x.X1; i <= (x.X1 + x.W); i++)
                             {
-                                Color piksel = bmap.GetPixel(i, j);
-                                //RGB renk değerleri 0 (siyah) olanları seç 
-                                if (piksel.R == 0 && piksel.G == 0 && piksel.B == 0)
+                                for (int j = x.Y1; j <= (x.Y1 + x.H); j++)
                                 {
-                                    //Sonraki döngüde OptikSonuc tablosuna kaydetmek için diziye al.
-                                    secenek.Add(new DiziSecenekler(ckInfo.OgrId, x.SoruNo, x.Secenek, piksel.R, piksel.G,
-                                        piksel.B, i, j, ck.DosyaAdi));
+                                    Color piksel = bmap.GetPixel(i, j);
+                                    //RGB renk değerleri 0 (siyah) olanları seç 
+                                    if (piksel.R == 0 && piksel.G == 0 && piksel.B == 0)
+                                    {
+                                        //Sonraki döngüde ckDosyalar tablosuna kaydetmek için diziye al.
+                                        secenekGirmedi.Add(new DiziSecenekler(x.Oturum, x.BransId, ck.OgrenciId,x.SoruNo, x.Secenek, piksel.R, piksel.G, piksel.B, i, j, ck.DosyaAdi));
+                                    }
+                                }
+                            }
+                            Application.DoEvents();
+                        }
 
-                                    progressBar1.Value = a;
+                        //girmeyenlerin konumlarını say. Diziye alınan siyah noktaları sayrak belirlenen sayıdan fala siyah nokta olanları db'ye kaydet.
+                        List<DiziSecenekler> dsSoru = (from scnk in secenekGirmedi select scnk).ToList();
+                      
+                        if (dsSoru.Count > kitapyogunluk)
+                        {
+                            ckDb.SinavaGirmedi(ckOgrenciNo, ckOturumNo);
+                            girmedi = 1;
+                        }
+                        Application.DoEvents();
+                        #endregion
 
-                                    progressBar1.PerformStep();
+                        #region KİTAPÇIK TÜRÜ BELİRLEME İŞLEMLERİ
+                        if (girmedi == 0)
+                        {
+                            List<string> ktpcikList = new List<string>();
+                            for (int i = 0; i < kitapcikTurleri.Length; i++)
+                            {
+                                ktpcikList.Add(kitapcikTurleri.Substring(i, 1));
+                            }
+                            Application.DoEvents();
+
+                            List<KitapcikTuru> ktpList = new List<KitapcikTuru>();
+
+                            //Kitapçık türlerine göre siyah noktaları say ve diye al.
+                            foreach (string kTur in ktpcikList)
+                            {
+                                //konumlar tablosundaki döngüdeki kitapçık türüne göre .
+                                List<KonumlarInfo> kTurKonumu = (from x in knm where x.Grup == kTur select x).ToList();
+
+                                foreach (KonumlarInfo x in kTurKonumu)
+                                {
+                                    for (int i = x.X1; i <= (x.X1 + x.W); i++)
+                                    {
+                                        for (int j = x.Y1; j <= (x.Y1 + x.H); j++)
+                                        {
+                                            Color piksel = bmap.GetPixel(i, j);
+                                            //RGB renk değerleri 0 (siyah) olanları seç 
+                                            if (piksel.R == 0 && piksel.G == 0 && piksel.B == 0)
+                                            {
+                                                //Sonraki döngüde OptikSonuc tablosuna kaydetmek için diziye al.
+                                                ktpList.Add(new KitapcikTuru(kTur, piksel.R, piksel.G, piksel.B, i, j, ck.DosyaAdi));
+                                            }
+                                        }
+                                    }
+                                    Application.DoEvents();
+                                }
+                            }
+                            Application.DoEvents();
+
+                            //Diziye alınan siyah noktaları sayrak belirlenen sayıdan fazla siyah nokta olanları db'ye kaydet.
+                            foreach (string kTur in ktpcikList)
+                            {
+                                List<KitapcikTuru> kitapcik = (from tur in ktpList where tur.Kitapcik == kTur select tur).ToList();
+                                //MessageBox.Show(kitapcik.Count+" "+ ck.DosyaAdi);
+                                if (kitapcik.Count > kitapyogunluk)
+                                {
+                                    ckDb.KitapcikTuru(ck.DosyaAdi, kTur);
+                                    ckKitapcikTuru = kTur;
+                                }
+                                Application.DoEvents();
+                            }
+                            if (string.IsNullOrEmpty(ckKitapcikTuru))
+                            {
+                                foreach (string kTur in ktpcikList)
+                                {
+                                    List<KitapcikTuru> kitapcik = (from tur in ktpList where tur.Kitapcik == kTur select tur).ToList();
+
+                                    if (kitapcik.Count > kitapikinciyogunluk && kitapcik.Count < kitapyogunluk)
+                                    {
+                                        ckDb.KitapcikTuru(ck.DosyaAdi, kTur);
+                                        ckKitapcikTuru = kTur;
+                                    }
+                                    Application.DoEvents();
                                 }
                             }
                         }
-                        Application.DoEvents();
-                    }
+                        #endregion
 
-                    //optik konumları say. Diziye alınan siyah noktaları sayrak belirlenen sayıdan fala siyah nokta olanları db'ye kaydet.
-                    foreach (KonumlarInfo ok in optikKonumlari)
-                    {
-                        List<DiziSecenekler> dsSoru = (from scnk in secenek
-                                                       where scnk.SoruNo == ok.SoruNo && scnk.Secenek == ok.Secenek && scnk.Dosya == ck.DosyaAdi
-                                                       select scnk).ToList();
-                        //TODO:600 değeri herhangi bir seçenekteki siyahlanmış piksel sayısıdır. Ayarlardan çekilebilir.
-                        if (dsSoru.Count > 500)
+                        #region OPTİK OKUMA İŞLEMLERİ
+
+                        if (girmedi == 0 && ckKitapcikTuru != "")
                         {
-                            OptikSonucInfo os = osDb.KayitBilgiGetir(_sinavId, ok.BransId, ckInfo.OgrId, ok.SoruNo);
-                            string ogrenciSecenek = os.Secenek + ok.Secenek;
-                            //Seçenek 1 ise konumlar tablosundaki puanı yazılır.(Doğru ise doğru puanı yanlış ise yanlış puanı 0) 
-                            //Seçenek 1 karekter değil ise boş veya birden fazla cevaptır. Puan yine 0 olur
-                            int puani = ogrenciSecenek.Length == 1 ? ok.SoruPuani : 0;
+                            //Cevap kağıdında optik konumları var mı yok mu kontrol edelim.
+                            int optikKonumSayisi = (from x in knm where x.Grup == "optik" select x).Count();
+                            if (optikKonumSayisi > 0)
+                            {
+                                SonucOptikDB osDb = new SonucOptikDB();
 
-                            osDb.KayitGuncelle(ogrenciSecenek, puani, os.Id);
+                                //bu cevap kağıdına ait eski optik sonuçlarını sil
+                                osDb.KayitSil(sinavId, ckOturumNo, ckOgrenciNo);
+
+                                //Öğrenci Bilgisi
+                                OgrencilerDb ogrDb = new OgrencilerDb();
+                                OgrencilerInfo ogrInfo = ogrDb.KayitBilgiGetir(ckOgrenciNo, sinavId);
+
+                                //Soru sayısını tespit için sadece a seçeneğini seçerek soruları listele.
+                                List<KonumlarInfo> branslar = knmDb.BranslariGetir(sinavId, ckOturumNo);
+                                foreach (KonumlarInfo brns in branslar)
+                                {
+                                    List<KonumlarInfo> sorular =
+                                        knmDb.OptikFormdakiSoruSayisi(sinavId, ckOturumNo, brns.BransId);
+
+                                    foreach (KonumlarInfo soru in sorular)
+                                    {
+                                        SonucOptikInfo osInfo = new SonucOptikInfo
+                                        {
+                                            BransId = soru.BransId,
+                                            OgrenciId = ckOgrenciNo,
+                                            KurumKodu = ogrInfo.KurumKodu,
+                                            Secenek = "",
+                                            Oturum = ckOturumNo,
+                                            SoruNo = soru.SoruNo,
+                                            SinavId = sinavId,
+                                            KitapcikTuru = ckKitapcikTuru,
+                                            Puani = 0,
+                                            Sinif = ogrInfo.Sinifi,
+                                            Sube = ogrInfo.Sube
+                                        };
+                                        osDb.KayitEkle(osInfo);
+                                        Application.DoEvents();
+                                    }
+                                    Application.DoEvents();
+
+                                    //konumlar tablosundaki konumlardan sadece optik olanları seç.             
+                                    List<KonumlarInfo> optikKonumlari = (from x in knm where x.Grup == "optik" && x.Oturum == ckOturumNo && x.BransId == brns.BransId orderby x.SoruNo select x).ToList();
+
+                                    //Optik formdaki seçenekleri okuyacak dizi
+                                    List<DiziSecenekler> secenekOptik = new List<DiziSecenekler>();
+
+                                    //Veritabanında bulunan optik seçenek konumlarını döngüye çağır
+                                    foreach (KonumlarInfo x in optikKonumlari)
+                                    {
+                                        for (int i = x.X1; i <= (x.X1 + x.W); i++)
+                                        {
+                                            for (int j = x.Y1; j <= (x.Y1 + x.H); j++)
+                                            {
+                                                Color piksel = bmap.GetPixel(i, j);
+                                                //RGB renk değerleri 0 (siyah) olanları seç 
+                                                if (piksel.R == 0 && piksel.G == 0 && piksel.B == 0)
+                                                {
+                                                    //Sonraki döngüde OptikSonuc tablosuna kaydetmek için diziye al.
+                                                    secenekOptik.Add(new DiziSecenekler(x.Oturum, x.BransId,
+                                                        ckOgrenciNo, x.SoruNo, x.Secenek, piksel.R, piksel.G, piksel.B,
+                                                        i, j, ck.DosyaAdi));
+                                                }
+                                            }
+                                        }
+                                        Application.DoEvents();
+                                    }
+                                    Application.DoEvents();
+                                    //optik konumları say. Diziye alınan siyah noktaları sayrak belirlenen sayıdan fala siyah nokta olanları db'ye kaydet.
+
+                                    foreach (KonumlarInfo ok in optikKonumlari)
+                                    {
+                                        dsSoru = (from scnk in secenekOptik
+                                                  where scnk.SoruNo == ok.SoruNo && scnk.Secenek == ok.Secenek &&
+                                                        scnk.Dosya == ck.DosyaAdi
+                                                  select scnk).ToList();
+                                        if (dsSoru.Count > yogunluk)
+                                        {
+                                            KitapcikCevapDB kcvpDb = new KitapcikCevapDB();
+                                            KitapcikCevapInfo kcInfo = kcvpDb.KayitBilgiGetir(sinavId, ckOturumNo,
+                                                brns.BransId, ok.SoruNo);
+
+                                            SonucOptikInfo os = osDb.KayitBilgiGetir(sinavId, brns.BransId, ckOgrenciNo,
+                                                ok.SoruNo);
+                                            string ogrenciSecenek = os.Secenek + ok.Secenek;
+                                            //Seçenek 1 ise kitapcikcevap tablosundaki puanı yazılır.(Doğru ise doğru puanı yanlış ise yanlış puanı 0) 
+                                            //TODO:KİTAPÇIK TÜRÜ OLAYI OTOMOTİKLEŞMESİ GEREK
+                                            string dogruSecenek = ckKitapcikTuru == "A"
+                                                ? kcInfo.KitapcikA
+                                                : kcInfo.KitapcikB;
+                                            int puani = ogrenciSecenek == dogruSecenek ? kcInfo.SoruPuani : 0;
+
+                                            osDb.KayitGuncelle(sinavId,ckOturumNo,ckOgrenciNo,ok.SoruNo,brns.BransId, ogrenciSecenek, puani);
+                                        }
+                                        Application.DoEvents();
+                                    }
+
+                                    //Sonucoptik tablosundan bu cevap kağıdına ait boş seçenekleri getir.
+                                    List<SonucOptikInfo> bosSecenekler = osDb.BosSecenekler(sinavId, ckOturumNo, brns.BransId, ckOgrenciNo);
+
+                                    if (bosSecenekler.Count > 0)
+                                    {
+                                        foreach (SonucOptikInfo bosS in bosSecenekler)
+                                        {
+                                            List<DiziSecenekler> secenekSecenek = new List<DiziSecenekler>();
+
+                                            optikKonumlari = (from x in knm
+                                                              where x.Grup == "optik" && x.Oturum == ckOturumNo &&
+                                                                    x.BransId == bosS.BransId && x.SoruNo == bosS.SoruNo
+                                                              orderby x.SoruNo
+                                                              select x).ToList();
+
+                                            foreach (KonumlarInfo x in optikKonumlari)
+                                            {
+                                                for (int i = x.X1; i <= (x.X1 + x.W); i++)
+                                                {
+                                                    for (int j = x.Y1; j <= (x.Y1 + x.H); j++)
+                                                    {
+                                                        Color piksel = bmap.GetPixel(i, j);
+                                                        //RGB renk değerleri 0 (siyah) olanları seç 
+                                                        if (piksel.R == 0 && piksel.G == 0 && piksel.B == 0)
+                                                        {
+                                                            //Sonraki döngüde OptikSonuc tablosuna kaydetmek için diziye al.
+                                                            secenekSecenek.Add(new DiziSecenekler(x.Oturum, x.BransId,
+                                                                bosS.OgrenciId, x.SoruNo, x.Secenek, piksel.R, piksel.G,
+                                                                piksel.B, i, j, ck.DosyaAdi));
+                                                        }
+                                                    }
+                                                }
+                                                Application.DoEvents();
+                                            }
+                                            Application.DoEvents();
+
+                                            //optik konumları say. Diziye alınan siyah noktaları sayrak belirlenen sayıdan fala siyah nokta olanları db'ye kaydet.
+                                            foreach (KonumlarInfo ok in optikKonumlari)
+                                            {
+                                                dsSoru = (from scnk in secenekSecenek
+                                                          where scnk.SoruNo == ok.SoruNo && scnk.Secenek == ok.Secenek
+                                                          select scnk).ToList();
+
+                                                if (dsSoru.Count > ikinciyogunluk && dsSoru.Count < yogunluk)
+                                                {
+                                                    KitapcikCevapDB kcvpDb = new KitapcikCevapDB();
+                                                    KitapcikCevapInfo kcInfo = kcvpDb.KayitBilgiGetir(sinavId,
+                                                        ckOturumNo, ok.BransId, ok.SoruNo);
+
+                                                    SonucOptikInfo os = osDb.KayitBilgiGetir(sinavId, ok.BransId,
+                                                        ckOgrenciNo, ok.SoruNo);
+                                                    string ogrenciSecenek = os.Secenek + ok.Secenek;
+                                                    //Seçenek 1 ise kitapcikcevap tablosundaki puanı yazılır.(Doğru ise doğru puanı yanlış ise yanlış puanı 0) 
+
+                                                    string dogruSecenek = ckKitapcikTuru == "A"
+                                                        ? kcInfo.KitapcikA
+                                                        : kcInfo.KitapcikB;
+                                                    int puani = ogrenciSecenek == dogruSecenek ? kcInfo.SoruPuani : 0;
+
+                                                    osDb.KayitGuncelle(sinavId, ckOturumNo, ckOgrenciNo, ok.SoruNo, brns.BransId, ogrenciSecenek, puani);
+                                                   
+                                                }
+                                                Application.DoEvents();
+                                            }
+                                            Application.DoEvents();
+                                        }
+                                        Application.DoEvents();
+                                    }
+                                }
+                            }
                         }
-                        Application.DoEvents();
+
+                        #endregion
+
+                        #region AÇIK UCLU SORULARI KIRPMA İŞLEMLERİ
+
+                        if (girmedi == 0)
+                        {
+                            //Cevap kağıdında açık uclu cevap konumları var mı yok mu kontrol edelim.
+                            int auKonumSayisi = (from cust in knm where cust.Grup == "au" select cust).Count();
+                            if (auKonumSayisi > 0)
+                            {
+                                SonucAuDB cvp = new SonucAuDB();
+                                //Bu cevap kağıdına ait önceki kayıtları sil.
+                                cvp.CevaplariSil(sinavId, ckOturumNo, ckOgrenciNo);
+                                SonucAuInfo info = new SonucAuInfo();
+
+                                try
+                                {
+                                    var auKonumlar = from cust in knm where cust.Oturum == ckOturumNo && cust.Grup == "au" select cust;
+
+                                    foreach (KonumlarInfo ak in auKonumlar)
+                                    {
+                                        string rndMetin = GenelIslemler.RastgeleMetinUret(8);
+                                        string uzanti = Path.GetExtension(dosyaAdresi);
+                                        string kirpilacakCevapAdresi = string.Format("{0}_{1}_{2}{3}", ak.SoruNo, ck.OgrenciId, rndMetin, uzanti);
+                                        string kirpilanDosyaAdresi = cevapDizin + kirpilacakCevapAdresi;
+                                        info.SoruNo = ak.SoruNo.ToInt32();
+                                        info.Dosya = kirpilacakCevapAdresi;
+                                        info.OgrenciId = ckOgrenciNo;
+                                        info.SinavId = ak.SinavId.ToInt32();
+                                        info.BransId = ak.BransId.ToInt32();
+                                        info.Oturum = ckOturumNo;
+
+                                        cvp.KayitEkle(info);
+
+                                        ImageProcessing.ResimKirp(dosyaAdresi, ak.W.ToInt32(), ak.H.ToInt32(), ak.X1.ToInt32(), ak.Y1.ToInt32(), kirpilanDosyaAdresi);
+                                        Application.DoEvents();
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    //
+                                }
+
+                                Application.DoEvents();
+                                DialogResult dialog =
+                                    MessageBox.Show(lblBilgi.Text + "\n" + @"Şimdi cevapların kırpıldığı dizini açmak ister misiniz?", @"Bilgi",
+                                        MessageBoxButtons.YesNo);
+                                if (dialog == DialogResult.Yes) Process.Start("explorer.exe", Path.GetDirectoryName(cevapDizin));
+                            }
+
+                        }
+                        #endregion
+
                     }
+
+                    //Eğer öğrenci no,oturum no ve kitapçık tür değeri almışsa işlem gördü olarak işaretle.
+                    if (ckOgrenciNo != 0 && ckOturumNo != 0 && (ckKitapcikTuru != "" || girmedi == 1))
+                        ckDb.CkKontrolIslemiGordu(ck.DizinAdresi, ck.DosyaAdi);
+                }
+                progressBar1.PerformStep();
+
+                lblGecenSure.Text = String.Format("{0} saat, {1} dakika, {2} saniye", watch.Elapsed.Hours, watch.Elapsed.Minutes, watch.Elapsed.Seconds);
+                try
+                {
+                    double gecenDakika = watch.Elapsed.TotalMinutes;
+                    double kalanIslem =ckSayisi -a;
+                    double kalanSure =(gecenDakika*kalanIslem)/a;
+
+                    double saat = (kalanSure - (kalanSure % 60)) / 60;
+                    double dakika = kalanSure % 60;
+                    lblBitisSuresi.Text = string.Format("Kalan tahmini süre : {0:0} saat, {1:0} dakika", saat, dakika);
+                }
+                catch (Exception)
+                {
+                    lblBitisSuresi.Text = "Hesaplanıyor...";
                 }
             }
-
-            lblBilgi.Text = "Cevap kağıdındaki optikleri okuma tamamlandı.";
-
-            Application.DoEvents();
+            watch.Stop();
+            lblBilgi.Text = "Cevap kağıtlarını kontrol işlemi tamamlandı.";
             progressBar1.Value = 0;
-            pbOptikOkuma.Enabled = pbDizinSec.Enabled = pbCKKontrol.Enabled = pbAuKirpma.Enabled = true;
-        }
 
-        #endregion
-        #region contextMenuStrip1
+            SorunluCKTespit();
+            pbDizinSec.Enabled = pbCKKontrol.Enabled = true;
 
-        private void okunmayanlariTasiToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!DizinIslemleri.DizinKontrol(okunmayanlar))
-                DizinIslemleri.DizinOlustur(okunmayanlar);
-            else
-                DizinIslemleri.DizinIceriginiSil(okunmayanlar);
-
-            foreach (string file in _aList)
+            //İşaretliyse işlem bittiğinde bilgisayarı kapat
+            if (cbBilgisayariKapat.Checked)
             {
-                File.Move(kareKodDizin + file, okunmayanlar + file);
+                Process.Start("shutdown", "-f -s");
             }
-            MessageBox.Show("Dokunamayan dosyalar taşındı");
-            DialogResult dialog =
-                MessageBox.Show(
-                    @"Dokunamayan dosyalar taşındı. Taşınan dosyaların bulunduğu dizini açmak ister misiniz?", @"Bilgi",
-                    MessageBoxButtons.YesNo);
-            if (dialog == DialogResult.Yes)
-                Process.Start("explorer.exe", Path.GetDirectoryName(okunmayanlar));
-
-
         }
+
+        private void SorunluCKTespit()
+        {
+            CkDosyalarDB ckDsyDb = new CkDosyalarDB();
+            List<CkDosyalarInfo> sorunluDsyLst = ckDsyDb.SorunluKayitlariDiziyeGetir(sinavId);
+            int eksikKalanlar = sorunluDsyLst.Count;
+            if (eksikKalanlar > 0)
+            {
+                progressBar1.Maximum = eksikKalanlar;
+                lblBilgi.Text = "Sorunlu CK dosyaları taranıyor.";
+
+                string dosyaAdi = ckDizin + "\\sorunlu_dosyalar.txt";
+                StreamWriter sqlSW = new StreamWriter(dosyaAdi, false, Encoding.UTF8);
+                foreach (CkDosyalarInfo srnDsy in sorunluDsyLst)
+                {
+                    progressBar1.PerformStep();
+                    sqlSW.WriteLine(srnDsy.DizinAdresi);
+                    //sorunlu dosyalar işlem gördüyü yeniden kontrol etmek için.
+                    ckDsyDb.CKIslemiGordu(srnDsy.DizinAdresi, 0);
+                    Application.DoEvents();
+                }
+                Application.DoEvents();
+                sqlSW.Close();
+                lblBilgi.Text =
+                    "Bazı cevap kağıtlarından bilgi alınamadı. Bu dosyalar kontrol edilerek Dizin seçme işlemini kalanları tamamlamak üzere tekrar başlatınız.";
+
+                progressBar1.Value = 0;
+                Process.Start(dosyaAdi);
+            }
+        }
+
         #endregion
-        #region Formu Taşıma İşlemleri
+
+        #region ANA FORMU TAŞIMA İŞLEMLERİ
         int Mov;
         int mx;
         int my;
@@ -907,9 +826,59 @@ namespace ODM
         }
         #endregion
 
-        private void FormCKIslemleri_Activated(object sender, EventArgs e)
+        #region contextMenuStrip2
+        private void ayarlarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormAyarlar frm = new FormAyarlar();
+            frm.ShowDialog();
+        }
+        private void karekodOluşturToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormKareKodOlustur frm = new FormKareKodOlustur();
+            frm.ShowDialog();
+        }
+        private void karekodKontrolToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            FormKarekodKontrol frm = new FormKarekodKontrol();
+            frm.ShowDialog();
+        }
+        private void excelİşlemleriToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormExcel frm = new FormExcel();
+            frm.ShowDialog();
+        }
+        private void cKOluşturToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormCKHazirla frm = new FormCKHazirla();
+            frm.ShowDialog();
+        }
+        private void sınıfListesiOluşturToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormSinifListesi frm = new FormSinifListesi();
+            frm.ShowDialog();
+        }
+        private void optikFormCevaplarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormCevaplar frm = new FormCevaplar();
+            frm.ShowDialog();
+        }
+        private void textDosyasıAlToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormTextAl frm = new FormTextAl();
+            frm.ShowDialog();
+        }
+        
+
+        private void formKarneToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+            FormKarne frm = new FormKarne();
+            frm.ShowDialog();
+        }
+        #endregion
+
+        private void FormCKIslemleri_Activated(object sender, EventArgs e)
+        {
             lblIlAdi.Text = IniIslemleri.VeriOku("Baslik", "IlAdi");
             this.Text = lblIlAdi.Text.IlkHarfleriBuyut() + " " + lblOdm.Text;
         }
@@ -932,43 +901,43 @@ namespace ODM
         }
         private void pbCikis_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            DialogResult dialog = MessageBox.Show(@"Programdan çıkış yapmak istediğinizden emin misiniz?", @"Bilgi", MessageBoxButtons.YesNo);
+            if (dialog == DialogResult.Yes)
+                Application.Exit();
+        }
+        private void cbCkKontrolDevamEt_CheckedChanged(object sender, EventArgs e)
+        {
+
+            if (!cbCkKontrolDevamEt.Checked) return;
+            DialogResult dialog = MessageBox.Show("Cevap kağıtları kontrol işlemlerine başlamadan önce Cevap Kağıdı konumları ayarlanması gerekmektedir."+ "\n"+"Cevap kağıtları konumları ayarlandığından emin misiniz?", "Bilgi", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            cbCkKontrolDevamEt.Checked = dialog == DialogResult.Yes;
+        }
+        private void pbBilgi_Click(object sender, EventArgs e)
+        {
+
         }
 
-        private void ayarlarToolStripMenuItem_Click(object sender, EventArgs e)
+        private void branşlarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FormAyarlar frm = new FormAyarlar();
+            FormBranslar frm = new FormBranslar();
             frm.ShowDialog();
         }
 
-        private void karekodOluşturToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ilçelerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            FormKareKodOlustur frm = new FormKareKodOlustur();
+            FormIlceler frm = new FormIlceler();
             frm.ShowDialog();
         }
 
-        private void karekodKontrolToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void formRaporToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FormKarekodKontrol frm = new FormKarekodKontrol();
+            FormRapor frm = new FormRapor();
             frm.ShowDialog();
         }
 
-        private void excelİşlemleriToolStripMenuItem_Click(object sender, EventArgs e)
+        private void kütükİşlemleriToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FormExcel frm = new FormExcel();
-            frm.ShowDialog();
-        }
-
-        private void cKOluşturToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FormCKHazirla frm = new FormCKHazirla();
-            frm.ShowDialog();
-        }
-
-        private void sınıfListesiOluşturToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FormSinifListesi frm= new FormSinifListesi();
+            FormKutukIslemleri frm = new FormKutukIslemleri();
             frm.ShowDialog();
         }
     }

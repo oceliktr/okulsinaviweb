@@ -10,7 +10,7 @@ namespace ODM
         {
             if (!IsPostBack)
             {
-                if (!Master.Yetki().Contains("Admin")) 
+                if (!Master.Yetki().Contains("Root")&& !Master.Yetki().Contains("Admin")) //root veya admin değil ise yönlendir
                     Response.Redirect("Giris.aspx");
             
                 IlcelerDb ilcelerDb = new IlcelerDb();

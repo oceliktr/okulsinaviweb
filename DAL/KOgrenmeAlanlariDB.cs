@@ -43,7 +43,7 @@ namespace DAL
         }
         public DataTable KayitlariGetir(int anaKat,int brans,int sinif)
         {
-            const string sql = "select * from kogrenmealanlari where AnaKat=?AnaKat and BransId=?BransId and Sinif=?Sinif order by Id asc";
+            const string sql = "select *,CONCAT(AlanNo,'-',OgrenmeAlani) as NoOgrenmeAlani from kogrenmealanlari where AnaKat=?AnaKat and BransId=?BransId and Sinif=?Sinif order by Id asc";
             MySqlParameter[] p =
             {
                 new MySqlParameter("?AnaKat", MySqlDbType.Int32),

@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
@@ -29,9 +30,9 @@ public static class GenelIslemler
     }
     public static string ToUrl(this string s)
     {
-        //s = oncul + id + "-" + s;
         if (string.IsNullOrEmpty(s)) return "";
         s = s.ToLower().Trim();
+        s = s.IlkHarfleriBuyut();
         if (s.Length > 80)
             s = s.Substring(0, 80);
         s = s.Replace("þ", "s");
@@ -50,15 +51,48 @@ public static class GenelIslemler
         s = s.Replace("\"", "");
         s = s.Replace("-", "");
         s = s.Replace("'", "");
+        s = s.Replace("?", "");
+        s = s.Replace("&", "");
         Regex r = new Regex("[^a-zA-Z0-9_-]");
-        //if (r.IsMatch(s))
-        s = r.Replace(s, "");
+        if (r.IsMatch(s))
+            s = r.Replace(s, "-");
         if (!string.IsNullOrEmpty(s))
-            while (s.IndexOf("--", StringComparison.Ordinal) > -1)
-                s = s.Replace("--", "");
+        {
+            while (s.IndexOf("__", StringComparison.Ordinal) > -1)
+                s = s.Replace("__", "-");
+        }
         if (s.StartsWith("-")) s = s.Substring(1);
         if (s.EndsWith("-")) s = s.Substring(0, s.Length - 1);
+
+        s = s.Replace("--", "-");
         return s;
+    }
+    public static string IlkHarfleriBuyut(this string metin)
+    {
+        try
+        {
+            metin = metin.ToLower();
+            CultureInfo cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
+            TextInfo textInfo = cultureInfo.TextInfo;
+            return textInfo.ToTitleCase(metin);
+        }
+        catch (Exception)
+        {
+            return metin;
+        }
+    }
+    public static string BuyukHarfeCevir(this string metin)
+    {
+        try
+        {
+            CultureInfo cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
+            TextInfo textInfo = cultureInfo.TextInfo;
+            return textInfo.ToUpper(metin);
+        }
+        catch (Exception)
+        {
+            return metin;
+        }
     }
     public static string ToCokSatirli(this string str)
     {
@@ -219,27 +253,28 @@ public static class GenelIslemler
     }
     public static String TarihYaz(this DateTime tarih)
     {
-        //DateTime tarih = Convert.ToDateTime(obj);
-        DateTime simdi = DateTime.Now;
-        String s;
+        DateTime simdi = YerelTarih();
+        string s;
         if (tarih.Hour == 0 && tarih.Minute == 0 && tarih.Second == 0)
         {
             if (simdi.Date == tarih.Date)
-                s = "Bugün " + tarih.Date;
-            else if (tarih.Date.AddDays(1.0).Day == simdi.Date.Day && tarih.Month == simdi.Month && tarih.Year == simdi.Year)
+                s = string.Format("Bugün {0:00}:{1:00}", tarih.Hour, tarih.Minute);
+            else if (tarih.Date.AddDays(1.0).Day == simdi.Date.Day && tarih.Month == simdi.Month &&
+                     tarih.Year == simdi.Year)
                 s = "Dün";
             else
-                s = String.Format("{0:00}.{1:00}.{2}", tarih.Day, tarih.Month, tarih.Year);
+                s = string.Format("{0} {1} {2} {3:HH:mm}", tarih.Day, tarih.Month.AyIsmi(), tarih.Year, tarih);
         }
         else
         {
             if (simdi.Date == tarih.Date)
-                s = String.Format("Bugün {0:00}:{1:00}", tarih.Hour, tarih.Minute);
+                s = string.Format("Bugün {0:00}:{1:00}", tarih.Hour, tarih.Minute);
             else if (tarih.Date.AddDays(1) == simdi.Date && tarih.Month == simdi.Month && tarih.Year == simdi.Year)
-                s = String.Format("Dün {0:00}:{1:00}", tarih.Hour, tarih.Minute);
+                s = string.Format("Dün {0:00}:{1:00}", tarih.Hour, tarih.Minute);
             else
-                s = String.Format("{0:00}.{1:00}.{2} {3:00}:{4:00}", tarih.Day, tarih.Month, tarih.Year, tarih.Hour, tarih.Minute);
+                s = string.Format("{0} {1} {2} {3:HH:mm}", tarih.Day, tarih.Month.AyIsmi(), tarih.Year, tarih);
         }
+
         return s;
     }
     public static String TarihYaz(this DateTime tarih, bool gunlu, bool kisa)
