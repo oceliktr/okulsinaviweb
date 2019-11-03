@@ -1,0 +1,77 @@
+﻿body
+{
+    font-family: Verdana;
+    font-size: 11px;
+}
+.txt
+{
+    background-color:White;
+    color:#000000;
+    border:none;
+    width:25px;
+}
+  
+#footer
+{
+    background-color: #f0f0f0;
+    width: 100%;
+    text-align:center;
+}
+#FileUpload1
+{
+    border: solid 1px gray;
+    font-family: Verdana;
+    font-size: 11px;
+	padding:3px;
+}
+a.button
+{
+    background-color: White;
+    padding-top: 3px;
+    font-weight: bold;
+    color: Gray;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: block;
+    width: 80px;
+    height: 20px;
+    border: solid 1px;
+    text-decoration: none;
+    text-align: center;
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding-right: 10px;
+}
+#loadFile
+{
+    background-image: url(load.png);
+}
+#crop
+{
+    background-image: url(crop.png);
+    text-align:center;
+    width:75px;
+    background-repeat: no-repeat;
+}
+#commit
+{
+    background-image: url(commit.png);
+    text-align:center;
+    width:75px;
+    background-repeat: no-repeat;
+}
+#cancel
+{
+    background-image: url(cancel.png);
+    text-align:center;
+    width:75px;
+    background-repeat: no-repeat;
+}
+.left
+{
+	float:left;
+}
+.right
+{
+	float:right;
+}
