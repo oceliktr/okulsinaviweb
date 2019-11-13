@@ -40,6 +40,11 @@
             this.btnSqlExport = new System.Windows.Forms.Button();
             this.lblBilgi = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.button1 = new System.Windows.Forms.Button();
+            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            this.btnKarneDegerlendir = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnKutuk
@@ -71,7 +76,7 @@
             this.btnCkOlustur.Name = "btnCkOlustur";
             this.btnCkOlustur.Size = new System.Drawing.Size(140, 62);
             this.btnCkOlustur.TabIndex = 3;
-            this.btnCkOlustur.Text = "Ck Oluştur";
+            this.btnCkOlustur.Text = "CK Oluştur";
             this.btnCkOlustur.UseVisualStyleBackColor = true;
             this.btnCkOlustur.Click += new System.EventHandler(this.BtnCkOlustur_Click);
             // 
@@ -139,34 +144,79 @@
             this.btnSqlExport.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSqlExport.Location = new System.Drawing.Point(12, 235);
             this.btnSqlExport.Name = "btnSqlExport";
-            this.btnSqlExport.Size = new System.Drawing.Size(140, 63);
+            this.btnSqlExport.Size = new System.Drawing.Size(432, 63);
             this.btnSqlExport.TabIndex = 10;
-            this.btnSqlExport.Text = "Data Export";
+            this.btnSqlExport.Text = "Data Export (Web İçin)";
             this.btnSqlExport.UseVisualStyleBackColor = true;
             this.btnSqlExport.Click += new System.EventHandler(this.btnSqlExport_Click);
             // 
             // lblBilgi
             // 
-            this.lblBilgi.AutoSize = true;
-            this.lblBilgi.Location = new System.Drawing.Point(12, 394);
+            this.lblBilgi.Location = new System.Drawing.Point(12, 301);
             this.lblBilgi.Name = "lblBilgi";
-            this.lblBilgi.Size = new System.Drawing.Size(20, 17);
+            this.lblBilgi.Size = new System.Drawing.Size(432, 34);
             this.lblBilgi.TabIndex = 177;
             this.lblBilgi.Text = "...";
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 416);
+            this.progressBar1.Location = new System.Drawing.Point(12, 350);
             this.progressBar1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(498, 26);
+            this.progressBar1.Size = new System.Drawing.Size(432, 26);
             this.progressBar1.TabIndex = 176;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(598, 54);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(187, 110);
+            this.button1.TabIndex = 178;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // backgroundWorker2
+            // 
+            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
+            // 
+            // btnKarneDegerlendir
+            // 
+            this.btnKarneDegerlendir.Location = new System.Drawing.Point(601, 186);
+            this.btnKarneDegerlendir.Name = "btnKarneDegerlendir";
+            this.btnKarneDegerlendir.Size = new System.Drawing.Size(184, 75);
+            this.btnKarneDegerlendir.TabIndex = 179;
+            this.btnKarneDegerlendir.Text = "Değerlendir";
+            this.btnKarneDegerlendir.UseVisualStyleBackColor = true;
+            this.btnKarneDegerlendir.Click += new System.EventHandler(this.btnKarneDegerlendir_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(801, 276);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 180;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(460, 267);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(325, 282);
+            this.textBox1.TabIndex = 181;
             // 
             // FormAna
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(934, 395);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btnKarneDegerlendir);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.lblBilgi);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.btnSqlExport);
@@ -200,6 +250,11 @@
         private System.Windows.Forms.Button btnSqlExport;
         private System.Windows.Forms.Label lblBilgi;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button button1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker2;
+        private System.Windows.Forms.Button btnKarneDegerlendir;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

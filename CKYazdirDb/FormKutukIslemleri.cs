@@ -29,7 +29,7 @@ namespace ODM.CKYazdirDb
                 {
                     kutukDb.TumunuSil();
 
-                    dgvKutuk.DataSource = kutukDb.List();
+                    KayitlariListele();
 
                 }
             }
@@ -49,9 +49,9 @@ namespace ODM.CKYazdirDb
                 if (openFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     Cursor = Cursors.WaitCursor;
-                   
-                        backgroundWorker1.RunWorkerAsync(openFileDialog1.FileNames);
-                    
+
+                    backgroundWorker1.RunWorkerAsync(openFileDialog1.FileNames);
+
                 }
                 else
                 {
@@ -149,9 +149,9 @@ namespace ODM.CKYazdirDb
                     Cursor = Cursors.Default;
                     return;
                 }
-                
+
             }
-            dgvKutuk.DataSource = kutukDb.List();
+            KayitlariListele();
 
             btnKutukDosyasiniAc.Enabled = true;
             Cursor = Cursors.Default;
@@ -161,8 +161,7 @@ namespace ODM.CKYazdirDb
             //background nesnesi sağlıklı çalışması için gerekli. 
             CheckForIllegalCrossThreadCalls = false;
 
-            KutukManager ktk = new KutukManager();
-            dgvKutuk.DataSource = ktk.List();
+            KayitlariListele();
 
             dgvKutuk.Columns[0].Visible = false;
             dgvKutuk.Columns[1].HeaderText = "Opaq Id";
@@ -188,6 +187,100 @@ namespace ODM.CKYazdirDb
             dgvKutuk.Columns[11].Visible = false;
             dgvKutuk.Columns[12].Visible = false;
             dgvKutuk.Columns[13].Visible = false;//barkod
+        }
+
+        private void KayitlariListele()
+        {
+            KutukManager ktk = new KutukManager();
+            dgvKutuk.DataSource = ktk.List();
+            txtAra.Text = "";
+        }
+
+        private void seçiliİlçeyiSilToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialog = new DialogResult();
+            dialog = MessageBox.Show("Seçilen ilçeye ait verileri silmek istediğinizden emin misiniz?", "Uyarı", MessageBoxButtons.YesNo);
+            if (dialog == DialogResult.Yes)
+            {
+                string ilceAdi = dgvKutuk.SelectedRows[0].Cells[3].Value.ToString();
+
+                KutukManager ktk = new KutukManager();
+
+                var ilce = ktk.List().Where(x => x.IlceAdi == ilceAdi);
+                foreach (var k in ilce)
+                {
+                    ktk.Delete(k);
+                }
+
+                KayitlariListele();
+            }
+        }
+
+        private void btnAra_Click(object sender, EventArgs e)
+        {
+            string ara = txtAra.Text;
+
+            KutukManager ktk = new KutukManager();
+            if (ara.IsInteger())
+                dgvKutuk.DataSource = ktk.List().Where(x => x.OpaqId==ara.ToInt32()||x.KurumKodu==ara.ToInt32()).ToList();
+            else
+                dgvKutuk.DataSource = ktk.List().Where(x => x.Adi.Contains(ara) || x.Soyadi.Contains(ara)).ToList();
+        }
+
+        private void seçiliOkuluSilToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialog = new DialogResult();
+            dialog = MessageBox.Show("Seçilen okula ait verileri silmek istediğinizden emin misiniz?", "Uyarı", MessageBoxButtons.YesNo);
+            if (dialog == DialogResult.Yes)
+            {
+                int kurumKodu = dgvKutuk.SelectedRows[0].Cells[4].Value.ToInt32();
+
+                KutukManager ktk = new KutukManager();
+
+                var okul = ktk.List().Where(x => x.KurumKodu == kurumKodu);
+                foreach (var k in okul)
+                {
+                    ktk.Delete(k);
+                }
+
+                KayitlariListele();
+
+            }
+        }
+
+        private void seçiliKayıtıSilToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialog = new DialogResult();
+            dialog = MessageBox.Show("Seçilen öğrenciyi silmek istediğinizden emin misiniz?", "Uyarı", MessageBoxButtons.YesNo);
+            if (dialog == DialogResult.Yes)
+            {
+                int id = dgvKutuk.SelectedRows[0].Cells[0].Value.ToInt32();
+
+                KutukManager ktk = new KutukManager();
+
+                var k = ktk.Find(x => x.Id == id);
+                ktk.Delete(k);
+
+                KayitlariListele();
+            }
+        }
+
+        private void düzenleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dgvKutuk.SelectedRows.Count>0)
+            {
+                FormKutukKayit frm = new FormKutukKayit();
+                frm.kutukId = dgvKutuk.SelectedRows[0].Cells[0].Value.ToInt32();
+
+                frm.ShowDialog();
+            }
+        }
+
+        private void yeniKayıtToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormKutukKayit frm = new FormKutukKayit();
+            frm.kutukId = 0;
+            frm.ShowDialog();
         }
     }
 }

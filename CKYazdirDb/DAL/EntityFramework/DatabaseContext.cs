@@ -13,6 +13,7 @@ namespace ODM.CKYazdirDb.DAL
         public DbSet<Kazanim> Kazanimlar { get; set; }
         public DbSet<Brans> Branslar { get; set; }
         public DbSet<KarneSonuc> KarneSonuclari { get; set; }
+        public DbSet<OgrenciCevabi> OgrenciCevaplari { get; set; }
 
         public DatabaseContext()
         {

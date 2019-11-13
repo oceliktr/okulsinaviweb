@@ -86,5 +86,19 @@ namespace DAL
             }
             return gonder;
         }
+
+        public static long GetMyLong(this MySqlDataReader dr, string alanAdi)
+        {
+            long gonder = 0;
+
+            try
+            {
+                gonder = dr.GetInt64(dr.GetOrdinal(alanAdi));
+            }
+            catch (Exception)
+            {
+            }
+            return gonder;
+        }
     }
 }

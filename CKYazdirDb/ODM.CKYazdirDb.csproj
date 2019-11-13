@@ -109,6 +109,7 @@
     <Compile Include="Business\KarneSonucManager.cs" />
     <Compile Include="Business\KazanimManager.cs" />
     <Compile Include="Business\KutukManager.cs" />
+    <Compile Include="Business\OgrenciCevapManager.cs" />
     <Compile Include="ExcelUtil.cs" />
     <Compile Include="FormAna.cs">
       <SubType>Form</SubType>
@@ -164,6 +165,18 @@
     <Compile Include="FormKutukIslemleri.Designer.cs">
       <DependentUpon>FormKutukIslemleri.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormKutukKayit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormKutukKayit.Designer.cs">
+      <DependentUpon>FormKutukKayit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormSonDegerlendirme.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSonDegerlendirme.Designer.cs">
+      <DependentUpon>FormSonDegerlendirme.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormTxtOlustur.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -174,6 +187,7 @@
     <Compile Include="Library\CevapveSinif.cs" />
     <Compile Include="Library\DersAdi.cs" />
     <Compile Include="Library\DizinIslemleri.cs" />
+    <Compile Include="Library\DogruCevapveBrans.cs" />
     <Compile Include="Library\GenelIslemler.cs" />
     <Compile Include="Library\KalanSureHesapla.cs" />
     <Compile Include="Library\KazanimveBrans.cs" />
@@ -182,9 +196,21 @@
     <Compile Include="Library\Sablon.cs" />
     <Compile Include="Library\SinifSube.cs" />
     <Compile Include="Library\TableModel.cs" />
-    <Compile Include="Migrations\201910091212517_sonDb.cs" />
-    <Compile Include="Migrations\201910091212517_sonDb.Designer.cs">
-      <DependentUpon>201910091212517_sonDb.cs</DependentUpon>
+    <Compile Include="Migrations\201911080818226_a.cs" />
+    <Compile Include="Migrations\201911080818226_a.Designer.cs">
+      <DependentUpon>201911080818226_a.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911102243584_a1.cs" />
+    <Compile Include="Migrations\201911102243584_a1.Designer.cs">
+      <DependentUpon>201911102243584_a1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911110403105_ak.cs" />
+    <Compile Include="Migrations\201911110403105_ak.Designer.cs">
+      <DependentUpon>201911110403105_ak.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911120517486_os.cs" />
+    <Compile Include="Migrations\201911120517486_os.Designer.cs">
+      <DependentUpon>201911120517486_os.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Ayarlar.cs" />
@@ -195,6 +221,7 @@
     <Compile Include="Model\KarneSonuc.cs" />
     <Compile Include="Model\Kazanim.cs" />
     <Compile Include="Model\Kutuk.cs" />
+    <Compile Include="Model\OgrenciCevabi.cs" />
     <Compile Include="Model\ResultList.cs" />
     <Compile Include="Model\ComboboxItem.cs" />
     <Compile Include="Program.cs" />
@@ -223,11 +250,26 @@
     <EmbeddedResource Include="FormKutukIslemleri.resx">
       <DependentUpon>FormKutukIslemleri.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormKutukKayit.resx">
+      <DependentUpon>FormKutukKayit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSonDegerlendirme.resx">
+      <DependentUpon>FormSonDegerlendirme.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormTxtOlustur.resx">
       <DependentUpon>FormTxtOlustur.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910091212517_sonDb.resx">
-      <DependentUpon>201910091212517_sonDb.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201911080818226_a.resx">
+      <DependentUpon>201911080818226_a.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911102243584_a1.resx">
+      <DependentUpon>201911102243584_a1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911110403105_ak.resx">
+      <DependentUpon>201911110403105_ak.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911120517486_os.resx">
+      <DependentUpon>201911120517486_os.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

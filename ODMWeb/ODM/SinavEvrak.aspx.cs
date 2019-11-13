@@ -16,10 +16,10 @@ namespace ODM
         {
             if (!IsPostBack)
             {
-                if (!Master.Yetki().Contains("Admin") && !Master.Yetki().Contains("OkulYetkilisi"))
+                if (!Master.Yetki().Contains("Root") && !Master.Yetki().Contains("Admin") && !Master.Yetki().Contains("OkulYetkilisi"))
                     Response.Redirect("Giris.aspx");
 
-                if (!Master.Yetki().Contains("Admin"))
+                if (!Master.Yetki().Contains("Root") && !Master.Yetki().Contains("Admin"))
                 {
                     tabliKayit.Visible = false;
                     tabliEvrakGelenler.Visible = false;
@@ -31,12 +31,10 @@ namespace ODM
                 lbKurumlar.DataTextField = "IlceveKurumAdi";
                 lbKurumlar.DataBind();
 
-                SinavlarDb snvDb = new SinavlarDb();
-                ddlSinavId2.DataSource = ddlSinavId.DataSource = snvDb.KayitlariGetir();
-                ddlSinavId2.DataValueField = ddlSinavId.DataValueField = "Id";
-                ddlSinavId2.DataTextField = ddlSinavId.DataTextField = "SinavAdi";
-                ddlSinavId.DataBind();
-                ddlSinavId.Items.Insert(0, new ListItem("Sınavı Seçiniz", ""));
+                CkSinavAdiDB snvDb = new CkSinavAdiDB();
+                ddlSinavId2.DataSource =  snvDb.KayitlariGetir();
+                ddlSinavId2.DataValueField = "SinavId";
+                ddlSinavId2.DataTextField =  "SinavAdi";
                 ddlSinavId2.DataBind();
                 ddlSinavId2.Items.Insert(0, new ListItem("Sınavı Seçiniz", ""));
 
@@ -49,16 +47,9 @@ namespace ODM
             KullanicilarDb kDb = new KullanicilarDb();
             KullanicilarInfo info = kDb.KayitBilgiGetir(Master.UyeId());
 
-            SinavEvrakDb veriDb = new SinavEvrakDb();
-            if (!Master.Yetki().Contains("Admin") && Master.Yetki().Contains("OkulYetkilisi"))
-                rptSinavEvraklari.DataSource = veriDb.KayitlariGetir(info.KurumKodu);
-            else rptSinavEvraklari.DataSource = veriDb.KayitlariGetir();
+            CkSinavEvrakDb veriDb = new CkSinavEvrakDb();
+            rptSinavEvraklari.DataSource = Master.Yetki().Contains("OkulYetkilisi") ? veriDb.KayitlariGetir(info.KurumKodu) : veriDb.KayitlariGetir();
             rptSinavEvraklari.DataBind();
-        }
-
-        protected void Button1_OnClick(object sender, EventArgs e)
-        {
-            Server.Transfer("/upload/ogr.xls", false);
         }
 
         protected void blnSecileniEkle_OnClick(object sender, EventArgs e)
@@ -101,7 +92,6 @@ namespace ODM
         protected void btnDosyaEkle_OnClick(object sender, EventArgs e)
         {
             int id = hfId.Value.ToInt32();
-            int sinavId = ddlSinavId.SelectedValue.ToInt32();
             string dosya = "";
             if (fuFoto.HasFile)
             {
@@ -110,18 +100,18 @@ namespace ODM
                 if (uzanti != null)
                 {
                     //Dizin yoksa
-                    if (!DizinIslemleri.DizinKontrol(Server.MapPath("/upload/" + sinavId + "/")))
-                        Directory.CreateDirectory(Server.MapPath("/upload/" + sinavId + "/"));
+                    if (!DizinIslemleri.DizinKontrol(Server.MapPath("/upload/SinavEvrak/")))
+                        Directory.CreateDirectory(Server.MapPath("/upload/SinavEvrak/"));
 
                     uzanti = uzanti.ToLower();
                     string rastgeleMetin = GenelIslemler.RastgeleMetinUret(8);
                     if (GenelIslemler.YuklenecekDosyalar.Contains(uzanti))
                     {
                         dosyaAdi = string.Format("{0}{1}", rastgeleMetin, uzanti);
-                        string dosyaYolu = string.Format(@"{0}upload\{1}\{2}", HttpContext.Current.Server.MapPath("/"), sinavId, dosyaAdi);
+                        string dosyaYolu = string.Format(@"{0}upload\SinavEvrak\{1}", HttpContext.Current.Server.MapPath("/"), dosyaAdi);
                         File.WriteAllBytes(dosyaYolu, fuFoto.FileBytes);
 
-                        dosya = string.Format(@"/upload/{0}/{1}", sinavId, dosyaAdi);
+                        dosya = string.Format(@"/upload/SinavEvrak/{0}", dosyaAdi);
                     }
                     else
                     {
@@ -130,6 +120,7 @@ namespace ODM
                 }
             }
 
+            string sinavAdi = txtSinavAdi.Text;
             string url = string.IsNullOrEmpty(txtUrl.Text) ? dosya : txtUrl.Text;
             string kurumlar = "|";
             for (int a = 0; a < lbSecilenler.Items.Count; a++)
@@ -139,10 +130,10 @@ namespace ODM
             DateTime baslangicTarihi = txtBaslangicTarihi.Text.ToDateTime();
             DateTime bitisTarihi = txtBitisTarihi.Text.ToDateTime();
 
-            SinavEvrakDb veriDb = new SinavEvrakDb();
-            SinavEvrakInfo info = new SinavEvrakInfo
+            CkSinavEvrakDb veriDb = new CkSinavEvrakDb();
+            CkSinavEvrakInfo info = new CkSinavEvrakInfo
             {
-                SinavId = sinavId,
+                SinavAdi = sinavAdi,
                 BitisTarihi = bitisTarihi,
                 BaslangicTarihi = baslangicTarihi,
                 Kurumlar = kurumlar,
@@ -195,7 +186,7 @@ namespace ODM
 
                 LinkButton lnkDuzenle = (LinkButton)e.Item.FindControl("lnkDuzenle");
                 LinkButton lnkSil = (LinkButton)e.Item.FindControl("lnkSil");
-                if (!Master.Yetki().Contains("Admin|"))
+                if (!Master.Yetki().Contains("Root|")&&!Master.Yetki().Contains("Admin|"))
                 {
                     lnkDuzenle.Visible = lnkSil.Visible = false;
 
@@ -216,8 +207,8 @@ namespace ODM
             lbSecilenler.Items.Clear();
 
             int id = e.CommandArgument.ToInt32();
-            SinavEvrakDb veriDb = new SinavEvrakDb();
-            SinavEvrakInfo info = veriDb.KayitBilgiGetir(id);
+            CkSinavEvrakDb veriDb = new CkSinavEvrakDb();
+            CkSinavEvrakInfo info = veriDb.KayitBilgiGetir(id);
             if (e.CommandName.Equals("Sil"))
             {
                 try
@@ -247,7 +238,7 @@ namespace ODM
                 txtBitisTarihi.Text = info.BitisTarihi.ToString(CultureInfo.CurrentCulture);
                 txtBaslangicTarihi.Text = info.BaslangicTarihi.ToString(CultureInfo.CurrentCulture);
                 txtUrl.Text = info.Url;
-                ddlSinavId.SelectedValue = info.SinavId.ToString();
+                txtSinavAdi.Text = info.SinavAdi;
 
 
                 string[] kategoriler = info.Kurumlar.Split('|');
@@ -289,8 +280,8 @@ namespace ODM
                 if (uzanti != null)
                 {
                     //Dizin yoksa
-                    if (!DizinIslemleri.DizinKontrol(Server.MapPath("/upload/gelenevrak/" + sinavId + "/")))
-                        Directory.CreateDirectory(Server.MapPath("/upload/gelenevrak/" + sinavId + "/"));
+                    if (!DizinIslemleri.DizinKontrol(Server.MapPath("/upload/gelenevrak/")))
+                        Directory.CreateDirectory(Server.MapPath("/upload/gelenevrak/"));
 
                     uzanti = uzanti.ToLower();
                     string rastgeleMetin = GenelIslemler.RastgeleMetinUret(8);

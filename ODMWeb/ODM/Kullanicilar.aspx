@@ -36,47 +36,62 @@
                                         <div class="col-md-2">
                                             <asp:DropDownList runat="server" CssClass="form-control" ID="ddlBranslar" ValidationGroup="form2"></asp:DropDownList>
                                         </div>
+                                        
+                                        <div class="col-md-2">
+                                            <asp:DropDownList runat="server" CssClass="form-control" ID="ddlYetki" ValidationGroup="form2">
+                                                <asp:ListItem Value="" Text="Yetki Seçiniz"></asp:ListItem>
+                                                <asp:ListItem Value="Root" Text="Administrotor"></asp:ListItem>
+                                                <asp:ListItem Value="Admin" Text="ÖDM Ekibi"></asp:ListItem>
+                                                <asp:ListItem Value="IlceMEMYetkilisi" Text="İlçe MEM"></asp:ListItem>
+                                                <asp:ListItem Value="OkulYetkilisi" Text="Okul - Kurum"></asp:ListItem>
+                                                <asp:ListItem Value="Ogretmen" Text="Öğretmen"></asp:ListItem>
+                                                <asp:ListItem Value="UstDegerlendirici" Text="Üst Değerlendirici"></asp:ListItem>
+                                                <asp:ListItem Value="LgsYazari" Text="Soru Yazarı (LGS)"></asp:ListItem>
+                                                <asp:ListItem Value="LgsIlKomisyonu" Text="LGS İl Komisyon Üyesi"></asp:ListItem>
+                                                <asp:ListItem Value="SoruYazari" Text="Soru Yazarı"></asp:ListItem>
+                                            </asp:DropDownList>
+                                        </div>
                                         <div class="col-md-2">
                                             <asp:Button ID="btnListele" CssClass="btn btn-primary" runat="server" ValidationGroup="form2" Text="Listele" OnClick="btnListele_OnClick" />
                                         </div>
                                     </div>
                                     <div class="box-body">
-                                              <div class="box box-warning">
-                                                    <table class="table table-bordered table-hover dataTable" role="grid">
-                                                        <thead>
-                                                            <tr role="row">
-                                                                <th>#</th>
-                                                                <th>Adı Soyadı</th>
-                                                                <th>Kurumu</th>
-                                                                <th>Branşı</th>
-                                                                <th>Önceki Giris</th>
-                                                                <th>Son Giris</th>
-                                                                <th>İşlem</th>
+                                        <div class="box box-warning">
+                                            <table class="table table-bordered table-hover dataTable" role="grid">
+                                                <thead>
+                                                    <tr role="row">
+                                                        <th>#</th>
+                                                        <th>Adı Soyadı</th>
+                                                        <th>Kurumu</th>
+                                                        <th>Branşı</th>
+                                                        <th>Önceki Giris</th>
+                                                        <th>Son Giris</th>
+                                                        <th>İşlem</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <asp:Repeater ID="rptKullanicilar" runat="server" OnItemCommand="rptKullanicilar_ItemCommand" OnItemDataBound="rptKullanicilar_OnItemDataBound">
+                                                        <ItemTemplate>
+                                                            <tr role="row" class="odd">
+                                                                <td><%#Eval("Id") %></td>
+                                                                <td><%#Eval("AdiSoyadi") %></td>
+                                                                <td>
+                                                                    <asp:Literal ID="ltrKurumAdi" runat="server"></asp:Literal></td>
+                                                                <td>
+                                                                    <asp:Literal ID="ltrBransi" runat="server"></asp:Literal></td>
+                                                                <td><%#Eval("OncekiGiris").ToDateTime().TarihYaz() %></td>
+                                                                <td><%#Eval("SonGiris").ToDateTime().TarihYaz() %></td>
+                                                                <td>
+                                                                    <asp:LinkButton ID="lnkDuzenle" runat="server" CommandName="Duzenle" CommandArgument='<%#Eval("Id") %>'><i class="glyphicon glyphicon-edit"></i></asp:LinkButton>
+                                                                    <asp:LinkButton ID="lnkSil" runat="server" CommandName="Sil" OnClientClick="return confirm('Silmek istediğinizden emin misiniz?');" CommandArgument='<%#Eval("Id") %>'><i class="glyphicon glyphicon-trash"></i></asp:LinkButton>
+                                                                </td>
                                                             </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <asp:Repeater ID="rptKullanicilar" runat="server" OnItemCommand="rptKullanicilar_ItemCommand" OnItemDataBound="rptKullanicilar_OnItemDataBound">
-                                                                <ItemTemplate>
-                                                                    <tr role="row" class="odd">
-                                                                        <td><%#Eval("Id") %></td>
-                                                                        <td><%#Eval("AdiSoyadi") %></td>
-                                                                        <td>
-                                                                            <asp:Literal ID="ltrKurumAdi" runat="server"></asp:Literal></td>
-                                                                        <td>
-                                                                            <asp:Literal ID="ltrBransi" runat="server"></asp:Literal></td>
-                                                                        <td><%#Eval("OncekiGiris").ToDateTime().TarihYaz() %></td>
-                                                                        <td><%#Eval("SonGiris").ToDateTime().TarihYaz() %></td>
-                                                                        <td>
-                                                                            <asp:LinkButton ID="lnkDuzenle" runat="server" CommandName="Duzenle" CommandArgument='<%#Eval("Id") %>'><i class="glyphicon glyphicon-edit"></i></asp:LinkButton>
-                                                                            <asp:LinkButton ID="lnkSil" runat="server" CommandName="Sil" OnClientClick="return confirm('Silmek istediğinizden emin misiniz?');" CommandArgument='<%#Eval("Id") %>'><i class="glyphicon glyphicon-trash"></i></asp:LinkButton>
-                                                                        </td>
-                                                                    </tr>
-                                                                </ItemTemplate>
-                                                            </asp:Repeater>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                        </ItemTemplate>
+                                                    </asp:Repeater>
+                                                </tbody>
+                                            </table>
                                         </div>
+                                    </div>
 
                                 </div>
                                 <div class="tab-pane" id="Kayit" runat="server">
@@ -97,7 +112,8 @@
                                                                 <div class="col-sm-8">
                                                                     <asp:TextBox ID="txtTcKimlik" AutoCompleteType="Enabled" CssClass="form-control" runat="server" placeholder="Tc Kimlik No" ValidationGroup="form"></asp:TextBox>
                                                                 </div>
-                                                            </div> <div class="form-group">
+                                                            </div>
+                                                            <div class="form-group">
                                                                 <label class="col-sm-4 control-label">Şifre</label>
                                                                 <div class="col-sm-8">
                                                                     <asp:TextBox ID="txtSifre" AutoCompleteType="Enabled" CssClass="form-control" TextMode="Password" runat="server" placeholder="Şifre"></asp:TextBox>
@@ -122,7 +138,7 @@
                                                             <div class="form-group">
                                                                 <label class="col-sm-4 control-label">
                                                                     E-mail Adresi
-                                                                  </label>
+                                                                </label>
                                                                 <div class="col-sm-8">
                                                                     <asp:TextBox ID="txtEpostaAdresi" CssClass="form-control" runat="server" placeholder="E-posta Adresi" ValidationGroup="form"></asp:TextBox>
                                                                 </div>
@@ -133,7 +149,7 @@
                                                                     <asp:TextBox runat="server" CssClass="form-control" ID="txtCepTlf" data-inputmask='"mask": "(999) 999-99-99"' data-mask="" ValidationGroup="form" placeholder="Cep Telefonu"></asp:TextBox>
                                                                 </div>
                                                             </div>
-                                                           
+
                                                             <div class="form-group">
                                                                 <label class="col-sm-4 control-label">
                                                                     İlçe
@@ -165,7 +181,6 @@
                                                                             <asp:CheckBox ID="cbLgsYazari" runat="server" Text="Soru Yazarı (LGS)" /><br />
                                                                             <asp:CheckBox ID="cbLgsIlKomisyonu" runat="server" Text="LGS İl Komisyon Üyesi" /><br />
                                                                             <asp:CheckBox ID="cbSoruYazari" runat="server" Text="Soru Yazarı" /><br />
-                                                                            <asp:CheckBox ID="cbPuanlayici" runat="server" Text="Abide Puanlayıcı" /><br />
                                                                         </ContentTemplate>
                                                                     </asp:UpdatePanel>
                                                                 </div>

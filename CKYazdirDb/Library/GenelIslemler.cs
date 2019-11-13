@@ -113,6 +113,19 @@ namespace ODM.CKYazdirDb.Library
                 return 0;
             }
         }
+        public static long ToInt64(this object sayi)
+        {
+            try
+            {
+                if (sayi == null) throw new Exception();
+                long x = Convert.ToInt64(sayi);
+                return x;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
         public static String RastgeleSayiUret(int adet)
         {
             Random random = new Random();

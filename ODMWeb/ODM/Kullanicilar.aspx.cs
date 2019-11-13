@@ -46,9 +46,10 @@ namespace ODM
                 int ilce = ddlIlceler.SelectedValue.ToInt32();
                 int brans = ddlBranslar.SelectedValue.ToInt32();
                 string kurumlar = ddlKurumlar.SelectedValue;
+                string yetki = ddlYetki.SelectedValue;
 
                 KullanicilarDb veriDb = new KullanicilarDb();
-                rptKullanicilar.DataSource = veriDb.KayitlariGetir(ilce, kurumlar, brans);
+                rptKullanicilar.DataSource = veriDb.KayitlariGetir(ilce, kurumlar, brans,yetki);
                 rptKullanicilar.DataBind();
             }
             catch (Exception)
@@ -123,8 +124,6 @@ namespace ODM
                     cbLgsYazari.Checked = true;
                 if (info.Yetki.Contains("LgsIlKomisyonu"))
                     cbLgsIlKomisyonu.Checked = true;
-                if (info.Yetki.Contains("Puanlayici"))
-                    cbPuanlayici.Checked = true;
 
 
                 btnKaydet.Text = "Bilgileri Değiştir";
@@ -166,9 +165,7 @@ namespace ODM
                 yetki += "LgsYazari|";
             if (cbLgsIlKomisyonu.Checked)
                 yetki += "LgsIlKomisyonu|";
-            if (cbPuanlayici.Checked)
-                yetki += "Puanlayici|";
-
+           
             int ilce = ddlIlce.SelectedValue.ToInt32();
             int id = hfId.Value.ToInt32();
 

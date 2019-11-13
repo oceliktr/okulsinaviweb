@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -69,59 +70,227 @@ namespace ODM.CKYazdirDb
         {
             btnDegerlendir.Enabled = btnDataAc.Enabled = false;
 
+
+            bool mukerrer = false;
+            List<string> opakKontrol = new List<string>();
+            //Önce mükerrer opq var mı kontrol edelim
+
+            string dosya_yolu = Application.StartupPath + @"\mukerrer_opak_kontrol.txt";
+            FileStream fs = new FileStream(dosya_yolu, FileMode.OpenOrCreate, FileAccess.Write);
+            StreamWriter sw = new StreamWriter(fs);
+
+
+            sw.WriteLine("----------- MÜKERRER OLAN OPAK IDLER -----------");
+
             progressBar1.Maximum = lines.Length;
             progressBar1.Value = 0;
             int a = 0;
+
             foreach (string file in lines)
             {
-                //529#20649649#A#0#1#2#CBBBBBACACBABCBAACAB#2#CBBBBBACACBABCBAACAB
-                //SINAVKODU#OPAKNO/TC#KTUR#CTIP#KD#DERSID#CEVAPLAR#DERSID#CEVAPLAR
-
-                Dictionary<int, string> cvpDic = new Dictionary<int, string>();
-
-                string[] cevapBilgisi = file.Split('#');
-
-                int sinavId = cevapBilgisi[0].ToInt32();
-                int opaqId = cevapBilgisi[1].ToInt32();
-                string kitapcikTuru = cevapBilgisi[2];
-                int cevapTipi = cevapBilgisi[3].ToInt32(); //opaq 0 tc 1
-                int katilimDurumu = cevapBilgisi[4].ToInt32(); //KD: 0=KATILMADI  1=KATILDI
-
-                //5. bölümden sonra ders kodları ve cevaplar alınacak.
-                //Tüm cevapları Dictionary sınıfından bir diziye alalım.
-                for (int i = 5; i < cevapBilgisi.Length; i += 2)
-                {
-                    int dersKodu = cevapBilgisi[i].ToInt32();
-                    string cevaplar = cevapBilgisi[i + 1];
-                    cvpDic.Add(dersKodu, cevaplar);
-                }
-
-                //cevap sayısınca öğrenci adına kayıt yapalım
-                foreach (var c in cvpDic)
-                {
-                    CevapTxt cvp = new CevapTxt()
-                    {
-                        SinavId = sinavId,
-                        OpaqId = opaqId,
-                        BransId = c.Key,
-                        KitapcikTuru = kitapcikTuru,
-                        CevapTipi = cevapTipi,
-                        KatilimDurumu = katilimDurumu,
-                        Cevaplar = c.Value
-                    };
-                    cvpTxtManager.Insert(cvp);
-
-                }
-
                 a++;
                 progressBar1.Value = a;
-                lblBilgi.Text = a + " cevap okundu.";
+                string[] cevapBilgisi = file.Split('#');
+                string opaqId = cevapBilgisi[0].Trim();
+
+                int kontrol = opakKontrol.Count(x => x.Equals(opaqId));
+                if (kontrol != 0) //mükerrer değil
+                {
+                    sw.WriteLine(opaqId);
+
+                    mukerrer = true;
+                }
+
             }
-            Application.DoEvents();
-
             progressBar1.Value = 0;
-            btnDegerlendir.Enabled = btnDataAc.Enabled = true;
 
+
+            sw.Flush();
+            sw.Close();
+            fs.Close();
+
+            if (mukerrer)
+            {
+                Process.Start("explorer.exe", Path.GetFileName(dosya_yolu));
+
+                MessageBox.Show(opakKontrol.Count + " adet mükkerrer Opaq olduğu için değerlendirme yapılmadı.");
+            }
+
+            if (mukerrer == false)
+            {
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
+                int islemSayisi = lines.Length;
+                progressBar1.Maximum = islemSayisi;
+                progressBar1.Value = 0;
+                a = 0;
+                var rangePartitioner = System.Collections.Concurrent.Partitioner.Create(0, islemSayisi);
+
+                List<CevapTxt> cevapTxtsList = new List<CevapTxt>();
+
+                Parallel.ForEach(rangePartitioner, (range, loopState) =>
+                {
+                    // Loop over each range element without a delegate invocation.
+                    for (int i = range.Item1; i < range.Item2; i++)
+                    {
+                        try
+                        {
+                            toolSslKalanSure.Text = "(1/2) " + islemSayisi.KalanSureHesapla(a, watch);
+                        }
+                        catch (Exception)
+                        {
+                            toolSslKalanSure.Text = "Hesaplanıyor...";
+                        }
+                        //20649649#A#1#2#CBBBBBACACBABCBAACAB#2#CBBBBBACACBABCBAACAB
+                        //OPAKNO/TC#KTUR#KD#DERSID#CEVAPLAR#DERSID#CEVAPLAR
+
+                        Dictionary<int, string> cvpDic = new Dictionary<int, string>();
+
+                        string[] cevapBilgisi = lines[i].Split('#');
+
+                        string opaqStr = cevapBilgisi[0].Trim();
+                        long opaqId = opaqStr.ToInt64();
+                        string kitapcikTuru = cevapBilgisi[1].Trim();
+                        int katilimDurumu = cevapBilgisi[2].ToInt32(); //KD: 0=KATILMADI  1=KATILDI
+
+
+                        //bir seferliğine kod kasım 2019 için
+                        //Kutuk kutuk = kutukManager.List().FirstOrDefault(x => x.OpaqId == opaqId);
+                        //if (kutuk!=null)
+                        //{
+
+                        //5. bölümden sonra ders kodları ve cevaplar alınacak.
+                        //Tüm cevapları Dictionary sınıfından bir diziye alalım.
+                        for (int t = 3; t < cevapBilgisi.Length; t += 2)
+                        {
+                            //bir seferliğine kod kasım 2019 için
+                            int dersKodu = cevapBilgisi[t].ToInt32();
+                            //if (dersKodu == 3 && kutuk.Sinifi == 8)
+                            //    dersKodu = 5;
+                            //bir seferliğine kod kasım 2019 son
+
+                            string cevaplar = cevapBilgisi[t + 1];
+                            cvpDic.Add(dersKodu, cevaplar);
+                            Application.DoEvents();
+                        }
+
+                        //cevap sayısınca öğrenci adına kayıt yapalım
+                        foreach (var c in cvpDic)
+                        {
+                            cevapTxtsList.Add(new CevapTxt(opaqId, c.Key, kitapcikTuru, katilimDurumu, c.Value));
+
+                            Application.DoEvents();
+                        }
+                        Application.DoEvents();
+
+                        //}
+
+                        a++;
+                        progressBar1.Value = a;
+                        lblBilgi.Text = a + " cevap okundu.";
+                    }
+                });
+                islemSayisi = cevapTxtsList.Count;
+                progressBar1.Maximum = islemSayisi;
+                progressBar1.Value = 0;
+                a = 0;
+                foreach (var txt in cevapTxtsList)
+                {
+                    try
+                    {
+                        toolSslKalanSure.Text = "(2/2) " + islemSayisi.KalanSureHesapla(a, watch);
+                    }
+                    catch (Exception)
+                    {
+                        toolSslKalanSure.Text = "Hesaplanıyor...";
+                    }
+                    lblBilgi.Text = "Cevaplar kaydediliyor. " + a + " / " + cevapTxtsList.Count;
+                    a++;
+                    progressBar1.Value = a;
+                    CevapTxt cvp = new CevapTxt()
+                    {
+                        OpaqId = txt.OpaqId,
+                        BransId = txt.BransId,
+                        KitapcikTuru = txt.KitapcikTuru,
+                        KatilimDurumu = txt.KatilimDurumu,
+                        Cevaplar = txt.Cevaplar
+                    };
+                    cvpTxtManager.Insert(cvp);
+                }
+                //foreach (string file in lines)
+                //{
+                //    try
+                //    {
+                //        toolSslKalanSure.Text = islemSayisi.KalanSureHesapla(a, watch);
+                //    }
+                //    catch (Exception)
+                //    {
+                //        toolSslKalanSure.Text = "Hesaplanıyor...";
+                //    }
+                //    //529#20649649#A#0#1#2#CBBBBBACACBABCBAACAB#2#CBBBBBACACBABCBAACAB
+                //    //SINAVKODU#OPAKNO/TC#KTUR#CTIP#KD#DERSID#CEVAPLAR#DERSID#CEVAPLAR
+
+                //    Dictionary<int, string> cvpDic = new Dictionary<int, string>();
+
+                //    string[] cevapBilgisi = file.Split('#');
+
+                //    string opaqStr = cevapBilgisi[1].Trim();
+                //    // int sinavId = cevapBilgisi[0].Trim().ToInt32();
+                //    long opaqId = opaqStr.ToInt64();
+                //    string kitapcikTuru = cevapBilgisi[2].Trim();
+                //    int katilimDurumu = cevapBilgisi[3].ToInt32(); //KD: 0=KATILMADI  1=KATILDI
+
+
+                //    //bir seferliğine kod kasım 2019 için
+                //    //Kutuk kutuk = kutukManager.List().FirstOrDefault(x => x.OpaqId == opaqId);
+                //    //if (kutuk!=null)
+                //    //{
+
+                //    //5. bölümden sonra ders kodları ve cevaplar alınacak.
+                //    //Tüm cevapları Dictionary sınıfından bir diziye alalım.
+                //    for (int i = 4; i < cevapBilgisi.Length; i += 2)
+                //    {
+                //        //bir seferliğine kod kasım 2019 için
+                //        int dersKodu = cevapBilgisi[i].ToInt32();
+                //        //if (dersKodu == 3 && kutuk.Sinifi == 8)
+                //        //    dersKodu = 5;
+                //        //bir seferliğine kod kasım 2019 son
+
+                //        string cevaplar = cevapBilgisi[i + 1];
+                //        cvpDic.Add(dersKodu, cevaplar);
+                //    }
+
+                //    //cevap sayısınca öğrenci adına kayıt yapalım
+                //    foreach (var c in cvpDic)
+                //    {
+                //        CevapTxt cvp = new CevapTxt()
+                //        {
+                //            SinavId = 0,
+                //            OpaqId = opaqId,
+                //            BransId = c.Key,
+                //            KitapcikTuru = kitapcikTuru,
+                //            CevapTipi = 0,
+                //            KatilimDurumu = katilimDurumu,
+                //            Cevaplar = c.Value
+                //        };
+                //        cvpTxtManager.Insert(cvp);
+                //    }
+                //    Application.DoEvents();
+
+                //    //}
+
+                //    a++;
+                //    progressBar1.Value = a;
+                //    lblBilgi.Text = a + " cevap okundu.";
+                //}
+                Application.DoEvents();
+
+                progressBar1.Value = 0;
+
+                watch.Stop();
+                toolSslKalanSure.Text = "Tamamlandı...";
+            }
+            btnDegerlendir.Enabled = btnDataAc.Enabled = true;
         }
 
 
@@ -169,85 +338,95 @@ namespace ODM.CKYazdirDb
 
             List<ResultList> result = new List<ResultList>();
             var kutukList = kutukManager.List();
-            var cevapTxtlerList = cvpTxtManager.List();
-            var dogruCevaplarList = dogruCevaplarManager.List();
+            var cevapTxtlerList = cvpTxtManager.List().Where(x => x.BransId == 2 && x.KitapcikTuru == "A").ToList();
+            var dogruCevaplarList = dogruCevaplarManager.ListAsync();
 
 
-            if (cevapTxtlerList.Count == 0)
-                result.Add(new ResultList($"cvptxt", $"Öğrenci cevapları yüklenmemiş"));
-            else
-            {
+            //if (cevapTxtlerList.Count == 0)
+            //    result.Add(new ResultList($"cvptxt", $"Öğrenci cevapları yüklenmemiş"));
+            //else
+            //{
 
-                //Gerekli kayıtlar oluşturulmuş mu kontrol edelim.
-                foreach (var ctx in cevapTxtlerList)
-                {
+            //    int a = 0;
+            //    progressBar1.Value = 0;
+            //    progressBar1.Maximum = cevapTxtlerList.Count;
 
-                    Kutuk ogrenci = kutukList.Find(x => x.OpaqId == ctx.OpaqId);
-                    DogruCevap cevaplar = dogruCevaplarManager.Find(x => x.SinavId == ctx.SinavId && x.BransId == ctx.BransId);
-                    Kazanim kazanim = kazanimManager.Find(x => x.BransId == ctx.BransId);
+            //    ////Gerekli kayıtlar oluşturulmuş mu kontrol edelim.
+            //    //foreach (var ctx in cevapTxtlerList)
+            //    //{
+            //    //    a++;
+            //    //    progressBar1.Value = a;
 
-                    //* CevapTxt tablosundaki öğrenciler kütük tablosunda var mı?
-                    if (ogrenci == null)
-                    {
+            //    //    Kutuk ogrenci = kutukList.Find(x => x.OpaqId == ctx.OpaqId);
+            //    //    if (ogrenci!=null)
+            //    //    {
+            //    //        DogruCevap cevaplar = dogruCevaplarManager.Find(x => x.Sinif == ogrenci.Sinifi && x.BransId == ctx.BransId);
+            //    //        Kazanim kazanim = kazanimManager.Find(x => x.BransId == ctx.BransId);
 
-                        //Daha önce bu öğrenci için uyarı yapılmış mı?
-                        int query = result.Count(x => x.Key == $"ktk-{ctx.OpaqId}");
 
-                        if (query == 0)
-                            result.Add(new ResultList($"ktk-{ctx.OpaqId}", $"{ctx.OpaqId} nolu öğrenci bulunamadı."));
-                    }
+            //    //        // DoğruCevaplar tablosunu kontrol et doğru cevaplar yüklenmiş mi?
+            //    //        if (cevaplar == null)
+            //    //        {
+            //    //            //Daha önce bu branş için uyarı yapılmış mı?
+            //    //            int query = result.Count(x => x.Key == $"cvp-{ctx.BransId}");
 
-                    // DoğruCevaplar tablosunu kontrol et doğru cevaplar yüklenmiş mi?
-                    if (cevaplar == null)
-                    {
-                        //Daha önce bu branş için uyarı yapılmış mı?
-                        int query = result.Count(x => x.Key == $"cvp-{ctx.BransId}");
+            //    //            if (query == 0)
+            //    //                result.Add(new ResultList($"cvp-{ctx.BransId}", $"{ctx.BransId.DersAdi()} için doğru cevaplar bulunamadı."));
+            //    //        }
 
-                        if (query == 0)
-                            result.Add(new ResultList($"cvp-{ctx.BransId}", $"{ctx.BransId.DersAdi()} için doğru cevaplar bulunamadı."));
-                    }
+            //    //        //Kazanımlar tablosunu kontrol et kazanımlar ve ilişkili sorular yüklenmiş mi?
+            //    //        if (kazanim == null)
+            //    //        {
+            //    //            //Daha önce bu branş için uyarı yapılmış mı?
+            //    //            int query = result.Count(x => x.Key == $"kznm-{ctx.BransId}");
 
-                    //Kazanımlar tablosunu kontrol et kazanımlar ve ilişkili sorular yüklenmiş mi?
-                    if (kazanim == null)
-                    {
-                        //Daha önce bu branş için uyarı yapılmış mı?
-                        int query = result.Count(x => x.Key == $"kznm-{ctx.BransId}");
+            //    //            if (query == 0)
+            //    //                result.Add(new ResultList($"kznm-{ctx.BransId}", $"{ctx.BransId.DersAdi()} branşı kazanımları bulunamadı."));
+            //    //        }
+            //    //    }
+            //    //    //else
+            //    //    //{
+            //    //    //    //* CevapTxt tablosundaki öğrenciler kütük tablosunda var mı?
+            //    //    //    //Daha önce bu öğrenci için uyarı yapılmış mı?
+            //    //    //    int query = result.Count(x => x.Key == $"ktk-{ctx.OpaqId}");
 
-                        if (query == 0)
-                            result.Add(new ResultList($"kznm-{ctx.BransId}", $"{ctx.BransId.DersAdi()} branşı kazanımları bulunamadı."));
-                    }
+            //    //    //    if (query == 0)
+            //    //    //        result.Add(new ResultList($"ktk-{ctx.OpaqId}", $"{ctx.OpaqId} nolu öğrenci bulunamadı."));
+            //    //    //}
+            //    //}
 
-                }
-            }
+            //    progressBar1.Value = 0;
+            //}
 
-            if (result.Count > 0)
-            {
-                string uyariMesaji = "";
-                foreach (var r in result.OrderBy(x => x.Key))
-                {
-                    uyariMesaji += r.Result + "\n";
-                }
+            //if (result.Count > 0)
+            //{
+            //    string uyariMesaji = "";
+            //    foreach (var r in result.OrderBy(x => x.Key))
+            //    {
+            //        uyariMesaji += r.Result + "\n";
+            //    }
 
-                MessageBox.Show(uyariMesaji, "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //    MessageBox.Show(uyariMesaji, "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            }
-            else
-            {
-                //Gerekli (doğru cevaplar kazanımlar kütük bilgileri) kayıtlar oluşturulmuş ise kazanım sonuç tablosunu doldur
-                KarneSonuclariniIsle(result, cevapTxtlerList, kutukList, dogruCevaplarList);
+            //}
+            //else
+            //{
+            //Gerekli (doğru cevaplar kazanımlar kütük bilgileri) kayıtlar oluşturulmuş ise kazanım sonuç tablosunu doldur
+            KarneSonuclariniIsle(result, cevapTxtlerList, kutukList, dogruCevaplarList);
 
-                //karne sonuçları işlendikten sonra karneleri oluşturmaya başla
-                KarneOlusturmaOlayi();
-            }
+            //    //karne sonuçları işlendikten sonra karneleri oluşturmaya başla
+            //    KarneOlusturmaOlayi();
+            //}
 
             btnDegerlendir.Enabled = btnDataAc.Enabled = true;
         }
 
 
-        private void KarneSonuclariniIsle(List<ResultList> result, List<CevapTxt> cevapTxtlerList, List<Kutuk> kutukList, List<DogruCevap> dogruCevaplarList)
+
+        private void KarneSonuclariniIsle(List<ResultList> result, List<CevapTxt> cevapTxtlerList, List<Kutuk> kutukList, Task<List<DogruCevap>> dogruCevaplarList)
         {
             //Önce tüm eski kayıtları sil
-            karneSonucManager.TumunuSil();
+            //   karneSonucManager.TumunuSil();
             //Uyarılar için uyarı dizisini temizle
             result.Clear();
 
@@ -264,14 +443,26 @@ namespace ODM.CKYazdirDb
                  *
                  * Karne sonuçları tablosunda kontrol et. Kayıt varsa 1 artır yoksa yeni kayıt ekle
                  */
-
+                 Stopwatch watch = new Stopwatch();
+                 watch.Start();
             foreach (var cvp in cevapTxtlerList)
             {
                 a++;
                 progressBar1.Value = a;
                 lblBilgi.Text = $"{a}/{cevapTxtlerList.Count} kayıt değerlendirildi.";
+
+                try
+                {
+                    lblBilgi.Text = $"{a} / {cevapTxtlerList.Count} : " + cevapTxtlerList.Count.KalanSureHesapla(a, watch);
+                }
+                catch (Exception)
+                {
+                    lblBilgi.Text = "Hesaplanıyor...";
+                }
+
+
                 //Kütükte bilgilerini bul.
-                Kutuk kutuk = kutukList.FirstOrDefault(x => x.SinavId == cvp.SinavId && x.OpaqId == cvp.OpaqId);
+                Kutuk kutuk = kutukList.FirstOrDefault(x => x.OpaqId == cvp.OpaqId);
                 if (kutuk == null)
                 {
                     //Daha önce bu öğrenci için uyarı yapılmış mı?
@@ -285,8 +476,8 @@ namespace ODM.CKYazdirDb
                 {
                     // doğrucevaplar tablosundan kontrol et. doğru yanlış boş olarak al.
                     DogruCevap dogruCevap =
-                        dogruCevaplarList.FirstOrDefault(x =>
-                            x.SinavId == cvp.SinavId && x.BransId == cvp.BransId && x.KitapcikTuru == cvp.KitapcikTuru);
+                        dogruCevaplarList.Result.FirstOrDefault(x =>
+                            x.Sinif == kutuk.Sinifi && x.BransId == cvp.BransId && x.KitapcikTuru == cvp.KitapcikTuru);
 
                     if (dogruCevap == null)
                     {
@@ -310,8 +501,7 @@ namespace ODM.CKYazdirDb
                         {
                             int soruNo = i + 1;
                             KarneSonuc karneSonuc = karneSonucManager.Find(x =>
-                                x.SinavId == cvp.SinavId &&
-                                x.BransId == cvp.BransId &&
+                               x.BransId == cvp.BransId &&
                                 x.Ilce == kutuk.IlceAdi &&
                                 x.KurumKodu == kutuk.KurumKodu &&
                                 x.Sinif == kutuk.Sinifi &&
@@ -339,7 +529,6 @@ namespace ODM.CKYazdirDb
                                 //Yeni kayıt ekle
                                 KarneSonuc ks = new KarneSonuc()
                                 {
-                                    SinavId = cvp.SinavId,
                                     Ilce = kutuk.IlceAdi,
                                     BransId = cvp.BransId,
                                     KitapcikTuru = cvp.KitapcikTuru,
@@ -362,14 +551,22 @@ namespace ODM.CKYazdirDb
                                 karneSonucManager.Update(karneSonuc);
                             }
 
+                            GC.SuppressFinalize(karneSonucManager);
+                            if (karneSonuc != null)
+                                GC.SuppressFinalize(karneSonuc);
                             Application.DoEvents();
                         }
+
+
                     }
                 }
 
                 Application.DoEvents();
-            }
 
+                GC.SuppressFinalize(cvp);
+            }
+            watch.Stop();
+            
             progressBar1.Value = 0;
         }
         private void KarneOlusturmaOlayi()
@@ -430,7 +627,7 @@ namespace ODM.CKYazdirDb
                         string path = $@"{pathStart}\{ilce.Ilce} - {brans.BransId.DersAdi()} - {sinif.Sinif}. Sınıf Karnesi.pdf";
                         string sonSatirBaslik = $"{ilce.Ilce.ToUpper()} İLÇE KARNESİ";
                         KarneModel karneModel = KarneModeliOlustur(ilce.Ilce, sinif.Sinif, brans.BransId, ayar);
-                       
+
                         Document doc = new Document();
                         PdfWriter.GetInstance(doc, new FileStream(path, FileMode.Create));
                         doc.Open();
@@ -439,93 +636,93 @@ namespace ODM.CKYazdirDb
                         doc.Close();
                     }
 
-                    var okullar = karneSonucList.Where(x => x.Ilce == ilce.Ilce).GroupBy(x => x.KurumKodu).Select(x => x.First()).OrderBy(x => x.KurumKodu);
+                    //var okullar = karneSonucList.Where(x => x.Ilce == ilce.Ilce).GroupBy(x => x.KurumKodu).Select(x => x.First()).OrderBy(x => x.KurumKodu);
 
-                    foreach (var okul in okullar)
-                    {
-                        string okulAdi = kutukManager.Find(x => x.KurumKodu == okul.KurumKodu).KurumAdi;
-                        siniflar = karneSonucList.Where(x => x.KurumKodu == okul.KurumKodu).GroupBy(x => x.Sinif).Select(x => x.First()).OrderBy(x => x.Sinif).ToList();
-                        foreach (var sinif in siniflar)
-                        {
+                    //foreach (var okul in okullar)
+                    //{
+                    //    string okulAdi = kutukManager.Find(x => x.KurumKodu == okul.KurumKodu).KurumAdi;
+                    //    siniflar = karneSonucList.Where(x => x.KurumKodu == okul.KurumKodu).GroupBy(x => x.Sinif).Select(x => x.First()).OrderBy(x => x.Sinif).ToList();
+                    //    foreach (var sinif in siniflar)
+                    //    {
 
-                            //SINIF KARNESİ
-                            pathStart = $@"{seciliDizin}\Karneler\{ilce.Ilce.ToUrl().ToUpper()}\{okulAdi.ToUrl().ToUpper()}\";
-                            if (!DizinIslemleri.DizinKontrol(pathStart))
-                                DizinIslemleri.DizinOlustur(pathStart);
+                    //        //SINIF KARNESİ
+                    //        pathStart = $@"{seciliDizin}\Karneler\{ilce.Ilce.ToUrl().ToUpper()}\{okulAdi.ToUrl().ToUpper()}\";
+                    //        if (!DizinIslemleri.DizinKontrol(pathStart))
+                    //            DizinIslemleri.DizinOlustur(pathStart);
 
-                            lblBilgi.Text = $"{ilce.Ilce} ilçesi {okulAdi} {sinif.Sinif}. sınıf {brans.BransId.DersAdi()} dersi sınıf karnesi oluşturuluyor";
+                    //        lblBilgi.Text = $"{ilce.Ilce} ilçesi {okulAdi} {sinif.Sinif}. sınıf {brans.BransId.DersAdi()} dersi sınıf karnesi oluşturuluyor";
 
-                            string path = $@"{pathStart}\{brans.BransId.DersAdi()} - {sinif.Sinif}. Sınıf Karnesi.pdf";
-                            string sonSatirBaslik = $"{okulAdi.ToUpper()} {sinif.Sinif}. SINIF KARNESİ";
-                            KarneModel karneModel = KarneModeliOlustur(ilce.Ilce, okul.KurumKodu, okulAdi, sinif.Sinif, brans.BransId, ayar);
+                    //        string path = $@"{pathStart}\{brans.BransId.DersAdi()} - {sinif.Sinif}. Sınıf Karnesi.pdf";
+                    //        string sonSatirBaslik = $"{okulAdi.ToUpper()} {sinif.Sinif}. SINIF KARNESİ";
+                    //        KarneModel karneModel = KarneModeliOlustur(ilce.Ilce, okul.KurumKodu, okulAdi, sinif.Sinif, brans.BransId, ayar);
 
-                            Document doc = new Document();
-                            PdfWriter.GetInstance(doc, new FileStream(path, FileMode.Create));
-                            doc.Open();
+                    //        Document doc = new Document();
+                    //        PdfWriter.GetInstance(doc, new FileStream(path, FileMode.Create));
+                    //        doc.Open();
 
-                            PdfOlustur(doc, ayar, sinif, brans, KolonSayisi.Okul.ToInt32(), sonSatirBaslik, karneModel);
-                            doc.Close();
+                    //        PdfOlustur(doc, ayar, sinif, brans, KolonSayisi.Okul.ToInt32(), sonSatirBaslik, karneModel);
+                    //        doc.Close();
 
-                            var subeler = karneSonucList.Where(x => x.KurumKodu == okul.KurumKodu && x.Sinif == sinif.Sinif).GroupBy(x => x.Sube).Select(x => x.First()).OrderBy(x => x.Sube);
+                    //        var subeler = karneSonucList.Where(x => x.KurumKodu == okul.KurumKodu && x.Sinif == sinif.Sinif).GroupBy(x => x.Sube).Select(x => x.First()).OrderBy(x => x.Sube);
 
-                            foreach (var sube in subeler)
-                            {
-                                //ŞUBE KARNESİ
-                                lblBilgi.Text = $"{ilce.Ilce} ilçesi {okulAdi} {sinif.Sinif}-{sube.Sube} şubesi {brans.BransId.DersAdi()} dersi şube karnesi oluşturuluyor";
+                    //        foreach (var sube in subeler)
+                    //        {
+                    //            //ŞUBE KARNESİ
+                    //            lblBilgi.Text = $"{ilce.Ilce} ilçesi {okulAdi} {sinif.Sinif}-{sube.Sube} şubesi {brans.BransId.DersAdi()} dersi şube karnesi oluşturuluyor";
 
-                                sonSatirBaslik = $"{okulAdi.ToUpper()} {sinif.Sinif}-{sube.Sube} SINIFI ŞUBE KARNESİ";
-                                karneModel = KarneModeliOlustur(ilce.Ilce, okul.KurumKodu, okulAdi, sinif.Sinif, sube.Sube, brans.BransId, ayar);
+                    //            sonSatirBaslik = $"{okulAdi.ToUpper()} {sinif.Sinif}-{sube.Sube} SINIFI ŞUBE KARNESİ";
+                    //            karneModel = KarneModeliOlustur(ilce.Ilce, okul.KurumKodu, okulAdi, sinif.Sinif, sube.Sube, brans.BransId, ayar);
 
-                                //Her şube için branş bazında dsya oluştur.
-                                path = $@"{pathStart}\{brans.BransId.DersAdi()} - {sinif.Sinif}-{sube.Sube} Şube Karnesi.pdf";
-                                
-                                doc = new Document();
-                                PdfWriter.GetInstance(doc, new FileStream(path, FileMode.Create));
-                                doc.Open();
+                    //            //Her şube için branş bazında dsya oluştur.
+                    //            path = $@"{pathStart}\{brans.BransId.DersAdi()} - {sinif.Sinif}-{sube.Sube} Şube Karnesi.pdf";
 
-                                PdfOlustur(doc, ayar, sinif, brans, KolonSayisi.Sube.ToInt32(), sonSatirBaslik, karneModel);
+                    //            doc = new Document();
+                    //            PdfWriter.GetInstance(doc, new FileStream(path, FileMode.Create));
+                    //            doc.Open();
 
-                                //ÖĞRENCİ KARNESİ
+                    //            PdfOlustur(doc, ayar, sinif, brans, KolonSayisi.Sube.ToInt32(), sonSatirBaslik, karneModel);
 
-                                List<Kazanim> kazanimlar = kazanimManager.List(x => x.BransId == brans.BransId && x.Sinif == sinif.Sinif);
+                    //            //ÖĞRENCİ KARNESİ
 
-                                var ogrenciListesi = kutukManager.List(x => x.KurumKodu == okul.KurumKodu && x.Sinifi == sinif.Sinif && x.Sube == sube.Sube);
+                    //            List<Kazanim> kazanimlar = kazanimManager.List(x => x.BransId == brans.BransId && x.Sinif == sinif.Sinif);
 
-                                //Öğrenci varsa yeni sayfa ekle
-                                if (ogrenciListesi.Count > 0)
-                                    doc.NewPage();
+                    //            var ogrenciListesi = kutukManager.List(x => x.KurumKodu == okul.KurumKodu && x.Sinifi == sinif.Sinif && x.Sube == sube.Sube);
 
-                                for (var i = 0; i < ogrenciListesi.Count; i++)
-                                {
-                                    Kutuk kutuk = ogrenciListesi[i];
-                                    CevapTxt ogrCevap = cvpTxtManager.Find(x => x.BransId == brans.BransId && x.OpaqId == kutuk.OpaqId);
-                                    if (ogrCevap != null)
-                                    {
-                                        DogruCevap dogruCvplar = dogruCevaplarManager.Find(x =>
-                                            x.BransId == brans.BransId && x.KitapcikTuru == ogrCevap.KitapcikTuru);
+                    //            //Öğrenci varsa yeni sayfa ekle
+                    //            if (ogrenciListesi.Count > 0)
+                    //                doc.NewPage();
+
+                    //            for (var i = 0; i < ogrenciListesi.Count; i++)
+                    //            {
+                    //                Kutuk kutuk = ogrenciListesi[i];
+                    //                CevapTxt ogrCevap = cvpTxtManager.Find(x => x.BransId == brans.BransId && x.OpaqId == kutuk.OpaqId);
+                    //                if (ogrCevap != null)
+                    //                {
+                    //                    DogruCevap dogruCvplar = dogruCevaplarManager.Find(x =>
+                    //                        x.BransId == brans.BransId && x.KitapcikTuru == ogrCevap.KitapcikTuru);
 
 
-                                        lblBilgi.Text =
-                                            $"{brans.BransId.DersAdi()} - {kutuk.Adi} {kutuk.Soyadi} karnesi hazırlanıyor";
+                    //                    lblBilgi.Text =
+                    //                        $"{brans.BransId.DersAdi()} - {kutuk.Adi} {kutuk.Soyadi} karnesi hazırlanıyor";
 
-                                        PdfOlustur(doc, ayar, brans.BransId.DersAdi(), kutuk, ogrCevap,dogruCvplar, kazanimlar);
+                    //                    PdfOlustur(doc, ayar, brans.BransId.DersAdi(), kutuk, ogrCevap, dogruCvplar, kazanimlar);
 
-                                        Application.DoEvents();
-                                    }
+                    //                    Application.DoEvents();
+                    //                }
 
-                                    //son kayıt değil ise yeni sayfa ekle ve döngüye devam et.
-                                    if (ogrenciListesi.Count > i)
-                                        doc.NewPage();
-                                }
+                    //                //son kayıt değil ise yeni sayfa ekle ve döngüye devam et.
+                    //                if (ogrenciListesi.Count > i)
+                    //                    doc.NewPage();
+                    //            }
 
-                                doc.Close();
+                    //            doc.Close();
 
-                                Application.DoEvents();
-                            }
-                            Application.DoEvents();
-                        }
-                        Application.DoEvents();
-                    }
+                    //            Application.DoEvents();
+                    //        }
+                    //        Application.DoEvents();
+                    //    }
+                    //    Application.DoEvents();
+                    //}
                     Application.DoEvents();
                 }
                 Application.DoEvents();
@@ -773,7 +970,7 @@ namespace ODM.CKYazdirDb
         /// <param name="karneModel"></param>
         private void PdfOlustur(Document doc, Ayarlar ayar, KarneSonuc sinif, KarneSonuc brans, int column, string sonSatirBaslik, KarneModel karneModel)
         {
-            
+
             PdfIslemleri pdf = new PdfIslemleri();
 
             #region Başlık
@@ -1364,6 +1561,11 @@ namespace ODM.CKYazdirDb
 
             //background nesnesi sağlıklı çalışması için gerekli. 
             CheckForIllegalCrossThreadCalls = false;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            karneSonucManager.TumunuSil();
         }
     }
 }

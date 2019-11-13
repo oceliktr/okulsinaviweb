@@ -91,6 +91,24 @@ public class CkKarneSonuclariDB
         }
         return karne;
     }
+    public List<CkKarneSonuclariInfo> KayitlariDizeGetir(int sinavId)
+    {
+        string sql = "select * from ckkarnesonuclari where SinavId=?SinavId";
+        MySqlParameter[] p =
+        {
+            new MySqlParameter("?SinavId", MySqlDbType.Int32)
+        };
+        p[0].Value = sinavId;
+
+        DataTable dt = helper.ExecuteDataSet(sql, p).Tables[0];
+        List<CkKarneSonuclariInfo> karne = new List<CkKarneSonuclariInfo>();
+        foreach (DataRow k in dt.Rows)
+        {
+            karne.Add(new CkKarneSonuclariInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["BransId"]), k["Ilce"].ToString(),
+                Convert.ToInt32(k["KurumKodu"]), Convert.ToInt32(k["Sinif"]), k["Sube"].ToString(), k["KitapcikTuru"].ToString(), Convert.ToInt32(k["SoruNo"]), Convert.ToInt32(k["Dogru"]), Convert.ToInt32(k["Yanlis"]), Convert.ToInt32(k["Bos"])));
+        }
+        return karne;
+    }
     public CkKarneSonuclariInfo KayitBilgiGetir(string cmdText, params MySqlParameter[] param)
     {
         MySqlDataReader dr = helper.ExecuteReader(cmdText, param);

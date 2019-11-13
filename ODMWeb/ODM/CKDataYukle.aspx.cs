@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI.WebControls;
 using DAL;
+using DAL.CkKarne;
 
 namespace ODM
 {
@@ -50,29 +51,9 @@ namespace ODM
                         {
                             //her satırı tek tek böl
                             string[] bol = line.Split('|');
-                            if (bol[0] == "{Kutuk}")
-                            {
-                                CkKarneKutukDB kutukDb = new CkKarneKutukDB();
-                                //OpaqId +  IlAdi +  IlceAdi +  KurumKodu + KurumAdi +  OgrenciNo +  Adi +  Soyadi +  Sinifi +  Sube +  SinavId +  DersKodu
-                                CkKarneKutukInfo kutukInfo = new CkKarneKutukInfo()
-                                {
-                                    OpaqId = bol[1].ToInt32(),
-                                    IlAdi = bol[2],
-                                    IlceAdi = bol[3],
-                                    KurumKodu = bol[4].ToInt32(),
-                                    KurumAdi = bol[5],
-                                    OgrenciNo = bol[6].ToInt32(),
-                                    Adi = bol[7],
-                                    Soyadi = bol[8],
-                                    Sinifi = bol[9].ToInt32(),
-                                    Sube = bol[10],
-                                    SinavId = bol[11].ToInt32(),
-                                    DersKodu = bol[12].ToInt32()
-                                };
-                                kutukDb.KayitEkle(kutukInfo);
-                            }
+                            
                             if (bol[0] == "{SinavAdi}")
-                            { 
+                            {
                                 CkSinavAdiDB snvDb = new CkSinavAdiDB();
                                 CkSinavAdiInfo snvInfo = new CkSinavAdiInfo()
                                 {
@@ -88,48 +69,14 @@ namespace ODM
                                 CkKarneDogruCevaplarInfo dcInfo = new CkKarneDogruCevaplarInfo()
                                 {
                                     SinavId = bol[1].ToInt32(),
-                                    BransId = bol[2].ToInt32(),
-                                    KitapcikTuru = bol[3],
-                                    Cevaplar = bol[4]
+                                    Sinif = bol[2].ToInt32(),
+                                    BransId = bol[3].ToInt32(),
+                                    KitapcikTuru = bol[4],
+                                    Cevaplar = bol[5]
                                 };
                                 dcDb.KayitEkle(dcInfo);
                             }
-                            if (bol[0] == "{OgrenciCevaplari}")
-                            {
-                                //ogrCvp.OpaqId + "|" + ogrCvp.SinavId + "|" + ogrCvp.KitapcikTuru + "|" + ogrCvp.CevapTipi + "|" + ogrCvp.KatilimDurumu + "|" + ogrCvp.Cevaplar + "|" + ogrCvp.BransId
-                                CkKarneCevapTxtDB cvpTxtDb= new CkKarneCevapTxtDB();
-                                CkKarneCevapTxtInfo ctInfo = new CkKarneCevapTxtInfo()
-                                {
-                                    OpaqId = bol[1].ToInt32(),
-                                    SinavId = bol[2].ToInt32(),
-                                    KitapcikTuru = bol[3],
-                                    CevapTipi = bol[4].ToInt32(),
-                                    KatilimDurumu = bol[5].ToInt32(),
-                                    Cevaplar = bol[6],
-                                    BransId = bol[7].ToInt32()
-                                };
-                                cvpTxtDb.KayitEkle(ctInfo);
-                            }
-                            if (bol[0] == "{KarneSonuclari}")
-                            {
-                                //sonuc.SinavId + "|" + sonuc.BransId + "|" + sonuc.Ilce + "|" + sonuc.KurumKodu + "|" + sonuc.Sinif + "|" + sonuc.Sube + "|" + sonuc.KitapcikTuru + "|" + sonuc.SoruNo + "|" + sonuc.Dogru + "|" + sonuc.Yanlis + "|" + sonuc.Bos
-                                CkKarneSonuclariDB cvpTxtDb = new CkKarneSonuclariDB();
-                                CkKarneSonuclariInfo ctInfo = new CkKarneSonuclariInfo()
-                                {
-                                    SinavId = bol[1].ToInt32(),
-                                    BransId = bol[2].ToInt32(),
-                                    Ilce = bol[3],
-                                    KurumKodu = bol[4].ToInt32(),
-                                    Sinif = bol[5].ToInt32(),
-                                    Sube = bol[6],
-                                    KitapcikTuru = bol[7],
-                                    SoruNo = bol[8].ToInt32(),
-                                    Dogru = bol[9].ToInt32(),
-                                    Yanlis = bol[10].ToInt32(),
-                                    Bos = bol[11].ToInt32()
-                                };
-                                cvpTxtDb.KayitEkle(ctInfo);
-                            }
+                           
                             if (bol[0] == "{Branslar}")
                             {
                                 //brans.Id + "|" + brans.BransAdi
@@ -170,16 +117,188 @@ namespace ODM
                 }
             }
 
-            //    lblBilgi.Text = Server.MapPath(dosyaAdi);
-            //    StreamReader sr = File.OpenText(Server.MapPath(dosyaAdi));
-            //    string strContents = sr.ReadToEnd();
-            //    To display normal raw contents
-            //Response.Write(strContents);
+           }
 
-            //    To handle Carriage returns
-            //Response.Write(strContents.Replace("\n", "<br>"));
+        protected void btnKutuk_OnClick(object sender, EventArgs e)
+        {
+            if (fuFileKutuk.HasFile)
+            {
+                string dosyaAdi = Server.HtmlEncode(fuFileKutuk.FileName);
+                string uzanti = Path.GetExtension(dosyaAdi);
+                if (uzanti != null)
+                {
+                    //Dizin yoksa
+                    if (!DizinIslemleri.DizinKontrol(Server.MapPath("/upload/ckveri/")))
+                        Directory.CreateDirectory(Server.MapPath("/upload/ckveri/"));
 
-            //    sr.Close();
+                    uzanti = uzanti.ToLower();
+                    string rastgeleMetin = GenelIslemler.RastgeleMetinUret(8);
+                    if (uzanti == ".ck")
+                    {
+                        dosyaAdi = string.Format("{0}_{1}{2}", dosyaAdi.ToUrl(), rastgeleMetin, uzanti);
+                        string dosyaYolu = string.Format(@"{0}upload\ckveri\{1}", HttpContext.Current.Server.MapPath("/"), dosyaAdi);
+                        File.WriteAllBytes(dosyaYolu, fuFileKutuk.FileBytes);
+
+                        string dosya = string.Format(@"/upload/ckveri/{0}", dosyaAdi);
+
+                        string[] lines = File.ReadAllLines(Server.MapPath(dosya));
+
+                        foreach (string line in lines)
+                        {
+                            //her satırı tek tek böl
+                            string[] bol = line.Split('|');
+                            if (bol[0] == "{Kutuk}")
+                            {
+                                CkKarneKutukDB kutukDb = new CkKarneKutukDB();
+                                //OpaqId +  IlAdi +  IlceAdi +  KurumKodu + KurumAdi +  OgrenciNo +  Adi +  Soyadi +  Sinifi +  Sube +  SinavId +  DersKodu
+                                CkKarneKutukInfo kutukInfo = new CkKarneKutukInfo()
+                                {
+                                    OpaqId = bol[1].ToInt32(),
+                                    IlAdi = bol[2],
+                                    IlceAdi = bol[3],
+                                    KurumKodu = bol[4].ToInt32(),
+                                    KurumAdi = bol[5],
+                                    OgrenciNo = bol[6].ToInt32(),
+                                    Adi = bol[7],
+                                    Soyadi = bol[8],
+                                    Sinifi = bol[9].ToInt32(),
+                                    Sube = bol[10],
+                                    SinavId = bol[11].ToInt32(),
+                                    DersKodu = bol[12].ToInt32()
+                                };
+                                kutukDb.KayitEkle(kutukInfo);
+                            }
+                        }
+                        Master.UyariIslemTamam("Dosya başarıya yüklendi.", phUyari);
+                    }
+                    else
+                    {
+                        Master.UyariKirmizi("Lütfen CK Yazdır uygulamasıyla oluşturulan dosyayı yükleyiniz.", phUyari);
+                    }
+                }
+            }
+        }
+
+        protected void btnOgrCevap_OnClick(object sender, EventArgs e)
+        {
+            if (fuFileOc.HasFile)
+            {
+                string dosyaAdi = Server.HtmlEncode(fuFileOc.FileName);
+                string uzanti = Path.GetExtension(dosyaAdi);
+                if (uzanti != null)
+                {
+                    //Dizin yoksa
+                    if (!DizinIslemleri.DizinKontrol(Server.MapPath("/upload/ckveri/")))
+                        Directory.CreateDirectory(Server.MapPath("/upload/ckveri/"));
+
+                    uzanti = uzanti.ToLower();
+                    string rastgeleMetin = GenelIslemler.RastgeleMetinUret(8);
+                    if (uzanti == ".ck")
+                    {
+                        dosyaAdi = string.Format("{0}_{1}{2}", dosyaAdi.ToUrl(), rastgeleMetin, uzanti);
+                        string dosyaYolu = string.Format(@"{0}upload\ckveri\{1}", HttpContext.Current.Server.MapPath("/"), dosyaAdi);
+                        File.WriteAllBytes(dosyaYolu, fuFileOc.FileBytes);
+
+                        string dosya = string.Format(@"/upload/ckveri/{0}", dosyaAdi);
+
+                        string[] lines = File.ReadAllLines(Server.MapPath(dosya));
+
+                        foreach (string line in lines)
+                        {
+                            //her satırı tek tek böl
+                            string[] bol = line.Split('|');
+                            if (bol[0] == "{OgrenciCevaplari}")
+                            {
+                                // sinavId + "|" + oc.OpaqId + "|" + oc.Ilce + "|" + oc.KurumKodu + "|" + oc.Sinif + "|" + oc.Sube + "|" + oc.KitapcikTuru + "|" + oc.KatilimDurumu + "|" + oc.Cevaplar);
+                                CkKarneOgrenciCevaplariDB cvpTxtDb = new CkKarneOgrenciCevaplariDB();
+                                CkKarneOgrenciCevaplariInfo ctInfo = new CkKarneOgrenciCevaplariInfo()
+                                {
+                                    SinavId = bol[1].ToInt32(),
+                                    OpaqId = bol[2].ToInt64(),
+                                    Ilce = bol[3],
+                                    KurumKodu = bol[4].ToInt32(),
+                                    Sinif = bol[5].ToInt32(),
+                                    Sube = bol[6],
+                                    KitapcikTuru = bol[7],
+                                    KatilimDurumu = bol[8],
+                                    Cevaplar = bol[9]
+                                };
+                                cvpTxtDb.KayitEkle(ctInfo);
+                            }
+                        }
+
+                        Master.UyariIslemTamam("Dosya başarıya yüklendi.", phUyari);
+                    }
+                    else
+                    {
+                        Master.UyariKirmizi("Lütfen CK Yazdır uygulamasıyla oluşturulan dosyayı yükleyiniz.", phUyari);
+                    }
+                }
+            }
+
+        }
+
+        protected void btnKarneSonuc_OnClick(object sender, EventArgs e)
+        {
+            if (fuFileKarneSonuc.HasFile)
+            {
+                string dosyaAdi = Server.HtmlEncode(fuFileKarneSonuc.FileName);
+                string uzanti = Path.GetExtension(dosyaAdi);
+                if (uzanti != null)
+                {
+                    //Dizin yoksa
+                    if (!DizinIslemleri.DizinKontrol(Server.MapPath("/upload/ckveri/")))
+                        Directory.CreateDirectory(Server.MapPath("/upload/ckveri/"));
+
+                    uzanti = uzanti.ToLower();
+                    string rastgeleMetin = GenelIslemler.RastgeleMetinUret(8);
+                    if (uzanti == ".ck")
+                    {
+                        dosyaAdi = string.Format("{0}_{1}{2}", dosyaAdi.ToUrl(), rastgeleMetin, uzanti);
+                        string dosyaYolu = string.Format(@"{0}upload\ckveri\{1}", HttpContext.Current.Server.MapPath("/"), dosyaAdi);
+                        File.WriteAllBytes(dosyaYolu, fuFileKarneSonuc.FileBytes);
+
+                        string dosya = string.Format(@"/upload/ckveri/{0}", dosyaAdi);
+
+                        string[] lines = File.ReadAllLines(Server.MapPath(dosya));
+
+                        foreach (string line in lines)
+                        {
+                            //her satırı tek tek böl
+                            string[] bol = line.Split('|');
+
+                            if (bol[0] == "{KarneSonuclari}")
+                            {
+                                //sonuc.SinavId + "|" + sonuc.BransId + "|" + sonuc.Ilce + "|" + sonuc.KurumKodu + "|" + sonuc.Sinif + "|" + sonuc.Sube + "|" + sonuc.KitapcikTuru + "|" + sonuc.SoruNo + "|" + sonuc.Dogru + "|" + sonuc.Yanlis + "|" + sonuc.Bos
+                                CkKarneSonuclariDB cvpTxtDb = new CkKarneSonuclariDB();
+                                CkKarneSonuclariInfo ctInfo = new CkKarneSonuclariInfo()
+                                {
+                                    SinavId = bol[1].ToInt32(),
+                                    BransId = bol[2].ToInt32(),
+                                    Ilce = bol[3],
+                                    KurumKodu = bol[4].ToInt32(),
+                                    Sinif = bol[5].ToInt32(),
+                                    Sube = bol[6],
+                                    KitapcikTuru = bol[7],
+                                    SoruNo = bol[8].ToInt32(),
+                                    Dogru = bol[9].ToInt32(),
+                                    Yanlis = bol[10].ToInt32(),
+                                    Bos = bol[11].ToInt32()
+                                };
+                                cvpTxtDb.KayitEkle(ctInfo);
+                            }
+                           
+                        }
+
+
+                        Master.UyariIslemTamam("Dosya başarıya yüklendi.", phUyari);
+                    }
+                    else
+                    {
+                        Master.UyariKirmizi("Lütfen CK Yazdır uygulamasıyla oluşturulan dosyayı yükleyiniz.", phUyari);
+                    }
+                }
+            }
 
         }
     }

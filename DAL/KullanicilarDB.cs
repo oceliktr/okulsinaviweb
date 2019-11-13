@@ -63,20 +63,20 @@ namespace DAL
             };
             return _helper.ExecuteDataSet(sql, p).Tables[0];
         }
-        public DataTable KayitlariGetir(int ilceId, string kurumKodu, int brans)
+        public DataTable KayitlariGetir(int ilceId, string kurumKodu, int brans,string yetki)
         {
-            string sql = "";
+            string sql = "select * from kullanicilar where Id<>0";
 
-            if (ilceId != 0 && kurumKodu == "" && brans == 0)
-                sql = "select * from kullanicilar where IlceId=?IlceId order by Id asc";
-            if (ilceId != 0 && kurumKodu != "" && brans == 0)
-                sql = "select * from kullanicilar where IlceId=?IlceId and KurumKodu=?KurumKodu order by Id asc";
-            if (ilceId != 0 && kurumKodu == "" && brans != 0)
-                sql = "select * from kullanicilar where IlceId=?IlceId and Bransi=?Bransi order by Id asc";
-            if (ilceId != 0 && kurumKodu != "" && brans != 0)
-                sql = "select * from kullanicilar where IlceId=?IlceId and Bransi=?Bransi and KurumKodu=?KurumKodu order by Id asc";
-            if (ilceId == 0 && kurumKodu == "" && brans != 0)
-                sql = "select * from kullanicilar where Bransi=?Bransi order by Id asc";
+            if (ilceId != 0)
+                sql += " and IlceId=?IlceId";
+            if (kurumKodu!="")
+                sql += " and KurumKodu=?KurumKodu";
+            if (brans != 0)
+                sql += " and Bransi=?Bransi";
+            if (yetki != "")
+                sql += " and Yetki like '%"+yetki+"%'";
+            
+            sql += " order by AdiSoyadi,KurumKodu,IlceId asc";
             
             MySqlParameter[] p = 
             {

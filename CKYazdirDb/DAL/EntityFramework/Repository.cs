@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ODM.CKYazdirDb.DAL
 {
@@ -16,6 +17,10 @@ namespace ODM.CKYazdirDb.DAL
         public List<T> List()
         {
             return _objectSet.ToList();
+        }
+        public Task<List<T>> ListAsync()
+        {
+            return _objectSet.ToListAsync();
         }
         public List<T> List(Expression<Func<T, bool>> where)
         {

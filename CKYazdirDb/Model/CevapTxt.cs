@@ -13,14 +13,25 @@ namespace ODM.CKYazdirDb
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int OpaqId { get; set; }
-        public int SinavId { get; set; }
+        public long OpaqId { get; set; }
         public int BransId { get; set; }
         [StringLength(3)]
         public string KitapcikTuru { get; set; }
-        public int CevapTipi { get; set; }
         public int KatilimDurumu { get; set; }
         [StringLength(250)]
         public string Cevaplar { get; set; }
+
+        public CevapTxt(long opaqId, int bransId, string kitapcikTuru, int katilimDurumu, string cevaplar)
+        {
+            OpaqId = opaqId;
+            BransId = bransId;
+            KitapcikTuru = kitapcikTuru;
+            KatilimDurumu = katilimDurumu;
+            Cevaplar = cevaplar;
+        }
+
+        public CevapTxt()
+        {
+        }
     }
 }

@@ -19,12 +19,12 @@
                     <asp:PlaceHolder ID="phUyari" runat="server"></asp:PlaceHolder>
                     <div class="box box-default">
                         <div class="box-header">
-                            <div class="col-md-2">
-                                <b>Sınav :</b>
-                                <asp:DropDownList runat="server" CssClass="form-control" ID="ddlSinavlar"></asp:DropDownList>
+                            <div class="col-md-4">
+                                <b>Sınav :  <asp:RequiredFieldValidator ControlToValidate="ddlSinavlar" ValidationGroup="form" ID="RequiredFieldValidator2" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></b>
+                                <asp:DropDownList runat="server" CssClass="form-control" ValidationGroup="form" ID="ddlSinavlar"></asp:DropDownList>
                             </div>
                             <div class="col-md-2">
-                                <b>İlçe :</b>
+                                <b>İlçe :  <asp:RequiredFieldValidator ControlToValidate="ddlIlce" ValidationGroup="form" ID="RequiredFieldValidator1" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></b>
                                 <asp:DropDownList ID="ddlIlce" CssClass="form-control" ValidationGroup="form" runat="server">
                                     <asp:ListItem Value="">Seçiniz</asp:ListItem>
                                     <asp:ListItem Value="AŞKALE">AŞKALE</asp:ListItem>
@@ -49,10 +49,21 @@
                                     <asp:ListItem Value="YAKUTİYE">YAKUTİYE</asp:ListItem>
                                 </asp:DropDownList>
                             </div>
-                            
+                            <div class="col-md-2">
+                                <b>Sınıf :  <asp:RequiredFieldValidator ControlToValidate="ddlSinif" ValidationGroup="form" ID="RequiredFieldValidator4" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></b>
+                                <asp:DropDownList ID="ddlSinif" CssClass="form-control" ValidationGroup="form" runat="server">
+                                    <asp:ListItem Value="">Seçiniz</asp:ListItem>
+                                    <asp:ListItem Value="7">7. Sınıf</asp:ListItem>
+                                    <asp:ListItem Value="8">8. Sınıf</asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                             <div class="col-md-2">
+                                <b>Ders :  <asp:RequiredFieldValidator ControlToValidate="ddlBrans" ValidationGroup="form" ID="RequiredFieldValidator3" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></b>
+                                <asp:DropDownList ID="ddlBrans" CssClass="form-control" ValidationGroup="form" runat="server"> </asp:DropDownList>
+                            </div>
                             <div class="col-md-1">
                                 <b>&nbsp;</b>
-                                <asp:Button ID="btnListele" CssClass="form-control btn btn-primary" runat="server" ValidationGroup="form2" Text="Listele" OnClick="btnListele_OnClick" />
+                                <asp:Button ID="btnListele" CssClass="form-control btn btn-primary" runat="server" ValidationGroup="form" Text="Listele" OnClick="btnListele_OnClick" />
                             </div>
                         </div>
                         <div class="box-body">
@@ -80,8 +91,7 @@
                                             <td><%#Eval("KurumKodu") %></td>
                                             <td><%#Eval("KurumAdi") %> Karnesi</td>
                                             <td>
-                                                <asp:LinkButton ID="lnkOkulKarnesi" ToolTip="Okul Karnesini İndir" runat="server" CommandName="Karne" CommandArgument='<%#string.Format("{0},{1},{2},{3}",Eval("SinavId"),Eval("KurumKodu"),Eval("IlceAdi"),Eval("KurumAdi") ) %>'><i class="fa fa-file-pdf-o"></i></asp:LinkButton>
-
+                                               <asp:LinkButton ID="lnkOkulKarnesi" ToolTip="Okul Karnesini İndir" runat="server" CommandName="Karne" CommandArgument='<%#string.Format("{0},{1},{2},{3}",Eval("SinavId"),Eval("KurumKodu"),Eval("IlceAdi"),Eval("KurumAdi") ) %>'><i class="fa fa-file-pdf-o"></i></asp:LinkButton>
                                             </td>
                                         </tr>
                                     </ItemTemplate>

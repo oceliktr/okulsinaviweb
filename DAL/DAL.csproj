@@ -77,6 +77,7 @@
     <Compile Include="CkKarne\CkkarnekarnesonuclariDB.cs" />
     <Compile Include="CkKarne\CkkarnekazanimlarDB.cs" />
     <Compile Include="CkKarne\CkkarnekutukDB.cs" />
+    <Compile Include="CkKarne\CkKarneOgrenciCevaplariDB.cs" />
     <Compile Include="CkKarne\CksinavadiDB.cs" />
     <Compile Include="KarneRaporDB.cs" />
     <Compile Include="KazanimKarneDB.cs" />
@@ -95,7 +96,7 @@
     <Compile Include="OgrenciKarneDB.cs" />
     <Compile Include="SonucOptikDB.cs" />
     <Compile Include="RubrikDB.cs" />
-    <Compile Include="SinavEvrakDB.cs" />
+    <Compile Include="CkKarne\CkSinavEvrakDB.cs" />
     <Compile Include="SinavEvrakGelenDB.cs" />
     <Compile Include="SinavlarDB.cs" />
     <Compile Include="HelperDB.cs" />

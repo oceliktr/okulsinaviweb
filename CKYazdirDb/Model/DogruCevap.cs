@@ -13,7 +13,7 @@ namespace ODM.CKYazdirDb
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int SinavId { get; set; }
+        public int Sinif { get; set; }
         public int BransId { get; set; }
         [StringLength(3)]
         public string KitapcikTuru { get; set; }

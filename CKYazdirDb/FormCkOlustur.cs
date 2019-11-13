@@ -30,29 +30,6 @@ namespace ODM.CKYazdirDb
             InitializeComponent();
         }
 
-        private void FormCkOlustur_Load(object sender, EventArgs e)
-        {
-            KutukManager kutukDb = new KutukManager();
-            foreach (var k in kutukDb.List())
-            {
-                ogrencilerKutuk.Add(new OgrencilerInfo(k.OpaqId, k.IlAdi, k.IlceAdi, k.KurumKodu, k.KurumAdi, k.OgrenciNo, k.Adi, k.Soyadi, k.Sinifi, k.Sube, k.SinavId, k.DersKodu, k.Barkod));
-            }
-
-            cbIlceler.DataSource = null;
-            List<OgrencilerInfo> ilceler = ogrencilerKutuk.GroupBy(x => x.IlceAdi).Select(x => x.First()).OrderBy(x => x.IlceAdi).ToList();
-
-            List<OgrencilerInfo> ogr = new List<OgrencilerInfo> { new OgrencilerInfo("0", "İlçe Seçiniz") };
-            ogr.AddRange(ilceler.Select(t => new OgrencilerInfo(t.IlceAdi, t.IlceAdi)));
-
-            cbIlceler.ValueMember = "Text";
-            cbIlceler.DisplayMember = "Value";
-            foreach (var o in ogr)
-            {
-                cbIlceler.Items.Add(new OgrencilerInfo(o.IlceAdi, o.IlceAdi));
-            }
-            cbIlceler.DataSource = ogr;
-        }
-
         private void CbIlceler_SelectedIndexChanged(object sender, EventArgs e)
         {
             string ilceAdi = "";
@@ -124,7 +101,7 @@ namespace ODM.CKYazdirDb
         {
             string sinifi = "";
             string kurumKodu = "";
-            if (cbSinifi.SelectedValue != null)
+            if (cbSinifi.SelectedValue != null && sinifi != "")
             {
                 sinifi = cbSinifi.SelectedValue.ToString();
                 kurumKodu = cbOkullar.SelectedValue.ToString();
@@ -726,16 +703,21 @@ namespace ODM.CKYazdirDb
                     .GroupBy(x => x.KurumKodu).Select(x => x.First()).OrderBy(x => x.KurumAdi);
                 foreach (var okul in okullar)
                 {
-                    var subeler = (from ogr in ogrencilerKutuk select ogr).Where(x => x.KurumKodu == okul.KurumKodu)
-                        .GroupBy(x => x.Sube).Select(x => x.First()).OrderBy(x => x.Sube);
-                    foreach (var sube in subeler)
+                    var siniflar = (from ogr in ogrencilerKutuk select ogr).Where(x => x.KurumKodu == okul.KurumKodu)
+                        .GroupBy(x => x.Sinifi).Select(x => x.First()).OrderBy(x => x.Sinifi);
+                    foreach (var sinif in siniflar)
                     {
-                        int ogrSayisi = (from ogr in ogrencilerKutuk select ogr).GroupBy(x => x.OpaqId)
-                            .Select(x => x.First()).Count(x =>
-                                x.KurumKodu == sube.KurumKodu && x.Sube == sube.Sube);
-                        s++;
-                        subeBilgi.Add(new SinifSube(s, sube.IlceAdi, sube.KurumKodu, sube.KurumAdi, sube.Sinifi,
-                            sube.Sube, ogrSayisi));
+                        var subeler = (from ogr in ogrencilerKutuk select ogr).Where(x => x.KurumKodu == sinif.KurumKodu && x.Sinifi == sinif.Sinifi)
+                            .GroupBy(x => x.Sube).Select(x => x.First()).OrderBy(x => x.Sube);
+                        foreach (var sube in subeler)
+                        {
+                            int ogrSayisi = (from ogr in ogrencilerKutuk select ogr).GroupBy(x => x.OpaqId)
+                                .Select(x => x.First()).Count(x =>
+                                    x.KurumKodu == sube.KurumKodu && x.Sinifi == sinif.Sinifi && x.Sube == sube.Sube);
+                            s++;
+                            subeBilgi.Add(new SinifSube(s, sube.IlceAdi, sube.KurumKodu, sube.KurumAdi, sube.Sinifi,
+                                sube.Sube, ogrSayisi));
+                        }
                     }
                 }
             }
@@ -764,7 +746,7 @@ namespace ODM.CKYazdirDb
             for (int i = 0; i < kayitSayisi; i++)
             {
 
-                calismaSayfasi.Cells[i + 2, 1] = i+1;
+                calismaSayfasi.Cells[i + 2, 1] = i + 1;
                 calismaSayfasi.Cells[i + 2, 2] = subeBilgi[i].IlceAdi;
                 calismaSayfasi.Cells[i + 2, 3] = subeBilgi[i].KurumKodu;
                 calismaSayfasi.Cells[i + 2, 4] = subeBilgi[i].KurumAdi;
@@ -799,5 +781,74 @@ namespace ODM.CKYazdirDb
 
         }
 
+        private void btnDosyaAdresleri_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+            {
+                folderDialog.ShowNewFolderButton = true; //yeni klasör oluşturmayı kapat
+                folderDialog.RootFolder = Environment.SpecialFolder.Desktop;
+                folderDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                folderDialog.Description = @"CK dosyalarının saklandığı dizini seçiniz.";
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    DirectoryInfo dizin = new DirectoryInfo(folderDialog.SelectedPath);
+                    FileInfo[] dosyalar = dizin.GetFiles("*.*", SearchOption.AllDirectories);
+
+                    string dosya_yolu = Application.StartupPath + @"\ck_dizin.txt";
+                    FileStream fs = new FileStream(dosya_yolu, FileMode.OpenOrCreate, FileAccess.Write);
+                    StreamWriter sw = new StreamWriter(fs);
+
+                    foreach (FileInfo dsy in dosyalar.OrderBy(x => x.FullName))
+                    {
+                        string dosyaYolu = dsy.FullName;
+                        DosyaInfo lst = new DosyaInfo(dsy.Name, dosyaYolu, dsy.CreationTime, dsy.DirectoryName);
+                        sw.WriteLine(dsy.FullName);
+                    }
+                    sw.Flush();
+                    sw.Close();
+                    fs.Close();
+
+                    Process.Start("explorer.exe", Path.GetFileName(dosya_yolu));
+                }
+            }
+        }
+
+        private void btnKutukCek_Click(object sender, EventArgs e)
+        {
+            KutukManager kutukDb = new KutukManager();
+            foreach (var k in kutukDb.List())
+            {
+                ogrencilerKutuk.Add(new OgrencilerInfo(k.OpaqId, k.IlAdi, k.IlceAdi, k.KurumKodu, k.KurumAdi, k.OgrenciNo, k.Adi, k.Soyadi, k.Sinifi, k.Sube, k.SinavId, k.DersKodu, k.Barkod));
+            }
+
+            cbIlceler.DataSource = null;
+            List<OgrencilerInfo> ilceler = ogrencilerKutuk.GroupBy(x => x.IlceAdi).Select(x => x.First()).OrderBy(x => x.IlceAdi).ToList();
+
+            List<OgrencilerInfo> ogr = new List<OgrencilerInfo> { new OgrencilerInfo("0", "İlçe Seçiniz") };
+            ogr.AddRange(ilceler.Select(t => new OgrencilerInfo(t.IlceAdi, t.IlceAdi)));
+
+            cbIlceler.ValueMember = "Text";
+            cbIlceler.DisplayMember = "Value";
+            foreach (var o in ogr)
+            {
+                cbIlceler.Items.Add(new OgrencilerInfo(o.IlceAdi, o.IlceAdi));
+            }
+            cbIlceler.DataSource = ogr;
+
+            //Sınıflar
+            var siniflar = ogrencilerKutuk.GroupBy(x => x.Sinifi).Select(x => x.First()).OrderBy(x => x.Sinifi).ToList();
+            List<OgrencilerInfo> snf = new List<OgrencilerInfo> { new OgrencilerInfo("0", "Sınıf Seçiniz") };
+            snf.AddRange(siniflar.Select(t => new OgrencilerInfo(t.Sinifi.ToString(), t.Sinifi + ". sınıf")));
+
+
+            cbSinifi.ValueMember = "Text";
+            cbSinifi.DisplayMember = "Value";
+
+            foreach (var o in snf)
+            {
+                cbSinifi.Items.Add(o);
+            }
+            cbSinifi.DataSource = snf;
+        }
     }
 }

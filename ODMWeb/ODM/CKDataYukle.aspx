@@ -33,6 +33,38 @@
                                         <asp:Button ID="btnDosyaEkle" ValidationGroup="form" CssClass="btn btn-primary pull-left" runat="server" Text="Yükle" OnClick="btnDosyaEkle_OnClick" />
                                     </div>
                                 </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Kütük Dosyasý</label>
+                                    <div class="col-sm-3">
+                                        <asp:FileUpload ID="fuFileKutuk" CssClass="form-control" runat="server" placeholder="Fotoðraf seçiniz"></asp:FileUpload>
+                                    </div>
+
+                                    <div class="col-sm-1">
+                                        <asp:Button ID="btnKutuk" ValidationGroup="form" CssClass="btn btn-primary pull-left" runat="server" Text="Yükle" OnClick="btnKutuk_OnClick" />
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Öðrenci Cevaplarý Dosyasý</label>
+                                    <div class="col-sm-3">
+                                        <asp:FileUpload ID="fuFileOc" CssClass="form-control" runat="server" placeholder="Fotoðraf seçiniz"></asp:FileUpload>
+                                    </div>
+
+                                    <div class="col-sm-1">
+                                        <asp:Button ID="btnOgrCevap" ValidationGroup="form" CssClass="btn btn-primary pull-left" runat="server" Text="Yükle" OnClick="btnOgrCevap_OnClick" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Karne Sonuçlarý Dosyasý</label>
+                                    <div class="col-sm-3">
+                                        <asp:FileUpload ID="fuFileKarneSonuc" CssClass="form-control" runat="server" placeholder="Fotoðraf seçiniz"></asp:FileUpload>
+                                    </div>
+
+                                    <div class="col-sm-1">
+                                        <asp:Button ID="btnKarneSonuc" ValidationGroup="form" CssClass="btn btn-primary pull-left" runat="server" Text="Yükle" OnClick="btnKarneSonuc_OnClick" />
+                                    </div>
+                                </div>
                                 <asp:Label runat="server" ID="lblBilgi" Text="Label"></asp:Label>
                             </div>
                         </div>

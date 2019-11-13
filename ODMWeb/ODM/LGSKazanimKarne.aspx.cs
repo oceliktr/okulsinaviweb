@@ -28,6 +28,13 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
             ddlSinavlar.DataBind();
             ddlSinavlar.Items.Insert(0, new ListItem("Sınav Seçiniz", ""));
 
+            CkKarneBranslarDB brans = new CkKarneBranslarDB();
+            ddlBrans.DataSource = brans.KayitlariGetir();
+            ddlBrans.DataValueField = "BransId";
+            ddlBrans.DataTextField = "BransAdi";
+            ddlBrans.DataBind();
+            ddlBrans.Items.Insert(0, new ListItem("Ders Seçiniz", ""));
+
             if (Master.Yetki().Contains("IlceMEMYetkilisi"))
             {
 
@@ -98,7 +105,8 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
         int kurumKodu = value[1].ToInt32();
         string ilceAdi = value[2];
         string okulAdi = value[3];
-
+    //    int sinif = ddlSinif.SelectedValue.ToInt32();
+     //   int brans = ddlBrans.SelectedValue.ToInt32();
 
         string path = string.Format("{0} - {1} Kazanım Karnesi.pdf", ilceAdi, okulAdi);
         Document doc = new Document();
@@ -196,7 +204,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
                         CkKarneCevapTxtInfo ogrCevap = cvpTxtList.FirstOrDefault(x => x.BransId == brans.BransId && x.OpaqId == kutuk.OpaqId);
                         if (ogrCevap != null)
                         {
-                            CkKarneDogruCevaplarInfo dogruCvplar = dogruCevapList.FirstOrDefault(x => x.BransId == brans.BransId && x.KitapcikTuru == ogrCevap.KitapcikTuru);
+                            CkKarneDogruCevaplarInfo dogruCvplar = dogruCevapList.FirstOrDefault(x =>x.Sinif==sinif.Sinif&& x.BransId == brans.BransId && x.KitapcikTuru == ogrCevap.KitapcikTuru);
                             PdfOlustur(doc, sinavAdi, bransAdi, kutuk, ogrCevap, dogruCvplar, kazanimlar);
                             doc.NewPage();
                         }
@@ -449,80 +457,82 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
     /// </summary>
     private void PdfOlustur(Document doc, string sinavAdi, CkKarneSonuclariInfo sinif, string dersAdi, int column, string sonSatirBaslik, KarneModel karneModel)
     {
-
-        PdfIslemleri pdf = new PdfIslemleri();
-
-        #region Başlık
-
-        pdf.addParagraph(doc, "ERZURUM  İL MİLLİ EĞİTİM MÜDÜRLÜĞÜ", hizalama: Element.ALIGN_CENTER);
-        pdf.addParagraph(doc, "Ölçme Değerlendirme Merkezi", hizalama: Element.ALIGN_CENTER);
-        pdf.addParagraph(doc, string.Format("{0} {1}. SINIF {2} DERSİ", sinavAdi.BuyukHarfeCevir(), sinif.Sinif, dersAdi.BuyukHarfeCevir()), hizalama: Element.ALIGN_CENTER);
-        pdf.addParagraph(doc, sonSatirBaslik, hizalama: Element.ALIGN_CENTER);
-
-        #endregion
-
-        float[] widths4 = { 25f, 40f, 392f, 70f }; //il  
-        float[] widths6 = { 25f, 40f, 285f, 30f, 30f, 117f }; //il - ilçe 
-        float[] widths7 = { 25f, 40f, 255f, 30f, 30f, 30f, 117f }; //il - ilçe - okul
-        float[] widths8 = { 25f, 40f, 225f, 30f, 30f, 30f, 30f, 117f }; //il - ilçe - okul - şube
-
-        PdfPTable table = new PdfPTable(column)
+        if (karneModel.TableModeller.Count > 0)
         {
-            TotalWidth = 522f, // puan cinsinden tablonun gerçek genişliği
-            LockedWidth = true, // tablonun mutlak genişliğini sabitle
-            SpacingBefore = 20f, //öncesinde boşluk miktarı
-            SpacingAfter = 30f, //sonrasında boşluk miktarı
-        };
+
+            PdfIslemleri pdf = new PdfIslemleri();
+
+            #region Başlık
+
+            pdf.addParagraph(doc, "ERZURUM  İL MİLLİ EĞİTİM MÜDÜRLÜĞÜ", hizalama: Element.ALIGN_CENTER);
+            pdf.addParagraph(doc, "Ölçme Değerlendirme Merkezi", hizalama: Element.ALIGN_CENTER);
+            pdf.addParagraph(doc, string.Format("{0} {1}. SINIF {2} DERSİ", sinavAdi.BuyukHarfeCevir(), sinif.Sinif, dersAdi.BuyukHarfeCevir()), hizalama: Element.ALIGN_CENTER);
+            pdf.addParagraph(doc, sonSatirBaslik, hizalama: Element.ALIGN_CENTER);
+
+            #endregion
+
+            float[] widths4 = { 25f, 40f, 392f, 70f }; //il  
+            float[] widths6 = { 25f, 40f, 285f, 30f, 30f, 117f }; //il - ilçe 
+            float[] widths7 = { 25f, 40f, 255f, 30f, 30f, 30f, 117f }; //il - ilçe - okul
+            float[] widths8 = { 25f, 40f, 225f, 30f, 30f, 30f, 30f, 117f }; //il - ilçe - okul - şube
+
+            PdfPTable table = new PdfPTable(column)
+            {
+                TotalWidth = 522f, // puan cinsinden tablonun gerçek genişliği
+                LockedWidth = true, // tablonun mutlak genişliğini sabitle
+                SpacingBefore = 20f, //öncesinde boşluk miktarı
+                SpacingAfter = 30f, //sonrasında boşluk miktarı
+            };
 
 
-        if (column == KolonSayisi.Il.ToInt32())
-            table.SetWidths(widths4);
-        else if (column == KolonSayisi.Ilce.ToInt32())
-            table.SetWidths(widths6);
-        else if (column == KolonSayisi.Okul.ToInt32())
-            table.SetWidths(widths7);
-        else
-            table.SetWidths(widths8);
+            if (column == KolonSayisi.Il.ToInt32())
+                table.SetWidths(widths4);
+            else if (column == KolonSayisi.Ilce.ToInt32())
+                table.SetWidths(widths6);
+            else if (column == KolonSayisi.Okul.ToInt32())
+                table.SetWidths(widths7);
+            else
+                table.SetWidths(widths8);
 
 
-        //--------------Üst Başlık
-        pdf.addCell(table, "", colspan: 3, fontSize: 6, bgColor: PdfIslemleri.Renkler.Gri);
-        pdf.addCell(table, "Edinilme Oranı %", hizalama: Element.ALIGN_CENTER, colspan: column - 4, bgColor: PdfIslemleri.Renkler.Gri);
-        if (column > 4) pdf.addCell(table, "", bgColor: PdfIslemleri.Renkler.Gri);
-        //Üst Başlık İkinci Satır
-        pdf.addCell(table, "No", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
-        pdf.addCell(table, "Kazanım No", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
-        pdf.addCell(table, "Kazanım", bgColor: PdfIslemleri.Renkler.Gri);
-        pdf.addCell(table, "İl", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
+            //--------------Üst Başlık
+            pdf.addCell(table, "", colspan: 3, fontSize: 6, bgColor: PdfIslemleri.Renkler.Gri);
+            pdf.addCell(table, "Edinilme Oranı %", hizalama: Element.ALIGN_CENTER, colspan: column - 4, bgColor: PdfIslemleri.Renkler.Gri);
+            if (column > 4) pdf.addCell(table, "", bgColor: PdfIslemleri.Renkler.Gri);
+            //Üst Başlık İkinci Satır
+            pdf.addCell(table, "No", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
+            pdf.addCell(table, "Kazanım No", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
+            pdf.addCell(table, "Kazanım", bgColor: PdfIslemleri.Renkler.Gri);
+            pdf.addCell(table, "İl", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
 
-        if (column > 5) pdf.addCell(table, "İlçe", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
-        if (column > 6) pdf.addCell(table, "Okul", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
-        if (column > 7) pdf.addCell(table, "Şube", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
-        if (column > 4) pdf.addCell(table, "", bgColor: PdfIslemleri.Renkler.Gri);
-        //--------------Üst Başlık Son
+            if (column > 5) pdf.addCell(table, "İlçe", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
+            if (column > 6) pdf.addCell(table, "Okul", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
+            if (column > 7) pdf.addCell(table, "Şube", hizalama: Element.ALIGN_CENTER, bgColor: PdfIslemleri.Renkler.Gri);
+            if (column > 4) pdf.addCell(table, "", bgColor: PdfIslemleri.Renkler.Gri);
+            //--------------Üst Başlık Son
 
-        //--------------satırlar
-        foreach (var t in karneModel.TableModeller)
-        {
-            pdf.addCell(table, t.No, hizalama: Element.ALIGN_CENTER); //Satır numarası
-            pdf.addCell(table, t.KazanimNo, hizalama: Element.ALIGN_CENTER);
-            pdf.addCell(table, t.Kazanim);
-            pdf.addCell(table, t.IlPuani, hizalama: Element.ALIGN_CENTER);
-            if (column > 5) pdf.addCell(table, t.IlcePuani, hizalama: Element.ALIGN_CENTER); //ilçe
-            if (column > 6) pdf.addCell(table, t.OkulPuani, hizalama: Element.ALIGN_CENTER); //okul
-            if (column > 7) pdf.addCell(table, t.SubePuani, hizalama: Element.ALIGN_CENTER); //şube
-            if (column > 4) pdf.addCell(table, t.Aciklama, hizalama: Element.ALIGN_CENTER); //açıklama
+            //--------------satırlar
+            foreach (var t in karneModel.TableModeller)
+            {
+                pdf.addCell(table, t.No, hizalama: Element.ALIGN_CENTER); //Satır numarası
+                pdf.addCell(table, t.KazanimNo, hizalama: Element.ALIGN_CENTER);
+                pdf.addCell(table, t.Kazanim);
+                pdf.addCell(table, t.IlPuani, hizalama: Element.ALIGN_CENTER);
+                if (column > 5) pdf.addCell(table, t.IlcePuani, hizalama: Element.ALIGN_CENTER); //ilçe
+                if (column > 6) pdf.addCell(table, t.OkulPuani, hizalama: Element.ALIGN_CENTER); //okul
+                if (column > 7) pdf.addCell(table, t.SubePuani, hizalama: Element.ALIGN_CENTER); //şube
+                if (column > 4) pdf.addCell(table, t.Aciklama, hizalama: Element.ALIGN_CENTER); //açıklama
+            }
+
+            doc.Add(table);
+
+            pdf.addParagraph(doc, karneModel.Raporu, 7);
+            pdf.addParagraph(doc, "Çalışmalarınızda kolaylıklar diler, katkılarınız için teşekkür ederiz.", 7, Element.ALIGN_RIGHT, iTextSharp.text.Font.ITALIC);
+            pdf.addParagraph(doc, "\n\n");
+            pdf.addParagraph(doc, "Erzurum Ölçme ve Değerlendirme Merkezi - Adres: Lalapaşa Mahallesi, Yukarı Mumcu Caddesi, Atatürk Evi Sokak, No1, Kat 5/6, Yakutiye / ERZURUM\n", 7, Element.ALIGN_CENTER, iTextSharp.text.Font.ITALIC);
+            pdf.addParagraph(doc, "Web: http://erzurumodm.meb.gov.tr E-Mail: odm25@meb.gov.tr", 7, Element.ALIGN_CENTER, iTextSharp.text.Font.ITALIC);
+
         }
-
-        doc.Add(table);
-
-        pdf.addParagraph(doc, karneModel.Raporu, 7);
-        pdf.addParagraph(doc, "Çalışmalarınızda kolaylıklar diler, katkılarınız için teşekkür ederiz.", 7, Element.ALIGN_RIGHT, iTextSharp.text.Font.ITALIC);
-        pdf.addParagraph(doc, "\n\n");
-        pdf.addParagraph(doc, "Erzurum Ölçme ve Değerlendirme Merkezi - Adres: Lalapaşa Mahallesi, Yukarı Mumcu Caddesi, Atatürk Evi Sokak, No1, Kat 5/6, Yakutiye / ERZURUM\n", 7, Element.ALIGN_CENTER, iTextSharp.text.Font.ITALIC);
-        pdf.addParagraph(doc, "Web: http://erzurumodm.meb.gov.tr E-Mail: odm25@meb.gov.tr", 7, Element.ALIGN_CENTER, iTextSharp.text.Font.ITALIC);
-
-
     }
 
     #region MyRegion
@@ -645,7 +655,6 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
         int telafiKazanimSayisi = 0;
         List<TableModel> model = new List<TableModel>();
         List<string> eksikKazanimlar = new List<string>();
-
 
         int i = 1;
 
@@ -775,7 +784,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
         CkKarneKazanimlardB kazanimDb = new CkKarneKazanimlardB();
         List<CkKarneKazanimlarInfo> kazanimList = kazanimDb.KayitlariDizeGetir(sinavId);
 
-        List<CkKarneSonuclariInfo> karneSonucList = ksDb.KayitlariDizeGetir(sinavId, ilce, kurumkodu);
+        List<CkKarneSonuclariInfo> karneSonucList = ksDb.KayitlariDizeGetir(sinavId);
 
         foreach (var kazanim in kazanimList.Where(x => x.BransId == brans && x.Sinif == sinif))
         {
@@ -908,7 +917,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
         CkKarneKazanimlardB kazanimDb = new CkKarneKazanimlardB();
         List<CkKarneKazanimlarInfo> kazanimList = kazanimDb.KayitlariDizeGetir(sinavId);
 
-        List<CkKarneSonuclariInfo> karneSonucList = ksDb.KayitlariDizeGetir(sinavId, ilce, kurumkodu);
+        List<CkKarneSonuclariInfo> karneSonucList = ksDb.KayitlariDizeGetir(sinavId);
 
 
 
@@ -1052,7 +1061,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
         CkKarneKazanimlardB kazanimDb = new CkKarneKazanimlardB();
 
         List<CkKarneKazanimlarInfo> kazanimList = kazanimDb.KayitlariDizeGetir(sinavId);
-        List<CkKarneSonuclariInfo> karneSonucList = ksDb.KayitlariDizeGetir(sinavId, ilceAdi);
+        List<CkKarneSonuclariInfo> karneSonucList = ksDb.KayitlariDizeGetir(sinavId);
 
         if (karneSonucList.Count > 0)
         {

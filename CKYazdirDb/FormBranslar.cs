@@ -75,9 +75,7 @@ namespace ODM.CKYazdirDb
             dgBranslar.Columns[0].HeaderText = "Branş No";
             dgBranslar.Columns[0].Width = 100;
             dgBranslar.Columns[1].HeaderText = "Branş Adı";
-            dgBranslar.Columns[1].Width = 250;
-            dgBranslar.Columns[2].Visible = false;
-            dgBranslar.Columns[3].Visible = false;
+            dgBranslar.Columns[1].Width = 350;
         }
 
         private void SilToolStripMenuItem_Click(object sender, EventArgs e)

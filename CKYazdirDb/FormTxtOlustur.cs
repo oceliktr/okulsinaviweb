@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using ODM.CKYazdirDb.Business;
 using ODM.CKYazdirDb.Library;
 
 namespace CKYazdir
@@ -355,16 +356,27 @@ namespace CKYazdir
         {
             OrnekOlustur();
         }
+        private void BranslariListele()
+        {
+            BransManager bransManager= new BransManager();
+            dgBranslar.DataSource = bransManager.List().OrderBy(x => x.Id).ToList();
 
+            dgBranslar.Columns[0].HeaderText = "Branş No";
+            dgBranslar.Columns[0].Width = 60;
+            dgBranslar.Columns[1].HeaderText = "Branş Adı";
+            dgBranslar.Columns[1].Width = 120;
+        }
         private void FormTxtOlustur_Load(object sender, EventArgs e)
         {
+            BranslariListele();
             blAciklama.Text =
-                "'Data Aç' butonu ile *.txt veya *.dat dosyasını seçiniz. Modül ilk satırı örnek olarak gösterecektir.\nOluşturmak istediğiniz format için her grup arasına kullanacağınız ara karakteri de girerek başlangıç noktasını ve karakter sayısını seçip ekle butonuna tıklayınız.\nKatılım Durumu ('G') alanı için açıklama alanına 'Girmedi' yazınız. Modül girmeyenler için 0, girenler için 1 değerini atayacaktır.\nİstenilen formatı örnekte görüldüğü gibi oluşturduktan sonra 'Text Oluştur' butonuna tıklayınız.";
+                @"'Data Aç' butonu ile *.txt veya *.dat dosyasını seçiniz. Modül ilk satırı örnek olarak gösterecektir."+Environment.NewLine+
+                "Oluşturmak istediğiniz format için her grup arasına kullanacağınız ara karakteri de girerek başlangıç noktasını ve karakter sayısını seçip ekle butonuna tıklayınız." + Environment.NewLine +
+                "Katılım Durumu ('G') alanı için açıklama alanına 'Girmedi' yazınız. Modül girmeyenler için 0, girenler için 1 değerini atayacaktır." + Environment.NewLine +
+                "İstenilen formatı örnekte görüldüğü gibi oluşturduktan sonra 'Text Oluştur' butonuna tıklayınız.\nBu uygulama için aşağıdaki formatta txt oluşturunuz." + Environment.NewLine +
+            "20649649#A#1#2#CBBBBBACACBABCBAACAB#2#CBBBBBACACBABCBAACAB" + Environment.NewLine +
+            "OPAKNO/TC#KTUR#KD#DERSID#CEVAPLAR#DERSID#CEVAPLAR";
         }
 
-        private void TxtData_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

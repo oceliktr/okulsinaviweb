@@ -67,9 +67,9 @@
                                                     <div class="form-group">
                                                         <label class="col-sm-2 control-label">
                                                             Sýnav
-                                                            <asp:RequiredFieldValidator ControlToValidate="ddlSinavId" ValidationGroup="form" ID="RequiredFieldValidator5" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
-                                                        <div class="col-sm-2">
-                                                            <asp:DropDownList ID="ddlSinavId" CssClass="form-control" runat="server" ValidationGroup="form"></asp:DropDownList>
+                                                            <asp:RequiredFieldValidator ControlToValidate="txtSinavAdi" ValidationGroup="form" ID="RequiredFieldValidator5" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
+                                                        <div class="col-sm-4">
+                                                            <asp:TextBox ID="txtSinavAdi" MaxLength="50" CssClass="form-control" runat="server" ValidationGroup="form"></asp:TextBox>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -194,6 +194,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-7"><div class="box box-danger">
+                    <div class="box-body">
+                        <ul class="list-unstyled">
+                            <li>
+                               Bu ekranda sadece okulunuza özel gönderilen sýnav evraklarý listelenir. Gelmesi gereken evraðý listede göremiyorsanýz lütfen bize <a href="Giris.aspx">buradaki</a> numaralardan ulaþýnýz.
+                            </li>
+                            <li>Dosyaya eriþim zamaný gelinceye kadar indirme butonu kapalý kalacaktýr. Sýnav evraðýný indirebilmek için indirme zamanýný beklemeniz gerekmektedir.</li>
+                            <li></li>
+                            </ul>
+                    </div>
+                </div></div>
             </div>
         </section>
     </div>

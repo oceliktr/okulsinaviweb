@@ -80,21 +80,21 @@
             this.txtKazanimNo.Location = new System.Drawing.Point(195, 94);
             this.txtKazanimNo.Name = "txtKazanimNo";
             this.txtKazanimNo.Size = new System.Drawing.Size(311, 26);
-            this.txtKazanimNo.TabIndex = 1;
+            this.txtKazanimNo.TabIndex = 2;
             // 
             // txtKazanim
             // 
             this.txtKazanim.Location = new System.Drawing.Point(195, 134);
             this.txtKazanim.Name = "txtKazanim";
             this.txtKazanim.Size = new System.Drawing.Size(739, 26);
-            this.txtKazanim.TabIndex = 2;
+            this.txtKazanim.TabIndex = 3;
             // 
             // txtKazanimOgrenci
             // 
             this.txtKazanimOgrenci.Location = new System.Drawing.Point(195, 174);
             this.txtKazanimOgrenci.Name = "txtKazanimOgrenci";
             this.txtKazanimOgrenci.Size = new System.Drawing.Size(739, 26);
-            this.txtKazanimOgrenci.TabIndex = 3;
+            this.txtKazanimOgrenci.TabIndex = 4;
             // 
             // label2
             // 
@@ -132,7 +132,7 @@
             this.btnKaydet.Location = new System.Drawing.Point(813, 242);
             this.btnKaydet.Name = "btnKaydet";
             this.btnKaydet.Size = new System.Drawing.Size(121, 49);
-            this.btnKaydet.TabIndex = 4;
+            this.btnKaydet.TabIndex = 6;
             this.btnKaydet.Text = "Kaydet";
             this.btnKaydet.UseVisualStyleBackColor = true;
             this.btnKaydet.Click += new System.EventHandler(this.BtnKaydet_Click);
@@ -168,7 +168,7 @@
             this.dgvKazanimlar.ShowEditingIcon = false;
             this.dgvKazanimlar.ShowRowErrors = false;
             this.dgvKazanimlar.Size = new System.Drawing.Size(924, 450);
-            this.dgvKazanimlar.TabIndex = 5;
+            this.dgvKazanimlar.TabIndex = 7;
             // 
             // contextMenuStrip1
             // 
@@ -199,7 +199,7 @@
             this.btnVazgec.Location = new System.Drawing.Point(12, 245);
             this.btnVazgec.Name = "btnVazgec";
             this.btnVazgec.Size = new System.Drawing.Size(121, 49);
-            this.btnVazgec.TabIndex = 9;
+            this.btnVazgec.TabIndex = 8;
             this.btnVazgec.Text = "Vazgeç";
             this.btnVazgec.UseVisualStyleBackColor = true;
             this.btnVazgec.Click += new System.EventHandler(this.BtnVazgec_Click);
@@ -219,7 +219,7 @@
             this.txtSorulari.Location = new System.Drawing.Point(195, 210);
             this.txtSorulari.Name = "txtSorulari";
             this.txtSorulari.Size = new System.Drawing.Size(739, 26);
-            this.txtSorulari.TabIndex = 10;
+            this.txtSorulari.TabIndex = 5;
             // 
             // label6
             // 
@@ -250,7 +250,7 @@
             this.cbSinif.Margin = new System.Windows.Forms.Padding(4);
             this.cbSinif.Name = "cbSinif";
             this.cbSinif.Size = new System.Drawing.Size(311, 28);
-            this.cbSinif.TabIndex = 13;
+            this.cbSinif.TabIndex = 1;
             // 
             // btnRefresh
             // 
@@ -260,7 +260,7 @@
             this.btnRefresh.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(40, 39);
-            this.btnRefresh.TabIndex = 171;
+            this.btnRefresh.TabIndex = 10;
             this.btnRefresh.Tag = "Cevapları Listele";
             this.btnRefresh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnRefresh.UseVisualStyleBackColor = true;

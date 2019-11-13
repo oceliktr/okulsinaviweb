@@ -54,11 +54,13 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cbAlanAdi = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.dgBranslar = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.ndSutun)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ndKarakter)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgBranslar)).BeginInit();
             this.SuspendLayout();
             // 
             // txtData
@@ -71,7 +73,6 @@
             this.txtData.Size = new System.Drawing.Size(727, 28);
             this.txtData.TabIndex = 165;
             this.txtData.Click += new System.EventHandler(this.txtData_Click);
-            this.txtData.TextChanged += new System.EventHandler(this.TxtData_TextChanged);
             this.txtData.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtData_KeyUp);
             this.txtData.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtData_MouseDown);
             this.txtData.MouseUp += new System.Windows.Forms.MouseEventHandler(this.txtData_MouseUp);
@@ -226,7 +227,7 @@
             this.blAciklama.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.blAciklama.Location = new System.Drawing.Point(12, 364);
             this.blAciklama.Name = "blAciklama";
-            this.blAciklama.Size = new System.Drawing.Size(706, 125);
+            this.blAciklama.Size = new System.Drawing.Size(979, 166);
             this.blAciklama.TabIndex = 185;
             this.blAciklama.Text = "...";
             this.blAciklama.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -234,7 +235,7 @@
             // btnTextOlustur
             // 
             this.btnTextOlustur.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnTextOlustur.Location = new System.Drawing.Point(725, 366);
+            this.btnTextOlustur.Location = new System.Drawing.Point(998, 361);
             this.btnTextOlustur.Margin = new System.Windows.Forms.Padding(4);
             this.btnTextOlustur.Name = "btnTextOlustur";
             this.btnTextOlustur.Size = new System.Drawing.Size(121, 123);
@@ -338,12 +339,35 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Kesme Noktaları";
             // 
+            // dgBranslar
+            // 
+            this.dgBranslar.AllowUserToAddRows = false;
+            this.dgBranslar.AllowUserToDeleteRows = false;
+            this.dgBranslar.AllowUserToOrderColumns = true;
+            this.dgBranslar.AllowUserToResizeColumns = false;
+            this.dgBranslar.AllowUserToResizeRows = false;
+            this.dgBranslar.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgBranslar.ContextMenuStrip = this.contextMenuStrip1;
+            this.dgBranslar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.dgBranslar.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dgBranslar.Location = new System.Drawing.Point(862, 86);
+            this.dgBranslar.Name = "dgBranslar";
+            this.dgBranslar.RowHeadersVisible = false;
+            this.dgBranslar.RowHeadersWidth = 51;
+            this.dgBranslar.RowTemplate.Height = 24;
+            this.dgBranslar.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgBranslar.ShowEditingIcon = false;
+            this.dgBranslar.ShowRowErrors = false;
+            this.dgBranslar.Size = new System.Drawing.Size(257, 268);
+            this.dgBranslar.TabIndex = 190;
+            // 
             // FormTxtOlustur
             // 
             this.AcceptButton = this.btnEkle;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(860, 500);
+            this.ClientSize = new System.Drawing.Size(1397, 652);
+            this.Controls.Add(this.dgBranslar);
             this.Controls.Add(this.btnTextOlustur);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -367,6 +391,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgBranslar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -398,5 +423,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ComboBox cbAlanAdi;
+        private System.Windows.Forms.DataGridView dgBranslar;
     }
 }

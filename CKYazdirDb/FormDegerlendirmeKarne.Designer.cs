@@ -35,6 +35,10 @@
             this.btnDataAc = new System.Windows.Forms.Button();
             this.bgwDegerlendir = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolSslKalanSure = new System.Windows.Forms.ToolStripStatusLabel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnDegerlendir
@@ -89,11 +93,41 @@
             // 
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolSslKalanSure});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 159);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 13, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(520, 26);
+            this.statusStrip1.TabIndex = 188;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolSslKalanSure
+            // 
+            this.toolSslKalanSure.Name = "toolSslKalanSure";
+            this.toolSslKalanSure.Size = new System.Drawing.Size(18, 20);
+            this.toolSslKalanSure.Text = "...";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(428, 124);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(62, 32);
+            this.button1.TabIndex = 189;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FormDegerlendirmeKarne
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(520, 154);
+            this.ClientSize = new System.Drawing.Size(520, 185);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.btnDegerlendir);
             this.Controls.Add(this.lblBilgi);
             this.Controls.Add(this.progressBar1);
@@ -105,7 +139,10 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Değerlendirme ve Karne Oluşturma Formu";
             this.Load += new System.EventHandler(this.FormDegerlendirmeKarne_Load);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -117,5 +154,8 @@
         private System.Windows.Forms.Button btnDataAc;
         private System.ComponentModel.BackgroundWorker bgwDegerlendir;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolSslKalanSure;
+        private System.Windows.Forms.Button button1;
     }
 }

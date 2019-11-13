@@ -8,7 +8,7 @@ namespace ODM.CKYazdirDb.Library
 {
 public class OgrencilerInfo
 {
-    public int OpaqId { get; set; }
+    public long OpaqId { get; set; }
     public string IlAdi { get; set; }
     public string IlceAdi { get; set; }
     public int KurumKodu { get; set; }
@@ -24,7 +24,7 @@ public class OgrencilerInfo
     public string Text { get; }
     public string Value { get; }
 
-    public OgrencilerInfo(int opaqId, string ilAdi, string ilceAdi, int kurumKodu, string kurumAdi, int ogrenciNo, string adi, string soyadi, int sinifi, string sube, int sinavId, int dersKodu,string barkod)
+    public OgrencilerInfo(long opaqId, string ilAdi, string ilceAdi, int kurumKodu, string kurumAdi, int ogrenciNo, string adi, string soyadi, int sinifi, string sube, int sinavId, int dersKodu,string barkod)
     {
         OpaqId = opaqId;
         IlAdi = ilAdi;

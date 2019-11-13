@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using ODM.CKYazdirDb.DAL;
 
 namespace ODM.CKYazdirDb
@@ -31,6 +32,10 @@ namespace ODM.CKYazdirDb
         public virtual List<T> List()
         {
             return repo.List();
+        }
+        public virtual Task<List<T>> ListAsync()
+        {
+            return repo.ListAsync();
         }
         /// <summary>
         /// Tümünü listeler

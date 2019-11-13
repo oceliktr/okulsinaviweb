@@ -7,6 +7,7 @@ public class CkKarneDogruCevaplarInfo
 {
     public int Id { get; set; }
     public int SinavId { get; set; }
+    public int Sinif { get; set; }
     public int BransId { get; set; }
     public string KitapcikTuru { get; set; }
     public string Cevaplar { get; set; }
@@ -16,10 +17,11 @@ public class CkKarneDogruCevaplarInfo
         
     }
 
-    public CkKarneDogruCevaplarInfo(int id, int sinavId, int bransId, string kitapcikTuru, string cevaplar)
+    public CkKarneDogruCevaplarInfo(int id, int sinavId,int sinif, int bransId, string kitapcikTuru, string cevaplar)
     {
         Id = id;
         SinavId = sinavId;
+        Sinif = sinif;
         BransId = bransId;
         KitapcikTuru = kitapcikTuru;
         Cevaplar = cevaplar;
@@ -48,7 +50,7 @@ public class CkKarneDogruCevaplarDB
         List<CkKarneDogruCevaplarInfo> karne = new List<CkKarneDogruCevaplarInfo>();
         foreach (DataRow k in dt.Rows)
         {
-            karne.Add(new CkKarneDogruCevaplarInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["BransId"]), k["KitapcikTuru"].ToString(), k["Cevaplar"].ToString()));
+            karne.Add(new CkKarneDogruCevaplarInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["Sinif"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["BransId"]), k["KitapcikTuru"].ToString(), k["Cevaplar"].ToString()));
         }
         return karne;
     }
@@ -60,6 +62,7 @@ public class CkKarneDogruCevaplarDB
         {
             info.Id = dr.GetMySayi("Id");
             info.SinavId = dr.GetMySayi("SinavId");
+            info.Sinif = dr.GetMySayi("Sinif");
             info.BransId = dr.GetMySayi("BransId");
             info.KitapcikTuru = dr.GetMyMetin("KitapcikTuru");
             info.Cevaplar = dr.GetMyMetin("Cevaplar");
@@ -79,6 +82,7 @@ public class CkKarneDogruCevaplarDB
         {
             info.Id = dr.GetMySayi("Id");
             info.SinavId = dr.GetMySayi("SinavId");
+            info.Sinif = dr.GetMySayi("Sinif");
             info.BransId = dr.GetMySayi("BransId");
             info.KitapcikTuru = dr.GetMyMetin("KitapcikTuru");
             info.Cevaplar = dr.GetMyMetin("Cevaplar");
@@ -97,37 +101,41 @@ public class CkKarneDogruCevaplarDB
 
     public void KayitEkle(CkKarneDogruCevaplarInfo info)
     {
-        const string sql = @"insert into ckkarnedogrucevaplar (SinavId,BransId,KitapcikTuru,Cevaplar) values (?SinavId,?BransId,?KitapcikTuru,?Cevaplar)";
+        const string sql = @"insert into ckkarnedogrucevaplar (SinavId,Sinif,BransId,KitapcikTuru,Cevaplar) values (?SinavId,?Sinif,?BransId,?KitapcikTuru,?Cevaplar)";
         MySqlParameter[] pars =
         {
  new MySqlParameter("?SinavId", MySqlDbType.Int32),
+ new MySqlParameter("?Sinif", MySqlDbType.Int32),
  new MySqlParameter("?BransId", MySqlDbType.Int32),
  new MySqlParameter("?KitapcikTuru", MySqlDbType.String),
  new MySqlParameter("?Cevaplar", MySqlDbType.String),
 };
         pars[0].Value = info.SinavId;
-        pars[1].Value = info.BransId;
-        pars[2].Value = info.KitapcikTuru;
-        pars[3].Value = info.Cevaplar;
+        pars[1].Value = info.Sinif;
+        pars[2].Value = info.BransId;
+        pars[3].Value = info.KitapcikTuru;
+        pars[4].Value = info.Cevaplar;
         helper.ExecuteNonQuery(sql, pars);
     }
 
     public void KayitGuncelle(CkKarneDogruCevaplarInfo info)
     {
-        const string sql = @"update ckkarnedogrucevaplar set SinavId=?SinavId,BransId=?BransId,KitapcikTuru=?KitapcikTuru,Cevaplar=?Cevaplar where Id=?Id";
+        const string sql = @"update ckkarnedogrucevaplar set SinavId=?SinavId,Sinif=?Sinif,BransId=?BransId,KitapcikTuru=?KitapcikTuru,Cevaplar=?Cevaplar where Id=?Id";
         MySqlParameter[] pars =
         {
  new MySqlParameter("?SinavId", MySqlDbType.Int32),
+ new MySqlParameter("?Sinif", MySqlDbType.Int32),
  new MySqlParameter("?BransId", MySqlDbType.Int32),
  new MySqlParameter("?KitapcikTuru", MySqlDbType.String),
  new MySqlParameter("?Cevaplar", MySqlDbType.String),
  new MySqlParameter("?Id", MySqlDbType.Int32),
 };
         pars[0].Value = info.SinavId;
-        pars[1].Value = info.BransId;
-        pars[2].Value = info.KitapcikTuru;
-        pars[3].Value = info.Cevaplar;
-        pars[4].Value = info.Id;
+        pars[1].Value = info.Sinif;
+        pars[2].Value = info.BransId;
+        pars[3].Value = info.KitapcikTuru;
+        pars[4].Value = info.Cevaplar;
+        pars[5].Value = info.Id;
         helper.ExecuteNonQuery(sql, pars);
     }
 }

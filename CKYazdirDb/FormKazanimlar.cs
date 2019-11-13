@@ -47,7 +47,7 @@ namespace ODM.CKYazdirDb
                 if (sonKarakter != ",")
                     sorulari += ",";
 
-
+                string kazanimOgrenci = txtKazanimOgrenci.Text == "" ? txtKazanim.Text:"";
                 if (kazanimId == 0)
                 {
                     Kazanim kazanim = new Kazanim()
@@ -55,7 +55,7 @@ namespace ODM.CKYazdirDb
                         BransId = cbBranslar.SelectedValue.ToInt32(),
                         KazanimAdi = txtKazanim.Text,
                         KazanimNo = txtKazanimNo.Text,
-                        KazanimAdiOgrenci = txtKazanimOgrenci.Text,
+                        KazanimAdiOgrenci = kazanimOgrenci,
                         Sorulari = sorulari,
                         Sinif = cbSinif.SelectedValue.ToInt32()
                     };
@@ -69,7 +69,7 @@ namespace ODM.CKYazdirDb
                         kazanim.BransId = cbBranslar.SelectedValue.ToInt32();
                         kazanim.KazanimAdi = txtKazanim.Text;
                         kazanim.KazanimNo = txtKazanimNo.Text;
-                        kazanim.KazanimAdiOgrenci = txtKazanimOgrenci.Text;
+                        kazanim.KazanimAdiOgrenci = kazanimOgrenci;
                         kazanim.Sorulari = txtSorulari.Text;
                         kazanim.Sinif = cbSinif.SelectedValue.ToInt32();
                         kazanimManager.Update(kazanim);
@@ -85,6 +85,7 @@ namespace ODM.CKYazdirDb
                 txtKazanim.Text = "";
                 txtKazanimNo.Text = "";
                 txtSorulari.Text = "";
+                btnKaydet.Text = "Kaydet";
                 cbBranslar.Focus();
 
                 KayitlariListele();
