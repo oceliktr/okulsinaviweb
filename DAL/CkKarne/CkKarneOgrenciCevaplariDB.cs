@@ -48,6 +48,24 @@ namespace DAL.CkKarne
             const string sql = "select * from ckogrencicevaplari order by Id asc";
             return helper.ExecuteDataSet(sql).Tables[0];
         }
+        public List<CkKarneOgrenciCevaplariInfo> KayitlariDizeGetir(int sinavId)
+        {
+            string sql = "select * from ckogrencicevaplari where SinavId=?SinavId";
+            MySqlParameter[] p =
+            {
+                new MySqlParameter("?SinavId", MySqlDbType.Int32)
+            };
+            p[0].Value = sinavId;
+
+            DataTable dt = helper.ExecuteDataSet(sql, p).Tables[0];
+            List<CkKarneOgrenciCevaplariInfo> karne = new List<CkKarneOgrenciCevaplariInfo>();
+            foreach (DataRow k in dt.Rows)
+            {
+                karne.Add(new CkKarneOgrenciCevaplariInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt64(k["OpaqId"]), Convert.ToInt32(k["KurumKodu"]), Convert.ToInt32(k["Sinif"]), k["Ilce"].ToString(), k["Sube"].ToString(),
+                    k["KitapcikTuru"].ToString(), k["KatilimDurumu"].ToString(), k["Cevaplar"].ToString()));
+            }
+            return karne;
+        }
         public List<CkKarneOgrenciCevaplariInfo> KayitlariDizeGetir(int sinavId, int kurumKodu)
         {
             string sql = "select * from ckogrencicevaplari where SinavId=?SinavId and KurumKodu=?KurumKodu";

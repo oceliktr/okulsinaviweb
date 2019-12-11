@@ -7,6 +7,7 @@ public class CkKarneBranslarInfo
 {
     public int Id { get; set; }
     public int SinavId { get; set; }
+    public int Sira { get; set; }
     public int BransId { get; set; }
     public string BransAdi { get; set; }
 
@@ -15,12 +16,13 @@ public class CkKarneBranslarInfo
         
     }
 
-    public CkKarneBranslarInfo(int id, int sinavId, int bransId, string bransAdi)
+    public CkKarneBranslarInfo(int id, int sinavId,int sira, int bransId, string bransAdi)
     {
         Id = id;
         SinavId = sinavId;
         BransId = bransId;
         BransAdi = bransAdi;
+        Sira = sira;
     }
 }
 
@@ -46,7 +48,7 @@ public class CkKarneBranslarDB
         List<CkKarneBranslarInfo> karne = new List<CkKarneBranslarInfo>();
         foreach (DataRow k in dt.Rows)
         {
-            karne.Add(new CkKarneBranslarInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["BransId"]), k["BransAdi"].ToString()));
+            karne.Add(new CkKarneBranslarInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["Sira"]), Convert.ToInt32(k["BransId"]), k["BransAdi"].ToString()));
         }
         return karne;
     }
@@ -90,7 +92,12 @@ public class CkKarneBranslarDB
         MySqlParameter p = new MySqlParameter("?Id", MySqlDbType.Int32) { Value = id };
         helper.ExecuteNonQuery(sql, p);
     }
-
+    public void SinaviSil(int sinavId)
+    {
+        const string sql = "delete from ckkarnebranslar where SinavId=?SinavId";
+        MySqlParameter p = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
+        helper.ExecuteNonQuery(sql, p);
+    }
     public void KayitEkle(CkKarneBranslarInfo info)
     {
         const string sql = @"insert into ckkarnebranslar (SinavId,BransId,BransAdi) values (?SinavId,?BransId,?BransAdi)";

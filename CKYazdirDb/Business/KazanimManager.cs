@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ODM.CKYazdirDb.DAL;
 using ODM.CKYazdirDb.Library;
 
 namespace ODM.CKYazdirDb.Business
 {
     public class KazanimManager : ManagerBase<Kazanim>
     {
+        private readonly Repository<Kazanim> repo = new Repository<Kazanim>();
         /// <summary>
         /// Kazanımları ve branş adını birlikte gösterir
         /// </summary>
@@ -30,6 +32,12 @@ namespace ODM.CKYazdirDb.Business
                                                  Sorulari = kznm.Sorulari
                                              };
             return q1;
+        }
+
+        public void TumunuSil()
+        {
+            repo.DeleteAll("Kazanim");
+
         }
     }
 }

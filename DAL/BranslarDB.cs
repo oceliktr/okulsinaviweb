@@ -31,7 +31,7 @@ namespace DAL
 
         public DataTable KayitlariGetir()
         {
-            const string sql = "select * from branslar order by Id asc";
+            const string sql = "select * from branslar order by BransAdi asc";
             return _helper.ExecuteDataSet(sql).Tables[0];
         }
 

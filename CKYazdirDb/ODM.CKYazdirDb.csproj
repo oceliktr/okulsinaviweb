@@ -104,8 +104,8 @@
     <Compile Include="Business\Abstract\ManagerBase.cs" />
     <Compile Include="Business\Abstract\RandomExtensions.cs" />
     <Compile Include="Business\BransManager.cs" />
-    <Compile Include="Business\DogruCevaplarManager.cs" />
     <Compile Include="Business\CevapTxtManager.cs" />
+    <Compile Include="Business\DogruCevaplarManager.cs" />
     <Compile Include="Business\KarneSonucManager.cs" />
     <Compile Include="Business\KazanimManager.cs" />
     <Compile Include="Business\KutukManager.cs" />
@@ -185,6 +185,7 @@
     </Compile>
     <Compile Include="Library\CevapveKutuk.cs" />
     <Compile Include="Library\CevapveSinif.cs" />
+    <Compile Include="Library\DegerlendirmeTurleri.cs" />
     <Compile Include="Library\DersAdi.cs" />
     <Compile Include="Library\DizinIslemleri.cs" />
     <Compile Include="Library\DogruCevapveBrans.cs" />
@@ -215,13 +216,15 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Ayarlar.cs" />
     <Compile Include="Model\Brans.cs" />
-    <Compile Include="Model\DogruCevap.cs" />
     <Compile Include="Model\CevapTxt.cs" />
+    <Compile Include="Model\DogruCevap.cs" />
+    <Compile Include="Model\IlIlceDogruYanlisBosModeli.cs" />
     <Compile Include="Model\KarneModel.cs" />
     <Compile Include="Model\KarneSonuc.cs" />
     <Compile Include="Model\Kazanim.cs" />
     <Compile Include="Model\Kutuk.cs" />
     <Compile Include="Model\OgrenciCevabi.cs" />
+    <Compile Include="Model\OgrenciSonucModel.cs" />
     <Compile Include="Model\ResultList.cs" />
     <Compile Include="Model\ComboboxItem.cs" />
     <Compile Include="Program.cs" />

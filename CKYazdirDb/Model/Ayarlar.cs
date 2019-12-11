@@ -20,7 +20,8 @@ namespace ODM.CKYazdirDb
         [StringLength(20)]
         public string IlAdi { get; set; }
         [StringLength(100)]
-        public string SinavAdi { get; set; }      
+        public string SinavAdi { get; set; }
+        public int DegerlendirmeTuru { get; set; }
         public string OdmAdres { get; set; }      
         public string OdmWeb { get; set; }      
         public string OdmEmail { get; set; }

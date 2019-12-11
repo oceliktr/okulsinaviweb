@@ -44,19 +44,14 @@
                                                                     <asp:DropDownList runat="server" CssClass="form-control" ID="ddlKurum" Enabled="False"></asp:DropDownList>
                                                                 </div>
                                                             </div><div class="form-group">
-                                                                <label class="col-sm-4 control-label">Tc Kimlik</label>
-                                                                <div class="col-sm-8">***********</div>
+                                                                <label class="col-sm-4 control-label">Giriş Bilgisi</label>
+                                                                <div class="col-sm-8">
+                                                                    <asp:Literal ID="ltrGiris" runat="server"></asp:Literal></div>
                                                             </div>
                                                            <div class="form-group">
                                                                 <label class="col-sm-4 control-label">Adı Soyadı</label>
                                                                 <div class="col-sm-8">
                                                                     <asp:TextBox ID="txtAdiSoyadi" CssClass="form-control" runat="server"></asp:TextBox>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="col-sm-4 control-label">Branşı</label>
-                                                                <div class="col-sm-8">
-                                                                    <asp:DropDownList runat="server" CssClass="form-control" ID="ddlBrans" Enabled="False"></asp:DropDownList>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">

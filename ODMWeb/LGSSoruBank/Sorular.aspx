@@ -79,9 +79,12 @@
                                                             <td><%#Eval("BransAdi") %></td>
                                                             <td><%#Eval("Sinif") %></td>
                                                             <td>
-                                                                <asp:LinkButton ID="lnkDownload" CommandName="Download" CommandArgument='<%#Eval("Id") %>' runat="server"><i class="fa fa-file-word-o"></i></asp:LinkButton></td>
+                                                                <asp:LinkButton ID="lnkDownload" CommandName="Download" CommandArgument='<%#Eval("Id") %>' runat="server"><i class="fa fa-file-word-o"></i></asp:LinkButton>
+                                                                <a href="#" type="button" class="view" data-toggle="modal" data-url='https://docs.google.com/gview?url=http://erzurumodm.meb.gov.tr<%#Eval("SoruUrl")%>&embedded=true' data-target="#modalYT" id="#modalx"><i class="fa fa-eye"></i></a>
+
+                                                            </td>
                                                             <td><%#Eval("Id") %> </td>
-                                                            <td><%#Eval("Kazanim") %> </td>
+                                                            <td><%#Eval("KazanimNoKazanim") %> </td>
                                                             <td><%#Eval("Tarih").ToDateTime().TarihYaz() %></td>
                                                             <td>
                                                                 <asp:Literal ID="ltrOnay"  runat="server" Text='<%#Eval("Onay").ToInt32().LgsDurumBul() %>'></asp:Literal>
@@ -120,7 +123,48 @@
             </div>
         </section>
     </div>
+    <div class="modal fade" id="modalYT" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+
+            <!--Content-->
+            <div class="modal-content">
+                <!--Body-->
+                <div class="modal-body mb-0 p-0">
+                    <div class="embed-responsive embed-responsive-16by9 z-depth-1-half">
+                        <iframe class="embed-responsive-item" src="" allowfullscreen></iframe>
+                    </div>
+
+                </div>
+                <!--Footer-->
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-outline-primary btn-rounded btn-md ml-4" data-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+            <!--/.Content-->
+        </div>
+    </div>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="footer" Runat="Server">
+    <script>
+        $(function () {
+            //Initialize Select2 Elements
+            $(".select2").select2();
+
+            $("[data-mask]").inputmask();
+        });
+    </script>
+        
+    <script>
+        $(function () {
+            $("body").on("click",
+                ".view",
+                function () {
+                    var url = $(this).data("url");
+                    $('.modal').on('shown.bs.modal',function(){
+                        $(this).find('iframe').attr('src',url)
+                    })
+                });
+        });
+    </script>
 </asp:Content>
 

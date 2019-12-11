@@ -26,10 +26,10 @@ namespace ODM
                 }
 
                 KurumlarDb veriDb = new KurumlarDb();
-                lbKurumlar.DataSource = veriDb.IlceveOkuluBirlestirGetir();
-                lbKurumlar.DataValueField = "KurumKodu";
-                lbKurumlar.DataTextField = "IlceveKurumAdi";
-                lbKurumlar.DataBind();
+                ddlOkulTuru.DataSource = veriDb.KurumTurleri();
+                ddlOkulTuru.DataValueField = "Tur";
+                ddlOkulTuru.DataTextField = "Tur";
+                ddlOkulTuru.DataBind();
 
                 CkSinavAdiDB snvDb = new CkSinavAdiDB();
                 ddlSinavId2.DataSource =  snvDb.KayitlariGetir();
@@ -240,15 +240,18 @@ namespace ODM
                 txtUrl.Text = info.Url;
                 txtSinavAdi.Text = info.SinavAdi;
 
+                KurumlarDb kurumlarDb = new KurumlarDb();
+                var kurumList = kurumlarDb.IlceveOkuluDiziyeGetir();
 
                 string[] kategoriler = info.Kurumlar.Split('|');
 
-                for (int i = 0; i < lbKurumlar.Items.Count; i++)
+                
+                foreach (var t in kategoriler)
                 {
-                    if (kategoriler.Contains(lbKurumlar.Items[i].Value))
+                    var kontrol = kurumList.Find(x => x.KurumKodu == t.ToString());
+                    if (kontrol!=null)
                     {
-                        ListItem l = lbKurumlar.Items[i];
-                        lbSecilenler.Items.Add(new ListItem(l.Text, l.Value));
+                        lbSecilenler.Items.Add(new ListItem(kontrol.KurumAdi,kontrol.KurumAdi));
                     }
                 }
                 btnDosyaEkle.Text = "Değiştir";
@@ -366,6 +369,16 @@ namespace ODM
             SinavEvrakGelenDb veriDb = new SinavEvrakGelenDb();
             rptGelenEvraklar.DataSource = veriDb.KayitlariGetir(sinavId);
             rptGelenEvraklar.DataBind();
+        }
+
+        protected void ddlOkulTuru_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            string okulTuru = ddlOkulTuru.SelectedValue;
+            KurumlarDb veriDb = new KurumlarDb();
+            lbKurumlar.DataSource = veriDb.IlceveOkuluBirlestirGetir(okulTuru);
+            lbKurumlar.DataValueField = "KurumKodu";
+            lbKurumlar.DataTextField = "IlceveKurumAdi";
+            lbKurumlar.DataBind();
         }
     }
 }

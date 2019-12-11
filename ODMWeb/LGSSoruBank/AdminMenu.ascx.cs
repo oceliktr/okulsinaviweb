@@ -21,6 +21,7 @@ public partial class LGSSoruBank_AdminMenu : System.Web.UI.UserControl
 
         if (kInfo.Yetki.Contains("Root")|| kInfo.Yetki.Contains("Admin"))
         {
+            liKazanimlar.Visible = true;
             liSorular.Visible = true;
             liSinavModulu.Visible = true;
         }

@@ -10,10 +10,10 @@ using DAL;
 /// </summary>
 public class ListboxWithTooltip
 {
-    public void Kazanimlar(ListBox lb, int sinif, int brans, int ogrenmeAlani, int altOgrenmeAlani)
+    public void Kazanimlar(ListBox lb, int sinif, int brans)
     {
         KazanimlarDB kazanimDb = new KazanimlarDB();
-        lb.DataSource = kazanimDb.KayitlariGetir(brans, sinif, ogrenmeAlani, altOgrenmeAlani);
+        lb.DataSource = kazanimDb.KayitlariGetir(brans, sinif);
         lb.DataValueField = "Id";
         lb.DataTextField = "Kazanim";
         lb.DataBind();

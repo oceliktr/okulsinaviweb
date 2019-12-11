@@ -129,7 +129,7 @@ public partial class SoruBank_Sorular : System.Web.UI.Page
 
 
         ListboxWithTooltip kazanimlar = new ListboxWithTooltip();
-        kazanimlar.Kazanimlar(lbKazanimlar, sinif, brans, ogrenmeAlani, 0);
+        kazanimlar.Kazanimlar(lbKazanimlar, sinif, brans);
     }
 
 
@@ -142,7 +142,7 @@ public partial class SoruBank_Sorular : System.Web.UI.Page
         int altOgrenmeAlani = ddlAltOgrenmeAlani.SelectedValue.ToInt32();
 
         ListboxWithTooltip kazanimlar = new ListboxWithTooltip();
-        kazanimlar.Kazanimlar(lbKazanimlar, sinif, brans, ogrenmeAlani, altOgrenmeAlani);
+        kazanimlar.Kazanimlar(lbKazanimlar, sinif, brans);
     }
 
     protected void ddlSinif_OnSelectedIndexChanged(object sender, EventArgs e)

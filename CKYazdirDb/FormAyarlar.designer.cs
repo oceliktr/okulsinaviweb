@@ -54,13 +54,15 @@
             this.txtWeb = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.txtOdmAdres = new System.Windows.Forms.TextBox();
+            this.rbKazanim = new System.Windows.Forms.RadioButton();
+            this.rbKonu = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
             this.SuspendLayout();
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(159, 102);
+            this.label5.Location = new System.Drawing.Point(159, 134);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(341, 17);
             this.label5.TabIndex = 168;
@@ -70,7 +72,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label4.Location = new System.Drawing.Point(159, 332);
+            this.label4.Location = new System.Drawing.Point(159, 364);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(429, 17);
             this.label4.TabIndex = 178;
@@ -79,7 +81,7 @@
             // 
             // pbLogo
             // 
-            this.pbLogo.Location = new System.Drawing.Point(159, 122);
+            this.pbLogo.Location = new System.Drawing.Point(159, 154);
             this.pbLogo.Name = "pbLogo";
             this.pbLogo.Size = new System.Drawing.Size(102, 93);
             this.pbLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -89,7 +91,7 @@
             // btnKaydet
             // 
             this.btnKaydet.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnKaydet.Location = new System.Drawing.Point(442, 470);
+            this.btnKaydet.Location = new System.Drawing.Point(442, 502);
             this.btnKaydet.Name = "btnKaydet";
             this.btnKaydet.Size = new System.Drawing.Size(83, 37);
             this.btnKaydet.TabIndex = 184;
@@ -101,7 +103,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label3.Location = new System.Drawing.Point(103, 78);
+            this.label3.Location = new System.Drawing.Point(103, 110);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(50, 18);
             this.label3.TabIndex = 3;
@@ -110,7 +112,7 @@
             // btnGozat
             // 
             this.btnGozat.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnGozat.Location = new System.Drawing.Point(531, 75);
+            this.btnGozat.Location = new System.Drawing.Point(531, 107);
             this.btnGozat.Name = "btnGozat";
             this.btnGozat.Size = new System.Drawing.Size(58, 27);
             this.btnGozat.TabIndex = 164;
@@ -122,7 +124,7 @@
             // 
             this.txtLogo.Enabled = false;
             this.txtLogo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.txtLogo.Location = new System.Drawing.Point(159, 75);
+            this.txtLogo.Location = new System.Drawing.Point(159, 107);
             this.txtLogo.Name = "txtLogo";
             this.txtLogo.Size = new System.Drawing.Size(366, 24);
             this.txtLogo.TabIndex = 169;
@@ -131,7 +133,7 @@
             // 
             this.txtCk.Enabled = false;
             this.txtCk.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.txtCk.Location = new System.Drawing.Point(159, 269);
+            this.txtCk.Location = new System.Drawing.Point(159, 301);
             this.txtCk.Name = "txtCk";
             this.txtCk.Size = new System.Drawing.Size(366, 24);
             this.txtCk.TabIndex = 188;
@@ -139,7 +141,7 @@
             // btnCkGozat
             // 
             this.btnCkGozat.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCkGozat.Location = new System.Drawing.Point(531, 269);
+            this.btnCkGozat.Location = new System.Drawing.Point(531, 301);
             this.btnCkGozat.Name = "btnCkGozat";
             this.btnCkGozat.Size = new System.Drawing.Size(58, 27);
             this.btnCkGozat.TabIndex = 187;
@@ -151,7 +153,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label6.Location = new System.Drawing.Point(94, 272);
+            this.label6.Location = new System.Drawing.Point(94, 304);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(62, 18);
             this.label6.TabIndex = 186;
@@ -161,7 +163,7 @@
             // 
             this.txtSinifListesi.Enabled = false;
             this.txtSinifListesi.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.txtSinifListesi.Location = new System.Drawing.Point(159, 302);
+            this.txtSinifListesi.Location = new System.Drawing.Point(159, 334);
             this.txtSinifListesi.Name = "txtSinifListesi";
             this.txtSinifListesi.Size = new System.Drawing.Size(366, 24);
             this.txtSinifListesi.TabIndex = 191;
@@ -169,7 +171,7 @@
             // btnSinifListesiGozat
             // 
             this.btnSinifListesiGozat.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSinifListesiGozat.Location = new System.Drawing.Point(531, 302);
+            this.btnSinifListesiGozat.Location = new System.Drawing.Point(531, 334);
             this.btnSinifListesiGozat.Name = "btnSinifListesiGozat";
             this.btnSinifListesiGozat.Size = new System.Drawing.Size(58, 27);
             this.btnSinifListesiGozat.TabIndex = 190;
@@ -181,7 +183,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label7.Location = new System.Drawing.Point(8, 305);
+            this.label7.Location = new System.Drawing.Point(8, 337);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(148, 18);
             this.label7.TabIndex = 189;
@@ -190,7 +192,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(51, 246);
+            this.label2.Location = new System.Drawing.Point(51, 278);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(105, 17);
             this.label2.TabIndex = 193;
@@ -200,7 +202,7 @@
             // 
             this.cbSablonTurleri.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSablonTurleri.FormattingEnabled = true;
-            this.cbSablonTurleri.Location = new System.Drawing.Point(159, 239);
+            this.cbSablonTurleri.Location = new System.Drawing.Point(159, 271);
             this.cbSablonTurleri.Name = "cbSablonTurleri";
             this.cbSablonTurleri.Size = new System.Drawing.Size(366, 24);
             this.cbSablonTurleri.TabIndex = 192;
@@ -244,7 +246,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(67, 369);
+            this.label1.Location = new System.Drawing.Point(67, 401);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 17);
             this.label1.TabIndex = 202;
@@ -253,7 +255,7 @@
             // txtEposta
             // 
             this.txtEposta.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.txtEposta.Location = new System.Drawing.Point(159, 428);
+            this.txtEposta.Location = new System.Drawing.Point(159, 460);
             this.txtEposta.Name = "txtEposta";
             this.txtEposta.Size = new System.Drawing.Size(366, 24);
             this.txtEposta.TabIndex = 200;
@@ -262,7 +264,7 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label10.Location = new System.Drawing.Point(43, 428);
+            this.label10.Location = new System.Drawing.Point(43, 460);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(113, 18);
             this.label10.TabIndex = 199;
@@ -271,7 +273,7 @@
             // txtWeb
             // 
             this.txtWeb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.txtWeb.Location = new System.Drawing.Point(159, 395);
+            this.txtWeb.Location = new System.Drawing.Point(159, 427);
             this.txtWeb.Name = "txtWeb";
             this.txtWeb.Size = new System.Drawing.Size(366, 24);
             this.txtWeb.TabIndex = 198;
@@ -280,7 +282,7 @@
             // 
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label11.Location = new System.Drawing.Point(64, 395);
+            this.label11.Location = new System.Drawing.Point(64, 427);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(92, 18);
             this.label11.TabIndex = 197;
@@ -289,16 +291,41 @@
             // txtOdmAdres
             // 
             this.txtOdmAdres.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.txtOdmAdres.Location = new System.Drawing.Point(159, 365);
+            this.txtOdmAdres.Location = new System.Drawing.Point(159, 397);
             this.txtOdmAdres.Name = "txtOdmAdres";
             this.txtOdmAdres.Size = new System.Drawing.Size(366, 24);
             this.txtOdmAdres.TabIndex = 203;
+            // 
+            // rbKazanim
+            // 
+            this.rbKazanim.AutoSize = true;
+            this.rbKazanim.Checked = true;
+            this.rbKazanim.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.rbKazanim.Location = new System.Drawing.Point(159, 72);
+            this.rbKazanim.Name = "rbKazanim";
+            this.rbKazanim.Size = new System.Drawing.Size(180, 21);
+            this.rbKazanim.TabIndex = 204;
+            this.rbKazanim.Text = "Kazanım Değerlendirme";
+            this.rbKazanim.UseVisualStyleBackColor = true;
+            // 
+            // rbKonu
+            // 
+            this.rbKonu.AutoSize = true;
+            this.rbKonu.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.rbKonu.Location = new System.Drawing.Point(345, 72);
+            this.rbKonu.Name = "rbKonu";
+            this.rbKonu.Size = new System.Drawing.Size(159, 21);
+            this.rbKonu.TabIndex = 205;
+            this.rbKonu.Text = "Konu Değerlendirme";
+            this.rbKonu.UseVisualStyleBackColor = true;
             // 
             // FormAyarlar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(600, 519);
+            this.ClientSize = new System.Drawing.Size(600, 553);
+            this.Controls.Add(this.rbKonu);
+            this.Controls.Add(this.rbKazanim);
             this.Controls.Add(this.txtOdmAdres);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtEposta);
@@ -365,5 +392,7 @@
         private System.Windows.Forms.TextBox txtWeb;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox txtOdmAdres;
+        private System.Windows.Forms.RadioButton rbKazanim;
+        private System.Windows.Forms.RadioButton rbKonu;
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
    public class TableModel
     {
         public string No { get; set; }
+        public string SoruNo { get; set; }
         public string KazanimNo { get; set; }
         public string Kazanim { get; set; }
         public string IlPuani { get; set; }
@@ -16,9 +17,10 @@ using System.Threading.Tasks;
         public string SubePuani { get; set; }
         public string Aciklama { get; set; }
 
-        public TableModel(string no, string kazanimNo, string kazanim, string ilPuani, string ilcePuani, string okulPuani, string subePuani, string aciklama)
+        public TableModel(string no,string soruNo, string kazanimNo, string kazanim, string ilPuani, string ilcePuani, string okulPuani, string subePuani, string aciklama)
         {
             No = no;
+            SoruNo = soruNo;
             KazanimNo = kazanimNo;
             Kazanim = kazanim;
             IlPuani = ilPuani;

@@ -16,7 +16,7 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
             if (Master.UyeId() == 0) Response.Redirect("~/ODM/Cikis.aspx");
             SinavlarDb sDb = new SinavlarDb();
             SinavlarInfo sinf = sDb.AktifSinavAdi();
-            ltrDonemAdiBreadCrumb.Text= ltrDonemAdi.Text = sinf.SinavAdi;
+            ltrDonemAdiBreadCrumb.Text = ltrDonemAdi.Text = sinf.SinavAdi;
             if (sinf.VeriGirisi == 0)
             {
                 Master.UyariTuruncu(string.Format("<b>{0}</b> için veri girişleri kapatıldı.", sinf.SinavAdi), phUyari);
@@ -27,8 +27,10 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
             ddlBrans.DataTextField = "BransAdi";
             ddlBrans.DataValueField = "Id";
             ddlBrans.DataBind();
-            ddlBrans.Items.Insert(0, new ListItem("--- Seçiniz ---", ""));
+            ddlBrans.Items.Insert(0, new ListItem("Branş Seçiniz", ""));
 
+
+            ddlKazanim.Items.Insert(0, new ListItem("Kazanım Seçiniz", ""));
 
             KullanicilarDb kDb = new KullanicilarDb();
             KullanicilarInfo kInfo = kDb.KayitBilgiGetir(Master.UyeId());
@@ -39,20 +41,37 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
             if (Request.QueryString["Id"] != null)
             {
                 int soruId = Request.QueryString["Id"].ToInt32();
-                
+
                 if (soruId != 0)
                 {
                     LgsSorularDB sbMKDb = new LgsSorularDB();
-                    LgsSorularInfo sbMkInfo = sbMKDb.KayitBilgiGetir(soruId,Master.UyeId());
+                    LgsSorularInfo sbMkInfo = sbMKDb.KayitBilgiGetir(soruId, Master.UyeId());
                     if (sbMkInfo.Id != 0)
                     {
                         hfSoruId.Value = soruId.ToString();
                         ddlSinif.SelectedValue = sbMkInfo.Sinif.ToString();
-                        txtKazanim.Text = sbMkInfo.Kazanim;
+
+                        KazanimlariListele();
+
+                        if (sbMkInfo.KazanimId != 0)
+                            ddlKazanim.Text = sbMkInfo.KazanimId.ToString();
                     }
                 }
             }
         }
+    }
+    protected void KazanimlariListele()
+    {
+        int bransId = ddlBrans.SelectedValue.ToInt32();
+        int sinif = ddlSinif.SelectedValue.ToInt32();
+
+
+        LgsKazanimlarDB kznmDb = new LgsKazanimlarDB();
+        ddlKazanim.DataSource = kznmDb.KazanimNoKazanimBirlestir(bransId, sinif);
+        ddlKazanim.DataValueField = "Id";
+        ddlKazanim.DataTextField = "KazanimNoKazanim";
+        ddlKazanim.DataBind();
+        ddlKazanim.Items.Insert(0, new ListItem("Kazanım Seçiniz", ""));
     }
 
     protected void btnYukle_OnClick(object sender, EventArgs e)
@@ -68,7 +87,7 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
         int sinavId = sinav.SinavId;
 
         KullanicilarDb kDb = new KullanicilarDb();
-        KullanicilarInfo kInfo = kDb.KayitBilgiGetir(Master.UyeId(),true);
+        KullanicilarInfo kInfo = kDb.KayitBilgiGetir(Master.UyeId(), true);
 
         int kullaniciId = Master.UyeId();
         string kullanidiAdiSoyadi = kInfo.AdiSoyadi;
@@ -89,7 +108,7 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
                 string rastgeleMetin = GenelIslemler.RastgeleMetinUret(5);
                 if (yuklenecekDosyalar.Contains(uzanti))
                 {
-                    dosyaAdi = string.Format("{0}_{1}_{2}_{3}{4}", sinif,bransAdi.ToUrl(), kullanidiAdiSoyadi.ToUrl(),rastgeleMetin, uzanti);
+                    dosyaAdi = string.Format("{0}_{1}_{2}_{3}{4}", sinif, bransAdi.ToUrl(), kullanidiAdiSoyadi.ToUrl(), rastgeleMetin, uzanti);
                     string dosyaYolu = string.Format(@"{0}upload\lgs\{1}\{2}", HttpContext.Current.Server.MapPath("/"), sinavId, dosyaAdi);
                     File.WriteAllBytes(dosyaYolu, fuDosya.FileBytes);
 
@@ -110,7 +129,6 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
                         KayitGuncelle(id, kullaniciId, dosya);
                     }
                     //formu temizle
-                    txtKazanim.Text = "";
                 }
                 else
                 {
@@ -120,9 +138,9 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
         }
         else
         {
-            if (id==0)
+            if (id == 0)
             {
-                Master.UyariTuruncu("Herhangi bir dosya seçmediniz.",phUyari);
+                Master.UyariTuruncu("Herhangi bir dosya seçmediniz.", phUyari);
             }
             else
             {
@@ -140,7 +158,7 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
         LgsSorularDB sgDb = new LgsSorularDB();
         LgsSorularInfo sgInfo = sgDb.KayitBilgiGetir(id, kullaniciId);
 
-        sgInfo.Kazanim = txtKazanim.Text.ToTemizMetin();
+        sgInfo.KazanimId = ddlKazanim.SelectedValue.ToInt32();
         sgInfo.SoruUrl = dosya;
         sgDb.KayitGuncelle(sgInfo);
 
@@ -154,7 +172,7 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
         {
             SinavId = sinavId,
             BransId = bransId,
-            Kazanim = txtKazanim.Text.ToTemizMetin(),
+            KazanimId = ddlKazanim.SelectedValue.ToInt32(),
             KullaniciId = kullaniciId,
             Onay = 0,
             Sinif = sinif,
@@ -163,5 +181,10 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
         };
         sgDb.KayitEkle(sgInfo);
         Master.UyariIslemTamam("Dosya başarıya yüklendi. Teşekkür ederiz.", phUyari);
+    }
+
+    protected void ddlSinif_OnSelectedIndexChanged(object sender, EventArgs e)
+    {
+        KazanimlariListele();
     }
 }

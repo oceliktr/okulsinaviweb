@@ -94,7 +94,7 @@ public partial class ODM_PdfOlustur : Page
             string[] konum = kazanimlar.Split('|');
             foreach (KazanimlarInfo kinfo in from t in konum where t.IsInteger() select kznDb.KayitBilgiGetir(t.ToInt32()))
             {
-                ltrKazanimKarne.Text += kinfo.Karne;
+                ltrKazanimKarne.Text += kinfo.Kazanim;
             }
 
         }

@@ -68,7 +68,14 @@ namespace ODM.CKYazdirDb
             txtCk.Text = ayar.CkSablon;
             txtSinifListesi.Text = ayar.SinifListesiSablon;
             cbSablonTurleri.SelectedValue = ayar.SablonTuru;
-
+            if (ayar.DegerlendirmeTuru==DegerlendirmeTurleri.DegerlendirmeTuru.KazanimBazli.ToInt32())
+            {
+                rbKazanim.Checked = true;
+            }
+            else
+            {
+                rbKonu.Checked = true;
+            }
             txtOdmAdres.Text = ayar.OdmAdres;
             txtWeb.Text = ayar.OdmWeb;
             txtEposta.Text = ayar.OdmEmail;
@@ -135,6 +142,14 @@ namespace ODM.CKYazdirDb
             ayar.SinifListesiSablon = txtSinifListesi.Text;
             ayar.SablonTuru = cbSablonTurleri.SelectedValue.ToString();
             ayar.SinavAdi = txtSinavAdi.Text;
+            if (rbKazanim.Checked==true)
+            {
+                ayar.DegerlendirmeTuru = DegerlendirmeTurleri.DegerlendirmeTuru.KazanimBazli.ToInt32();
+            }
+            else
+            {
+                ayar.DegerlendirmeTuru = DegerlendirmeTurleri.DegerlendirmeTuru.KonuBazli.ToInt32();
+            }
             ayar.OdmAdres = txtOdmAdres.Text;
             ayar.OdmWeb = txtWeb.Text;
             ayar.OdmEmail = txtEposta.Text;

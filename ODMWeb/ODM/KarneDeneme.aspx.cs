@@ -282,7 +282,7 @@ public partial class ODM_KarneDeneme : System.Web.UI.Page
                 telafiKazanimSayisi++;
             }
 
-            model.Add(new TableModel(i.ToString(), kazanim.KazanimNo, kazanim.KazanimAdi, ilBasariDurumu.ToString("0"), ilceBasariDurumu.ToString("0"),
+            model.Add(new TableModel(i.ToString(), kazanim.Sorulari,kazanim.KazanimNo, kazanim.KazanimAdi, ilBasariDurumu.ToString("0"), ilceBasariDurumu.ToString("0"),
                 okulBasariDurumu.ToString("0"), subeBasariDurumu.ToString("0"), aciklama));
 
 

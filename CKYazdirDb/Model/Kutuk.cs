@@ -33,5 +33,11 @@ namespace ODM.CKYazdirDb
         public int DersKodu { get; set; }
         [StringLength(50)]
         public string Barkod { get; set; }
+        [StringLength(3)]
+        public string KatilimDurumu { get; set; }
+        [StringLength(3)]
+        public string KitapcikTuru { get; set; }
+        [StringLength(350)]
+        public string Cevaplar { get; set; }
     }
 }

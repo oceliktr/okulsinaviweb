@@ -2,6 +2,7 @@
 
 <ul class="sidebar-menu">
     <li class="header">MENU</li>
+    <li id="liKazanimlar" runat="server" Visible="False"><a href="Kazanimlar.aspx"><i class="fa fa-file-image-o"></i><span>Kazanımlar</span></a></li>
     <li id="liSorular" runat="server" Visible="False"><a href="Sorular.aspx"><i class="fa fa-file-image-o"></i><span>Sorular</span></a></li>
     <li><a href="Bilgilerim.aspx"><i class="fa fa-file-image-o"></i><span>Bilgilerim</span></a></li>
     <li><a href="Sorularim.aspx"><i class="fa fa-file-image-o"></i><span>Sorularım</span></a></li>

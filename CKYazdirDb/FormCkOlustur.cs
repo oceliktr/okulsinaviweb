@@ -244,7 +244,7 @@ namespace ODM.CKYazdirDb
                 CKCizimIslemleri(ogr);
 
                 progressBar1.Value = a;
-                lblBilgi.Text = string.Format("{0} - {1}  CK dosyası oluşturuluyor. ({2}/{3}) {4}", ogr.IlceAdi, ogr.KurumAdi, a, ogrenciler.Count, progressBar1.Value);
+                lblBilgi.Text = string.Format("{0} - {1}  CK dosyası oluşturuluyor. ({2}/{3})", ogr.IlceAdi, ogr.KurumAdi, a, ogrenciler.Count);
 
                 try
                 {
@@ -359,7 +359,9 @@ namespace ODM.CKYazdirDb
             Brush dolgu = new SolidBrush(Color.Black);
 
             //bARKOD OLUŞTUR
-            Bitmap qrc = qrCodeEncoder.Encode(ogr.Barkod);
+            //Bitmap qrc = new Bitmap("");
+            //if (ogr.Barkod != null)
+            //    qrc = qrCodeEncoder.Encode(ogr.Barkod);
 
             //optikte işaretlenecek alanların bilgileri
             int w = 39;
@@ -389,7 +391,8 @@ namespace ODM.CKYazdirDb
 
                 Bitmap logo = new Bitmap(logoUrl);
                 //A4 Karekod Konumu
-                ckImage.DrawImage(qrc, 1580, 1480, 300, 300);
+                //if (ogr.Barkod != null)
+                //    ckImage.DrawImage(qrc, 1580, 1480, 300, 300);
                 ckImage.DrawImage(logo, 730, 1320, 300, 300);
             }
             else if (ayar.SablonTuru == "2")
@@ -417,7 +420,7 @@ namespace ODM.CKYazdirDb
 
                 Bitmap logo = new Bitmap(ayar.Logo);
                 //A5 Karekod Konumu
-                ckImage.DrawImage(qrc, 1130, 960, 300, 300);
+                // ckImage.DrawImage(qrc, 1130, 960, 300, 300);
                 ckImage.DrawImage(logo, 520, 750, 230, 230);
             }
             else if (ayar.SablonTuru == "3")
@@ -471,7 +474,7 @@ namespace ODM.CKYazdirDb
             ckImage.Clear(Color.Transparent);
             ckImage.Dispose();
             img.Dispose();
-            qrc.Dispose();
+            //qrc.Dispose();
         }
         private static QRCodeEncoder QrCodeEncoder()
         {
@@ -694,26 +697,35 @@ namespace ODM.CKYazdirDb
 
             lblBilgi.Text = "Şube listesi oluşturuluyor.";
             int s = 0;
+            int o = 0;
+            int il = 0;
+            List<SinifSube> ilceBilgi = new List<SinifSube>();
+            List<SinifSube> okulBilgi = new List<SinifSube>();
             List<SinifSube> subeBilgi = new List<SinifSube>();
-            var ilceler = (from ogr in ogrencilerKutuk select ogr).GroupBy(x => x.IlceAdi).Select(x => x.First())
-                .OrderBy(x => x.IlceAdi);
-            foreach (var ilce in ilceler)
+
+            var siniflar = (from ogr in ogrencilerKutuk select ogr).GroupBy(x => x.Sinifi).Select(x => x.First()).OrderBy(x => x.Sinifi);
+            foreach (var sinif in siniflar)
             {
-                var okullar = (from ogr in ogrencilerKutuk select ogr).Where(x => x.IlceAdi == ilce.IlceAdi)
-                    .GroupBy(x => x.KurumKodu).Select(x => x.First()).OrderBy(x => x.KurumAdi);
-                foreach (var okul in okullar)
+                var ilceler = (from ogr in ogrencilerKutuk select ogr).GroupBy(x => x.IlceAdi).Select(x => x.First()).OrderBy(x => x.IlceAdi);
+                foreach (var ilce in ilceler)
                 {
-                    var siniflar = (from ogr in ogrencilerKutuk select ogr).Where(x => x.KurumKodu == okul.KurumKodu)
-                        .GroupBy(x => x.Sinifi).Select(x => x.First()).OrderBy(x => x.Sinifi);
-                    foreach (var sinif in siniflar)
+                    o++;
+                    int ilceOgrSayisi = (from ogr in ogrencilerKutuk select ogr).GroupBy(x => x.OpaqId).Select(x => x.First()).Count(x => x.IlceAdi == ilce.IlceAdi && x.Sinifi == sinif.Sinifi);
+                    ilceBilgi.Add(new SinifSube(o, ilce.IlceAdi, 0, "", sinif.Sinifi,"", ilceOgrSayisi));
+
+                    var okullar = (from ogr in ogrencilerKutuk select ogr).Where(x => x.IlceAdi == ilce.IlceAdi).GroupBy(x => x.KurumKodu).Select(x => x.First()).OrderBy(x => x.KurumAdi);
+                    foreach (var okul in okullar)
                     {
-                        var subeler = (from ogr in ogrencilerKutuk select ogr).Where(x => x.KurumKodu == sinif.KurumKodu && x.Sinifi == sinif.Sinifi)
-                            .GroupBy(x => x.Sube).Select(x => x.First()).OrderBy(x => x.Sube);
+                        o++;
+                        int okulOgrSayisi = (from ogr in ogrencilerKutuk select ogr).GroupBy(x => x.OpaqId).Select(x => x.First()).Count(x => x.KurumKodu == okul.KurumKodu && x.Sinifi == sinif.Sinifi);
+                        okulBilgi.Add(new SinifSube(o, okul.IlceAdi, okul.KurumKodu, okul.KurumAdi, sinif.Sinifi,
+                            "", okulOgrSayisi));
+                        var subeler = (from ogr in ogrencilerKutuk select ogr).Where(x => x.KurumKodu == sinif.KurumKodu && x.Sinifi == sinif.Sinifi).GroupBy(x => x.Sube).Select(x => x.First()).OrderBy(x => x.Sube);
                         foreach (var sube in subeler)
                         {
                             int ogrSayisi = (from ogr in ogrencilerKutuk select ogr).GroupBy(x => x.OpaqId)
                                 .Select(x => x.First()).Count(x =>
-                                    x.KurumKodu == sube.KurumKodu && x.Sinifi == sinif.Sinifi && x.Sube == sube.Sube);
+                                    x.KurumKodu == sube.KurumKodu && x.Sinifi == sube.Sinifi && x.Sube == sube.Sube);
                             s++;
                             subeBilgi.Add(new SinifSube(s, sube.IlceAdi, sube.KurumKodu, sube.KurumAdi, sube.Sinifi,
                                 sube.Sube, ogrSayisi));
@@ -723,8 +735,11 @@ namespace ODM.CKYazdirDb
             }
 
             int a = 0;
-            int kayitSayisi = subeBilgi.Count;
-            progressBar1.Maximum = kayitSayisi;
+            int ilceSayisi = ilceBilgi.Count;
+            int okulSayisi = okulBilgi.Count;
+            int subeSayisi = subeBilgi.Count;
+            int islemSayisi = subeSayisi + okulSayisi+ilceSayisi;
+            progressBar1.Maximum = islemSayisi;
             progressBar1.Value = 0;
 
             lblBilgi.Text = "Şube öğrenci sayıları listesi oluşturuluyor.";
@@ -743,7 +758,7 @@ namespace ODM.CKYazdirDb
             calismaSayfasi.Cells[1, 6] = "Şube";
             calismaSayfasi.Cells[1, 7] = "Şube Ö. Sayısı";
 
-            for (int i = 0; i < kayitSayisi; i++)
+            for (int i = 0; i < subeSayisi; i++)
             {
 
                 calismaSayfasi.Cells[i + 2, 1] = i + 1;
@@ -759,7 +774,77 @@ namespace ODM.CKYazdirDb
 
                 try
                 {
-                    toolSslKalanSure.Text = kayitSayisi.KalanSureHesapla(a, watch);
+                    toolSslKalanSure.Text = islemSayisi.KalanSureHesapla(a, watch);
+                }
+                catch (Exception)
+                {
+                    toolSslKalanSure.Text = "Hesaplanıyor...";
+                }
+            }
+
+            //Yeni Sayfa Ekle
+            Sheets xlSheets = calismaKitabi.Sheets as Sheets;
+            var calismaSayfasi2 = (Worksheet)xlSheets.Add(xlSheets[1], Type.Missing, Type.Missing, Type.Missing);
+
+            //  Worksheet calismaSayfasi2 = (Worksheet)calismaKitabi.Worksheets.Item[1];
+
+
+            calismaSayfasi2.Name = "Okul Öğrenci Sayıları";
+
+            calismaSayfasi2.Cells[1, 1] = "Sıra No";
+            calismaSayfasi2.Cells[1, 2] = "İlçe Adı";
+            calismaSayfasi2.Cells[1, 3] = "Kurum Kodu";
+            calismaSayfasi2.Cells[1, 4] = "Kurum Adı";
+            calismaSayfasi2.Cells[1, 5] = "Sınıf";
+            calismaSayfasi2.Cells[1, 6] = "Ö. Sayısı";
+
+            for (int i = 0; i < okulSayisi; i++)
+            {
+
+                calismaSayfasi2.Cells[i + 2, 1] = i + 1;
+                calismaSayfasi2.Cells[i + 2, 2] = okulBilgi[i].IlceAdi;
+                calismaSayfasi2.Cells[i + 2, 3] = okulBilgi[i].KurumKodu;
+                calismaSayfasi2.Cells[i + 2, 4] = okulBilgi[i].KurumAdi;
+                calismaSayfasi2.Cells[i + 2, 5] = okulBilgi[i].Sinif;
+                calismaSayfasi2.Cells[i + 2, 6] = okulBilgi[i].OgrenciSayisi;
+
+                a++;
+                progressBar1.Value = a;
+
+                try
+                {
+                    toolSslKalanSure.Text = islemSayisi.KalanSureHesapla(a, watch);
+                }
+                catch (Exception)
+                {
+                    toolSslKalanSure.Text = "Hesaplanıyor...";
+                }
+            }
+
+
+            var calismaSayfasi3 = (Worksheet)xlSheets.Add(xlSheets[1], Type.Missing, Type.Missing, Type.Missing);
+
+            calismaSayfasi3.Name = "İlçe Öğrenci Sayıları";
+
+            calismaSayfasi3.Cells[1, 1] = "Sıra No";
+            calismaSayfasi3.Cells[1, 2] = "İlçe Adı";
+            calismaSayfasi3.Cells[1, 3] = "Sınıf";
+            calismaSayfasi3.Cells[1, 4] = "Ö. Sayısı";
+
+            for (int i = 0; i < ilceSayisi; i++)
+            {
+
+                calismaSayfasi3.Cells[i + 2, 1] = i + 1;
+                calismaSayfasi3.Cells[i + 2, 2] = ilceBilgi[i].IlceAdi;
+                calismaSayfasi3.Cells[i + 2, 3] = ilceBilgi[i].Sinif;
+                calismaSayfasi3.Cells[i + 2, 4] = ilceBilgi[i].OgrenciSayisi;
+
+                a++;
+                progressBar1.Value = a;
+
+                try
+                {
+                    toolSslKalanSure.Text = islemSayisi.KalanSureHesapla(a, watch);
                 }
                 catch (Exception)
                 {
@@ -768,6 +853,7 @@ namespace ODM.CKYazdirDb
             }
 
             toolSslKalanSure.Text = "Tamamlandı...";
+
             calismaKitabi.SaveAs(dosyaAdi, XlFileFormat.xlWorkbookNormal);
             calismaKitabi.Close(true);
             aplicacion.Quit();

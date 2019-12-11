@@ -8,13 +8,12 @@ namespace ODM.CKYazdirDb.DAL
     {
         public DbSet<Ayarlar> Ayarlar { get; set; }
         public DbSet<DogruCevap> Cevaplar { get; set; }
-        public DbSet<CevapTxt> CevapTxt { get; set; }
         public DbSet<Kutuk> Kutuk { get; set; }
         public DbSet<Kazanim> Kazanimlar { get; set; }
         public DbSet<Brans> Branslar { get; set; }
         public DbSet<KarneSonuc> KarneSonuclari { get; set; }
         public DbSet<OgrenciCevabi> OgrenciCevaplari { get; set; }
-
+       
         public DatabaseContext()
         {
            // Database.SetInitializer(new MyInitializer());

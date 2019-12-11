@@ -51,6 +51,9 @@
             this.label7 = new System.Windows.Forms.Label();
             this.cbSinif = new System.Windows.Forms.ComboBox();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tümünüSilToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKazanimlar)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -175,21 +178,24 @@
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.düzenleToolStripMenuItem,
-            this.silToolStripMenuItem});
+            this.silToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem,
+            this.tümünüSilToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(133, 52);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(261, 134);
             // 
             // düzenleToolStripMenuItem
             // 
             this.düzenleToolStripMenuItem.Name = "düzenleToolStripMenuItem";
-            this.düzenleToolStripMenuItem.Size = new System.Drawing.Size(132, 24);
+            this.düzenleToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
             this.düzenleToolStripMenuItem.Text = "Düzenle";
             this.düzenleToolStripMenuItem.Click += new System.EventHandler(this.DüzenleToolStripMenuItem_Click);
             // 
             // silToolStripMenuItem
             // 
             this.silToolStripMenuItem.Name = "silToolStripMenuItem";
-            this.silToolStripMenuItem.Size = new System.Drawing.Size(132, 24);
+            this.silToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
             this.silToolStripMenuItem.Text = "Sil";
             this.silToolStripMenuItem.Click += new System.EventHandler(this.SilToolStripMenuItem_Click);
             // 
@@ -266,6 +272,25 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(257, 6);
+            // 
+            // seçiliSınıfKazanımlarınıSilToolStripMenuItem
+            // 
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Name = "seçiliSınıfKazanımlarınıSilToolStripMenuItem";
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Text = "Seçili Sınıf Kazanımlarını Sil";
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Click += new System.EventHandler(this.seçiliSınıfKazanımlarınıSilToolStripMenuItem_Click);
+            // 
+            // tümünüSilToolStripMenuItem
+            // 
+            this.tümünüSilToolStripMenuItem.Name = "tümünüSilToolStripMenuItem";
+            this.tümünüSilToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
+            this.tümünüSilToolStripMenuItem.Text = "Tümünü Sil";
+            this.tümünüSilToolStripMenuItem.Click += new System.EventHandler(this.tümünüSilToolStripMenuItem_Click);
+            // 
             // FormKazanimlar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -326,5 +351,8 @@
         private System.Windows.Forms.ComboBox cbSinif;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.DataGridView dgvKazanimlar;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem seçiliSınıfKazanımlarınıSilToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tümünüSilToolStripMenuItem;
     }
 }

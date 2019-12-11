@@ -1,11 +1,11 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/LGSSoruBank/MasterPage.master" AutoEventWireup="true" CodeFile="SoruEkleAdmin.aspx.cs" Inherits="LGSSoruBank_SoruEkleAdmin" %>
 
 <%@ MasterType VirtualPath="MasterPage.master" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    </asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <asp:ScriptManager ID="scriptManager1" runat="server"></asp:ScriptManager>
-    <asp:HiddenField runat="server" ID="hfSoruId" Value="0"/>
+    <asp:HiddenField runat="server" ID="hfSoruId" Value="0" />
     <div class="content-wrapper">
         <section class="content-header">
             <h1>Erzurum Ölçme Değerlendirme Merkezi
@@ -29,44 +29,60 @@
                             </div>
                             <div class="box-body">
                                 <div class="form-group">
-                                    <label> Sınav Adı </label>
+                                    <label>Sınav Adı </label>
                                     <asp:DropDownList runat="server" CssClass="form-control" ID="ddlSinavlar"></asp:DropDownList>
                                 </div>
-                                <asp:UpdatePanel ID="UpdatePanel1" runat="server"><ContentTemplate>
-                                    <div class="form-group">
-                                        <label>
-                                            Branşı
-                                        </label>
-                                        <asp:DropDownList CssClass="form-control" ID="ddlBrans" ValidationGroup="form" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlBrans_OnSelectedIndexChanged"></asp:DropDownList>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>
-                                            Soru Yazarı
-                                        </label>
-                                        <asp:DropDownList CssClass="form-control" ID="ddlSoruYazarlari" ValidationGroup="form" runat="server"></asp:DropDownList>
-                                    </div>
-                                </ContentTemplate></asp:UpdatePanel>
+                                <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                                    <ContentTemplate>
+                                        <div class="form-group">
+                                            <label>
+                                                Branşı
+                                            </label>
+                                            <asp:DropDownList CssClass="form-control" ID="ddlBrans" ValidationGroup="form" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlBrans_OnSelectedIndexChanged"></asp:DropDownList>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>
+                                                Soru Yazarı
+                                            </label>
+                                            <asp:DropDownList CssClass="form-control" ID="ddlSoruYazarlari" ValidationGroup="form" runat="server"></asp:DropDownList>
+                                        </div>
                                 <div class="form-group">
                                     <label>
                                         Sınıf Düzeyi
                                         <asp:RequiredFieldValidator ControlToValidate="ddlSinif" ValidationGroup="form" ID="RequiredFieldValidator3" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
-                                    <asp:DropDownList ID="ddlSinif" CssClass="form-control" ValidationGroup="form" runat="server">
+                                    <asp:DropDownList ID="ddlSinif" CssClass="form-control" ValidationGroup="form" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlSinif_OnSelectedIndexChanged">
                                         <asp:ListItem Value="">--- Seçiniz ---</asp:ListItem>
+                                        <asp:ListItem Value="5">5. Sınıf</asp:ListItem>
+                                        <asp:ListItem Value="6">6. Sınıf</asp:ListItem>
                                         <asp:ListItem Value="7">7. Sınıf</asp:ListItem>
                                         <asp:ListItem Value="8">8. Sınıf</asp:ListItem>
+                                        <asp:ListItem Value="9">9. Sınıf</asp:ListItem>
+                                        <asp:ListItem Value="10">10. Sınıf</asp:ListItem>
+                                        <asp:ListItem Value="11">11. Sınıf</asp:ListItem>
+                                        <asp:ListItem Value="12">12. Sınıf</asp:ListItem>
                                     </asp:DropDownList>
                                 </div>
                                 <div class="form-group">
-                                    <label> Kazanım <asp:RequiredFieldValidator ControlToValidate="txtKazanim" ValidationGroup="form" ID="RequiredFieldValidator1" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
+                                    <label>
+                                       Kazanım <asp:RequiredFieldValidator ControlToValidate="ddlKazanim" ValidationGroup="form" ID="RequiredFieldValidator1" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator>
+                                    </label>
+                                    <asp:DropDownList CssClass="form-control" ID="ddlKazanim" ValidationGroup="form" runat="server"></asp:DropDownList>
+                                </div>
+                                        
+                                    </ContentTemplate>
+                                </asp:UpdatePanel>
+                                <div class="form-group">
+                                    <label>Kazanım
+                                       </label>
                                     <asp:TextBox ID="txtKazanim" MaxLength="250" CssClass="form-control" ValidationGroup="form" runat="server" placeholder="Kazanım numarası / Kazanım adı"></asp:TextBox>
                                 </div>
                                 <div class="form-group">
-                                    <label> Dosya Yükle </label>
+                                    <label>Dosya Yükle </label>
                                     <asp:FileUpload ID="fuDosya" CssClass="form-control" runat="server" />
                                 </div>
                                 <div class="form-group">
-                                    <label> Onay </label>
-                                    <asp:CheckBox ID="cbOnay" runat="server" CssClass="form-control" Text="İncelendi"/>
+                                    <label>Onay </label>
+                                    <asp:CheckBox ID="cbOnay" runat="server" CssClass="form-control" Text="İncelendi" />
                                 </div>
                             </div>
 
@@ -75,13 +91,13 @@
                             </div>
                         </div>
                     </div>
-                    
-                    
+
+
                 </div>
             </div>
         </section>
     </div>
 </asp:Content>
-<asp:Content ID="Content3" ContentPlaceHolderID="footer" Runat="Server">
+<asp:Content ID="Content3" ContentPlaceHolderID="footer" runat="Server">
 </asp:Content>
 

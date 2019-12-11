@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Security;
 using System.Windows.Forms;
@@ -65,23 +66,43 @@ namespace ODM.CKYazdirDb
         }
         private void BackgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
 
             btnKutukDosyasiniAc.Enabled = false;
             //Gelen object tipini string[] tipine çevir
             string[] files = ((IEnumerable)e.Argument).Cast<object>().Select(x => x.ToString()).ToArray();
+            int asama = 0;
+            int topKayit = 0;
 
             foreach (var file in files)
             {
+                asama++;
                 try
                 {
                     DataTable table = ExcelUtil.ExcelToDataTable(file);
-                    progressBar1.Maximum = table.Rows.Count;
+
+                    int islemSayisi = table.Rows.Count;
+                    progressBar1.Maximum = islemSayisi;
                     bool ozelEgitimOkul = false;
 
-                    for (int row = 1; row <= table.Rows.Count; row++)
+                    var mevcutKutuk = kutukDb.List();
+                    int a = 0;
+                    for (int row = 1; row <= islemSayisi; row++)
                     {
+                        a++;
+                        topKayit++;
+
+                        progressBar1.Value = row;
+                        try
+                        {
+                            lblBilgi.Text = $"({asama}/{files.Length}) - {a} - {islemSayisi} kayıt eklendi." + islemSayisi.KalanSureHesapla(a, watch);
+                        }
+                        catch (Exception)
+                        {
+                            lblBilgi.Text = "Hesaplanıyor...";
+                        }
                         int opaqNo = table.Rows[row - 1][0].ToInt32();
-                        string ilAdi = table.Rows[row - 1][1].ToString().Trim();
                         string ilceAdi = table.Rows[row - 1][3].ToString().Trim();
                         int kurumKodu = table.Rows[row - 1][4].ToInt32();
                         string kurumAdi = table.Rows[row - 1][6].ToString().Trim();
@@ -91,8 +112,6 @@ namespace ODM.CKYazdirDb
                         string sube = table.Rows[row - 1][14].ToString().Trim();
                         int sinifi = table.Rows[row - 1][15].ToInt32();
                         int sinavId = table.Rows[row - 1][16].ToInt32();
-                        int dersKodu = table.Rows[row - 1][18].ToInt32();
-                        string barkod = table.Rows[row - 1][19].ToString().Trim();
 
                         if (sube.Contains("Zihinsel") || sube.Contains("Otistik"))
                             ozelEgitimOkul = true;
@@ -108,7 +127,6 @@ namespace ODM.CKYazdirDb
                         Kutuk ktk = new Kutuk
                         {
                             OpaqId = opaqNo,
-                            IlAdi = ilAdi,
                             IlceAdi = ilceAdi,
                             KurumKodu = kurumKodu,
                             KurumAdi = kurumAdi,
@@ -118,20 +136,17 @@ namespace ODM.CKYazdirDb
                             Sube = sube,
                             Sinifi = sinifi,
                             SinavId = sinavId,
-                            DersKodu = dersKodu,
-                            Barkod = barkod
                         };
-                        kutukDb.Insert(ktk);
-                        progressBar1.Value = row;
-                        lblBilgi.Text = $"{row} kayıt eklendi.";
+
+                        if (mevcutKutuk.FirstOrDefault(x => x.OpaqId == opaqNo) == null) //Kütükte yok ise kaydet
+                            kutukDb.Insert(ktk);
+                        
                     }
 
                     if (ozelEgitimOkul)
                         MessageBox.Show("Kütükte özel eğitim kurumlarına ait öğrenciler bulunmakta.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     progressBar1.Value = 0;
-
-                    lblBilgi.Text = table.Rows.Count + " kayıt eklendi.";
 
                 }
                 catch (SecurityException ex)
@@ -151,10 +166,12 @@ namespace ODM.CKYazdirDb
                 }
 
             }
+            lblBilgi.Text = "Tamamlandı.";
             KayitlariListele();
 
             btnKutukDosyasiniAc.Enabled = true;
             Cursor = Cursors.Default;
+            watch.Stop();
         }
         private void FormKutukIslemleri_Load(object sender, EventArgs e)
         {
@@ -222,7 +239,7 @@ namespace ODM.CKYazdirDb
 
             KutukManager ktk = new KutukManager();
             if (ara.IsInteger())
-                dgvKutuk.DataSource = ktk.List().Where(x => x.OpaqId==ara.ToInt32()||x.KurumKodu==ara.ToInt32()).ToList();
+                dgvKutuk.DataSource = ktk.List().Where(x => x.OpaqId == ara.ToInt32() || x.KurumKodu == ara.ToInt32()).ToList();
             else
                 dgvKutuk.DataSource = ktk.List().Where(x => x.Adi.Contains(ara) || x.Soyadi.Contains(ara)).ToList();
         }
@@ -267,7 +284,7 @@ namespace ODM.CKYazdirDb
 
         private void düzenleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (dgvKutuk.SelectedRows.Count>0)
+            if (dgvKutuk.SelectedRows.Count > 0)
             {
                 FormKutukKayit frm = new FormKutukKayit();
                 frm.kutukId = dgvKutuk.SelectedRows[0].Cells[0].Value.ToInt32();

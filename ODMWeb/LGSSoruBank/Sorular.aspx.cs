@@ -162,13 +162,14 @@ public partial class LGSSoruBank_Sorular : System.Web.UI.Page
 
         if (e.CommandName.Equals("Download"))
         {
-            BranslarDb bransDb = new BranslarDb();
-            BranslarInfo brnsInfo = bransDb.KayitBilgiGetir(info.BransId);
+            LgsKazanimlarDB kznmDb = new LgsKazanimlarDB();
+            LgsKazanimlarInfo kznmInfo = kznmDb.KayitBilgiGetir(info.KazanimId);
+
             //File to be downloaded.
             string filePath = Server.MapPath(info.SoruUrl);
 
             //Set the New File name.
-            string newFileName =string.Format("{0}-Sinif-{1}-SoruNo-{2}.docx",info.Sinif, brnsInfo.BransAdi.ToUrl(),info.Id);
+            string newFileName =string.Format("{0}-SoruNo-{1}.docx", kznmInfo.KazanimNo,info.Id);
 
             //Setting the Content Type, Header and the new File name.
             Response.ContentType = "application/msword";

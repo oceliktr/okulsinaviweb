@@ -33,6 +33,12 @@ namespace DAL
         {
             KurumKodu = kurumKodu;
         }
+
+        public KurumlarInfo(string kurumKodu, string kurumveIlceAdi)
+        {
+            KurumKodu = kurumKodu;
+            KurumAdi = kurumveIlceAdi; //ilçe adýyla birleþtirilecek
+        }
     }
     public class KurumlarDb
     {
@@ -41,6 +47,11 @@ namespace DAL
         public DataTable KayitlariGetir()
         {
             const string sql = "select * from kurumlar order by Id asc";
+            return _helper.ExecuteDataSet(sql).Tables[0];
+        }
+        public DataTable KurumTurleri()
+        {
+            const string sql = "select DISTINCT(Tur) from kurumlar order by Tur asc";
             return _helper.ExecuteDataSet(sql).Tables[0];
         }
         public DataTable OkullariGetir(int ilce)
@@ -98,12 +109,24 @@ namespace DAL
             DataTable veriler = _helper.ExecuteDataSet(sql, pars).Tables[0];
             return (from DataRow row in veriler.Rows select new KurumlarInfo(row["KurumKodu"].ToString(), row["KurumAdi"].ToString(), Convert.ToInt32(row["IlceId"]), row["IlceAdi"].ToString())).ToList();
         }
-        public DataTable IlceveOkuluBirlestirGetir()
+        public List<KurumlarInfo> IlceveOkuluDiziyeGetir()
         {
             string sql = @"select okul.KurumKodu as KurumKodu,ilce.IlceAdi as IlceAdi,okul.KurumAdi as KurumAdi,CONCAT(ilce.IlceAdi, ' - ', okul.KurumAdi) AS IlceveKurumAdi from ilceler as ilce
-                        left outer join kurumlar as okul on okul.IlceId = ilce.Id where okul.Tur='Ortaokul' order by ilce.Id asc, okul.KurumAdi asc, okul.KurumAdi asc ";
+                        left outer join kurumlar as okul on okul.IlceId = ilce.Id order by ilce.Id asc, okul.KurumAdi asc, okul.KurumAdi asc ";
 
-            return _helper.ExecuteDataSet(sql).Tables[0];
+            DataTable veriler = _helper.ExecuteDataSet(sql).Tables[0];
+
+            return (from DataRow row in veriler.Rows
+                select new KurumlarInfo(row["KurumKodu"].ToString(), row["IlceveKurumAdi"].ToString())).ToList();
+        }
+
+        public DataTable IlceveOkuluBirlestirGetir(string tur)
+        {
+            string sql = @"select okul.KurumKodu as KurumKodu,ilce.IlceAdi as IlceAdi,okul.KurumAdi as KurumAdi,CONCAT(ilce.IlceAdi, ' - ', okul.KurumAdi) AS IlceveKurumAdi from ilceler as ilce
+                        left outer join kurumlar as okul on okul.IlceId = ilce.Id where okul.Tur=?Tur order by ilce.Id asc, okul.KurumAdi asc, okul.KurumAdi asc ";
+            MySqlParameter p = new MySqlParameter("?Tur", MySqlDbType.String) { Value = tur };
+
+            return _helper.ExecuteDataSet(sql,p).Tables[0];
         }
         public KurumlarInfo KayitBilgiGetir(string kurumKodu)
         {

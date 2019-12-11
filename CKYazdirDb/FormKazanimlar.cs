@@ -213,5 +213,37 @@ namespace ODM.CKYazdirDb
             KayitlariListele();
         }
 
+        private void tümünüSilToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            KazanimManager kznmlist = new KazanimManager();
+            DialogResult dialog = new DialogResult();
+            dialog = MessageBox.Show("Tümünü silmek istediğinizden emin misiniz?", "Uyarı", MessageBoxButtons.YesNo);
+            if (dialog == DialogResult.Yes)
+            {
+                kznmlist.TumunuSil();
+                KayitlariListele();
+            }
+        }
+
+        private void seçiliSınıfKazanımlarınıSilToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialog = new DialogResult();
+            dialog = MessageBox.Show("Seçilen sınıfa ait kazanımları silmek istediğinizden emin misiniz?", "Uyarı", MessageBoxButtons.YesNo);
+            if (dialog == DialogResult.Yes)
+            {
+                int sinif = dgvKazanimlar.SelectedRows[0].Cells[1].Value.ToInt32();
+
+                KazanimManager kznmlist = new KazanimManager();
+
+                var siniflar = kznmlist.List().Where(x => x.Sinif == sinif);
+                foreach (var k in siniflar)
+                {
+                    kznmlist.Delete(k);
+                }
+
+                KayitlariListele();
+
+            }
+        }
     }
 }

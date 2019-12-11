@@ -49,6 +49,30 @@ public class CkKarneSonuclariDB
         const string sql = "select * from ckkarnesonuclari order by Id asc";
         return helper.ExecuteDataSet(sql).Tables[0];
     }
+    public List<CkKarneSonuclariInfo> KayitlariDizeGetir(int sinavId, string ilce, int kurumKodu,int sinif)
+    {
+        string sql = "select * from ckkarnesonuclari where SinavId=?SinavId and Ilce=?Ilce and KurumKodu=?KurumKodu and Sinif=?Sinif";
+        MySqlParameter[] p =
+        {
+            new MySqlParameter("?SinavId", MySqlDbType.Int32),
+            new MySqlParameter("?Ilce", MySqlDbType.String),
+            new MySqlParameter("?KurumKodu", MySqlDbType.Int32),
+            new MySqlParameter("?Sinif", MySqlDbType.Int32)
+        };
+        p[0].Value = sinavId;
+        p[1].Value = ilce;
+        p[2].Value = kurumKodu;
+        p[3].Value = sinif;
+
+        DataTable dt = helper.ExecuteDataSet(sql, p).Tables[0];
+        List<CkKarneSonuclariInfo> karne = new List<CkKarneSonuclariInfo>();
+        foreach (DataRow k in dt.Rows)
+        {
+            karne.Add(new CkKarneSonuclariInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["BransId"]), k["Ilce"].ToString(),
+                Convert.ToInt32(k["KurumKodu"]), Convert.ToInt32(k["Sinif"]), k["Sube"].ToString(), k["KitapcikTuru"].ToString(), Convert.ToInt32(k["SoruNo"]), Convert.ToInt32(k["Dogru"]), Convert.ToInt32(k["Yanlis"]), Convert.ToInt32(k["Bos"])));
+        }
+        return karne;
+    }
     public List<CkKarneSonuclariInfo> KayitlariDizeGetir(int sinavId, string ilce, int kurumKodu)
     {
         string sql = "select * from ckkarnesonuclari where SinavId=?SinavId and Ilce=?Ilce and KurumKodu=?KurumKodu";
@@ -165,7 +189,12 @@ public class CkKarneSonuclariDB
         MySqlParameter p = new MySqlParameter("?Id", MySqlDbType.Int32) { Value = id };
         helper.ExecuteNonQuery(sql, p);
     }
-
+    public void SinaviSil(int sinavId)
+    {
+        const string sql = "delete from ckkarnesonuclari where SinavId=?SinavId";
+        MySqlParameter p = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
+        helper.ExecuteNonQuery(sql, p);
+    }
     public void KayitEkle(CkKarneSonuclariInfo info)
     {
         const string sql = @"insert into ckkarnesonuclari (SinavId,BransId,Ilce,KurumKodu,Sinif,Sube,KitapcikTuru,SoruNo,Dogru,Yanlis,Bos) values (?SinavId,?BransId,?Ilce,?KurumKodu,?Sinif,?Sube,?KitapcikTuru,?SoruNo,?Dogru,?Yanlis,?Bos)";

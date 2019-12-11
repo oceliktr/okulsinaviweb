@@ -6,6 +6,7 @@ using MySql.Data.MySqlClient;
 public class CkKarneKazanimlarInfo
 {
     public int Id { get; set; }
+    public int KazanimId { get; set; }
     public int SinavId { get; set; }
     public int Sinif { get; set; }
     public int BransId { get; set; }
@@ -19,9 +20,10 @@ public class CkKarneKazanimlarInfo
         
     }
 
-    public CkKarneKazanimlarInfo(int id, int sinavId, int sinif, int bransId, string kazanimNo, string kazanimAdi, string kazanimAdiOgrenci, string sorulari)
+    public CkKarneKazanimlarInfo(int id,int kazanimId, int sinavId, int sinif, int bransId, string kazanimNo, string kazanimAdi, string kazanimAdiOgrenci, string sorulari)
     {
         Id = id;
+        KazanimId = kazanimId;
         SinavId = sinavId;
         Sinif = sinif;
         BransId = bransId;
@@ -52,7 +54,7 @@ public class CkKarneKazanimlardB
         List<CkKarneKazanimlarInfo> karne = new List<CkKarneKazanimlarInfo>();
         foreach (DataRow k in dt.Rows)
         {
-            karne.Add(new CkKarneKazanimlarInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["Sinif"]), Convert.ToInt32(k["BransId"]),
+            karne.Add(new CkKarneKazanimlarInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["KazanimId"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["Sinif"]), Convert.ToInt32(k["BransId"]),
                  k["KazanimNo"].ToString(), k["KazanimAdi"].ToString(), k["KazanimAdiOgrenci"].ToString(), k["Sorulari"].ToString()));
         }
         return karne;
@@ -64,6 +66,7 @@ public class CkKarneKazanimlardB
         while (dr.Read())
         {
             info.Id = dr.GetMySayi("Id");
+            info.KazanimId = dr.GetMySayi("KazanimId");
             info.SinavId = dr.GetMySayi("SinavId");
             info.Sinif = dr.GetMySayi("Sinif");
             info.BransId = dr.GetMySayi("BransId");
@@ -86,6 +89,7 @@ public class CkKarneKazanimlardB
         while (dr.Read())
         {
             info.Id = dr.GetMySayi("Id");
+            info.KazanimId = dr.GetMySayi("KazanimId");
             info.SinavId = dr.GetMySayi("SinavId");
             info.Sinif = dr.GetMySayi("Sinif");
             info.BransId = dr.GetMySayi("BransId");
@@ -105,12 +109,18 @@ public class CkKarneKazanimlardB
         MySqlParameter p = new MySqlParameter("?Id", MySqlDbType.Int32) { Value = id };
         helper.ExecuteNonQuery(sql, p);
     }
-
+    public void SinaviSil(int sinavId)
+    {
+        const string sql = "delete from ckkarnekazanimlar where SinavId=?SinavId";
+        MySqlParameter p = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
+        helper.ExecuteNonQuery(sql, p);
+    }
     public void KayitEkle(CkKarneKazanimlarInfo info)
     {
-        const string sql = @"insert into ckkarnekazanimlar (SinavId,Sinif,BransId,KazanimNo,KazanimAdi,KazanimAdiOgrenci,Sorulari) values (?SinavId,?Sinif,?BransId,?KazanimNo,?KazanimAdi,?KazanimAdiOgrenci,?Sorulari)";
+        const string sql = @"insert into ckkarnekazanimlar (KazanimId,SinavId,Sinif,BransId,KazanimNo,KazanimAdi,KazanimAdiOgrenci,Sorulari) values (?KazanimId,?SinavId,?Sinif,?BransId,?KazanimNo,?KazanimAdi,?KazanimAdiOgrenci,?Sorulari)";
         MySqlParameter[] pars =
         {
+             new MySqlParameter("?KazanimId", MySqlDbType.Int32),
              new MySqlParameter("?SinavId", MySqlDbType.Int32),
              new MySqlParameter("?Sinif", MySqlDbType.Int32),
              new MySqlParameter("?BransId", MySqlDbType.Int32),
@@ -119,21 +129,23 @@ public class CkKarneKazanimlardB
              new MySqlParameter("?KazanimAdiOgrenci", MySqlDbType.String),
              new MySqlParameter("?Sorulari", MySqlDbType.String)
         };
-        pars[0].Value = info.SinavId;
-        pars[1].Value = info.Sinif;
-        pars[2].Value = info.BransId;
-        pars[3].Value = info.KazanimNo;
-        pars[4].Value = info.KazanimAdi;
-        pars[5].Value = info.KazanimAdiOgrenci;
-        pars[6].Value = info.Sorulari;
+        pars[0].Value = info.KazanimId;
+        pars[1].Value = info.SinavId;
+        pars[2].Value = info.Sinif;
+        pars[3].Value = info.BransId;
+        pars[4].Value = info.KazanimNo;
+        pars[5].Value = info.KazanimAdi;
+        pars[6].Value = info.KazanimAdiOgrenci;
+        pars[7].Value = info.Sorulari;
         helper.ExecuteNonQuery(sql, pars);
     }
 
     public void KayitGuncelle(CkKarneKazanimlarInfo info)
     {
-        const string sql = @"update ckkarnekazanimlar set SinavId=?SinavId,Sinif=?Sinif,BransId=?BransId,KazanimNo=?KazanimNo,KazanimAdi=?KazanimAdi,KazanimAdiOgrenci=?KazanimAdiOgrenci,Sorulari=?Sorulari where Id=?Id";
+        const string sql = @"update ckkarnekazanimlar set KazanimId=?KazanimId,SinavId=?SinavId,Sinif=?Sinif,BransId=?BransId,KazanimNo=?KazanimNo,KazanimAdi=?KazanimAdi,KazanimAdiOgrenci=?KazanimAdiOgrenci,Sorulari=?Sorulari where Id=?Id";
         MySqlParameter[] pars =
         {
+            new MySqlParameter("?KazanimId", MySqlDbType.Int32),
             new MySqlParameter("?SinavId", MySqlDbType.Int32),
             new MySqlParameter("?Sinif", MySqlDbType.Int32),
             new MySqlParameter("?BransId", MySqlDbType.Int32),
@@ -143,14 +155,15 @@ public class CkKarneKazanimlardB
             new MySqlParameter("?Sorulari", MySqlDbType.String),
             new MySqlParameter("?Id", MySqlDbType.Int32),
         };
-        pars[0].Value = info.SinavId;
-        pars[1].Value = info.Sinif;
-        pars[2].Value = info.BransId;
-        pars[3].Value = info.KazanimNo;
-        pars[4].Value = info.KazanimAdi;
-        pars[5].Value = info.KazanimAdiOgrenci;
-        pars[6].Value = info.Sorulari;
-        pars[7].Value = info.Id;
+        pars[0].Value = info.KazanimId;
+        pars[1].Value = info.SinavId;
+        pars[2].Value = info.Sinif;
+        pars[3].Value = info.BransId;
+        pars[4].Value = info.KazanimNo;
+        pars[5].Value = info.KazanimAdi;
+        pars[6].Value = info.KazanimAdiOgrenci;
+        pars[7].Value = info.Sorulari;
+        pars[8].Value = info.Id;
         helper.ExecuteNonQuery(sql, pars);
     }
 }

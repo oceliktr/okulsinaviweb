@@ -2,11 +2,12 @@
 
 <%@ MasterType VirtualPath="MasterPage.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+    
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div class="content-wrapper">
         <section class="content-header">
-            <h1>Kazanım Karneleri
+            <h1>Kazanım Karneleri 
                 <small>
                     <asp:Literal ID="ltrDonemAdi" runat="server"></asp:Literal></small></h1>
             <ol class="breadcrumb">
@@ -55,15 +56,19 @@
                                     <asp:ListItem Value="">Seçiniz</asp:ListItem>
                                     <asp:ListItem Value="7">7. Sınıf</asp:ListItem>
                                     <asp:ListItem Value="8">8. Sınıf</asp:ListItem>
+                                    <asp:ListItem Value="9">9. Sınıf</asp:ListItem>
+                                    <asp:ListItem Value="10">10. Sınıf</asp:ListItem>
+                                    <asp:ListItem Value="11">11. Sınıf</asp:ListItem>
+                                    <asp:ListItem Value="12">12. Sınıf</asp:ListItem>
                                 </asp:DropDownList>
-                            </div>
-                             <div class="col-md-2">
-                                <b>Ders :  <asp:RequiredFieldValidator ControlToValidate="ddlBrans" ValidationGroup="form" ID="RequiredFieldValidator3" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></b>
-                                <asp:DropDownList ID="ddlBrans" CssClass="form-control" ValidationGroup="form" runat="server"> </asp:DropDownList>
                             </div>
                             <div class="col-md-1">
                                 <b>&nbsp;</b>
                                 <asp:Button ID="btnListele" CssClass="form-control btn btn-primary" runat="server" ValidationGroup="form" Text="Listele" OnClick="btnListele_OnClick" />
+                            </div>
+                            <div class="col-md-2">
+                                <b>&nbsp;</b>
+                                <asp:Button ID="btnIlKarnesi" CssClass="form-control btn btn-success" runat="server" ValidationGroup="form2" Text="İl Karnesi" OnClick="btnIlKarnesi_OnClick" />
                             </div>
                         </div>
                         <div class="box-body">
@@ -72,29 +77,36 @@
                                 <tr role="row">
                                     <th>Kurum Kodu</th>
                                     <th>Kurum Adı</th>
-                                    <th>Karne</th>
+                                    <th colspan="2">Karne</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr role="row" class="odd" id="ilceTr" runat="server">
                                     <td></td>
                                     <td>
-                                        <asp:Literal ID="ltrIlceAdi" runat="server"></asp:Literal> İLÇE KARNESİ</td>
+                                        <asp:Literal ID="ltrIlceAdi" runat="server"></asp:Literal> İLÇE KARNESİ </td>
                                     <td>
-                                        <asp:LinkButton ToolTip="İlçe Karnesini İndir" ID="lnkIlceKarnesi" OnClick="lnkIlceKarnesi_OnClick" runat="server"><i class="fa fa-file-pdf-o"></i></asp:LinkButton>
+                                        <asp:LinkButton ToolTip="İlçe Karnesini İndir" ID="lnkIlceKarnesi" OnClick="lnkIlceKarnesi_OnClick" runat="server"><i class="fa fa-file-pdf-o"></i> İlçe Karnesi</asp:LinkButton> 
 
                                     </td>
                                 </tr>
-                                <asp:Repeater ID="rptKurumlar" runat="server" OnItemCommand="rptKurumlar_OnItemCommand">
+                                <asp:Repeater ID="rptKurumlar" runat="server" OnItemCommand="rptKurumlar_OnItemCommand" OnItemDataBound="rptKurumlar_OnItemDataBound">
                                     <ItemTemplate>
                                         <tr role="row" class="odd">
                                             <td><%#Eval("KurumKodu") %></td>
-                                            <td><%#Eval("KurumAdi") %> Karnesi</td>
+                                            <td><%#Eval("KurumAdi") %> </td>
                                             <td>
-                                               <asp:LinkButton ID="lnkOkulKarnesi" ToolTip="Okul Karnesini İndir" runat="server" CommandName="Karne" CommandArgument='<%#string.Format("{0},{1},{2},{3}",Eval("SinavId"),Eval("KurumKodu"),Eval("IlceAdi"),Eval("KurumAdi") ) %>'><i class="fa fa-file-pdf-o"></i></asp:LinkButton>
+                                               <asp:LinkButton ID="lnkOkulKarnesi" ToolTip="Okul Karnesini İndir" runat="server" CommandName="okul" CommandArgument='<%#string.Format("{0},{1},{2},{3}",Eval("SinavId"),Eval("KurumKodu"),Eval("IlceAdi"),Eval("KurumAdi") ) %>'><i class="fa fa-file-pdf-o"></i> Okul Karnesi</asp:LinkButton> 
+                                            </td>
+                                            <td>  <asp:LinkButton ID="lnkOgrenci" ToolTip="Öğrenci Karnesini İndir" runat="server" CommandName="ogrenci" CommandArgument='<%#string.Format("{0},{1},{2},{3}",Eval("SinavId"),Eval("KurumKodu"),Eval("IlceAdi"),Eval("KurumAdi") ) %>'><i class="fa fa-file-pdf-o"></i> Öğrenci Karnesi</asp:LinkButton> 
                                             </td>
                                         </tr>
                                     </ItemTemplate>
+                                    <FooterTemplate>
+                                       <tr><td colspan="4" class="text-center">
+                                           <asp:Literal ID="ltrBilgi" runat="server"></asp:Literal>
+                                       </td></tr>
+                                    </FooterTemplate>
                                 </asp:Repeater>
                                 </tbody>
                             </table>
@@ -107,11 +119,11 @@
                 <div class="col-md-7"><div class="box box-danger">
                     <div class="box-body">
                         <ul class="list-unstyled">
-                            <li>Sınav ve ilçe seçimi yaparak listele butonuna tıklayınız. Sınava giren okullar listelenecektir.</li>
+                            <li>Sınav, ilçe, sınıf ve ders seçimi yaparak listele butonuna tıklayınız. Sınava giren okullar listelenecektir.</li>
                             <li>İlçe alanı okul ve kurumlar için sınırlandırılmıştır.</li>
                             <li>İlçe ve okul karnelerini bilgisayarınıza indirmek için <i class="fa fa-file-pdf-o"></i> butonuna tıklayınız.</li>
-                            <li><b>İlçe Karnesi :</b> Branş ve sınıf düzeyinde ilçe karnesini içermektedir. Sayfa sayısı, sınava katılan branş ve sınıf sayısına göre değişmektedir.</li>
-                            <li><b>Okul Karnesi :</b> Branş ve sınıf ve şube düzeyinde sınıf, şube ve öğrenci karnelerini içermektedir. Sayfa sayısı, sınava katılan branş, sınıf, şube ve öğrenci sayısına göre değişmektedir.</li>
+                            <li><b>İlçe Karnesi :</b>Branş ve sınıf düzeyinde ilçe karnesini içermektedir. Sayfa sayısı, sınava katılan branş ve sınıf sayısına göre değişmektedir.</li>
+                            <li><b>Okul Karnesi :</b>Seçilen branş ve sınıf ve şube düzeyinde sınıf, şube ve öğrenci karnelerini içermektedir. Sayfa sayısı, sınava katılan branş, sınıf, şube ve öğrenci sayısına göre değişmektedir.</li>
                         </ul>
                     </div>
                 </div></div>
@@ -121,5 +133,6 @@
     </div>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="footer" runat="Server">
+    
 </asp:Content>
 

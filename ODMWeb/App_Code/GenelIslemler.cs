@@ -85,7 +85,13 @@ public static class GenelIslemler
     {
         try
         {
-            CultureInfo cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
+             metin = metin.Replace("i", "Ý");
+             metin = metin.Replace("ç", "Ç");
+             metin = metin.Replace("ð", "Ð");
+             metin = metin.Replace("ö", "Ö");
+             metin = metin.Replace("þ", "Þ");
+             metin = metin.Replace("ü", "Ü");
+             CultureInfo cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
             TextInfo textInfo = cultureInfo.TextInfo;
             return textInfo.ToUpper(metin);
         }

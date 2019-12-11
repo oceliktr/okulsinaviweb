@@ -28,40 +28,43 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSonDegerlendirme));
+            this.btnDegerlendirme1 = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolSslKalanSure = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolSslOkul = new System.Windows.Forms.ToolStripStatusLabel();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.bgwDegerlendirme1 = new System.ComponentModel.BackgroundWorker();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.progressBar2 = new System.Windows.Forms.ProgressBar();
-            this.pbOgrenci = new System.Windows.Forms.ProgressBar();
-            this.label1 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            this.btnDegerlendirme2 = new System.Windows.Forms.Button();
+            this.bgwDegerlendirme2 = new System.ComponentModel.BackgroundWorker();
+            this.bgwOkulOrtalamalari = new System.ComponentModel.BackgroundWorker();
+            this.bgwIlIlceOrtalamasi = new System.ComponentModel.BackgroundWorker();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.bgwOgrenciOrtalamalari = new System.ComponentModel.BackgroundWorker();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // button1
+            // btnDegerlendirme1
             // 
-            this.button1.Location = new System.Drawing.Point(454, 131);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(171, 42);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnDegerlendirme1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDegerlendirme1.Location = new System.Drawing.Point(42, 112);
+            this.btnDegerlendirme1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnDegerlendirme1.Name = "btnDegerlendirme1";
+            this.btnDegerlendirme1.Size = new System.Drawing.Size(179, 47);
+            this.btnDegerlendirme1.TabIndex = 0;
+            this.btnDegerlendirme1.Text = "Değerlendirme 1";
+            this.btnDegerlendirme1.UseVisualStyleBackColor = true;
+            this.btnDegerlendirme1.Click += new System.EventHandler(this.btnDegerlendirme1_Click);
             // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolSslKalanSure,
-            this.toolSslOkul});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 424);
+            this.toolSslKalanSure});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 282);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 13, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(800, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(723, 26);
             this.statusStrip1.TabIndex = 189;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -71,77 +74,68 @@
             this.toolSslKalanSure.Size = new System.Drawing.Size(18, 20);
             this.toolSslKalanSure.Text = "...";
             // 
-            // toolSslOkul
+            // bgwDegerlendirme1
             // 
-            this.toolSslOkul.Name = "toolSslOkul";
-            this.toolSslOkul.Size = new System.Drawing.Size(151, 20);
-            this.toolSslOkul.Text = "toolStripStatusLabel1";
-            // 
-            // backgroundWorker1
-            // 
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.bgwDegerlendirme1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwDegerlendirme1_DoWork);
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(147, 40);
+            this.progressBar1.Location = new System.Drawing.Point(42, 39);
             this.progressBar1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(478, 26);
+            this.progressBar1.Size = new System.Drawing.Size(635, 26);
             this.progressBar1.TabIndex = 190;
             // 
-            // progressBar2
+            // btnDegerlendirme2
             // 
-            this.progressBar2.Location = new System.Drawing.Point(147, 70);
-            this.progressBar2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.progressBar2.Name = "progressBar2";
-            this.progressBar2.Size = new System.Drawing.Size(478, 26);
-            this.progressBar2.TabIndex = 191;
+            this.btnDegerlendirme2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDegerlendirme2.Location = new System.Drawing.Point(42, 195);
+            this.btnDegerlendirme2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnDegerlendirme2.Name = "btnDegerlendirme2";
+            this.btnDegerlendirme2.Size = new System.Drawing.Size(179, 46);
+            this.btnDegerlendirme2.TabIndex = 194;
+            this.btnDegerlendirme2.Text = "Değerlendirme 2";
+            this.btnDegerlendirme2.UseVisualStyleBackColor = true;
+            this.btnDegerlendirme2.Click += new System.EventHandler(this.btnDegerlendirme2_Click);
             // 
-            // pbOgrenci
+            // bgwDegerlendirme2
             // 
-            this.pbOgrenci.Location = new System.Drawing.Point(147, 100);
-            this.pbOgrenci.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.pbOgrenci.Name = "pbOgrenci";
-            this.pbOgrenci.Size = new System.Drawing.Size(478, 26);
-            this.pbOgrenci.TabIndex = 192;
+            this.bgwDegerlendirme2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwDegerlendirme2_DoWork);
             // 
-            // label1
+            // label2
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(144, 213);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(46, 17);
-            this.label1.TabIndex = 193;
-            this.label1.Text = "label1";
+            this.label2.Location = new System.Drawing.Point(227, 112);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(450, 78);
+            this.label2.TabIndex = 197;
+            this.label2.Text = resources.GetString("label2.Text");
             // 
-            // button2
+            // label3
             // 
-            this.button2.Location = new System.Drawing.Point(482, 250);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(143, 64);
-            this.button2.TabIndex = 194;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // backgroundWorker2
-            // 
-            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
+            this.label3.Location = new System.Drawing.Point(227, 190);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(450, 51);
+            this.label3.TabIndex = 198;
+            this.label3.Text = "İl ilçe karnelerinin oluşturulması için hesaplamalar yapar.";
             // 
             // FormSonDegerlendirme
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.pbOgrenci);
-            this.Controls.Add(this.progressBar2);
+            this.ClientSize = new System.Drawing.Size(723, 308);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.btnDegerlendirme2);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnDegerlendirme1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormSonDegerlendirme";
-            this.Text = "FormSonDegerlendirme";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Değerlendirme";
             this.Load += new System.EventHandler(this.FormSonDegerlendirme_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -152,16 +146,17 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnDegerlendirme1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolSslKalanSure;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.ComponentModel.BackgroundWorker bgwDegerlendirme1;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.ToolStripStatusLabel toolSslOkul;
-        private System.Windows.Forms.ProgressBar progressBar2;
-        private System.Windows.Forms.ProgressBar pbOgrenci;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button2;
-        private System.ComponentModel.BackgroundWorker backgroundWorker2;
+        private System.Windows.Forms.Button btnDegerlendirme2;
+        private System.ComponentModel.BackgroundWorker bgwDegerlendirme2;
+        private System.ComponentModel.BackgroundWorker bgwOkulOrtalamalari;
+        private System.ComponentModel.BackgroundWorker bgwIlIlceOrtalamasi;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.ComponentModel.BackgroundWorker bgwOgrenciOrtalamalari;
     }
 }

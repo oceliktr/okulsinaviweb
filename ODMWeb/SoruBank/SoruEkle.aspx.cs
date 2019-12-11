@@ -148,7 +148,7 @@ public partial class SoruBank_SoruEkle : System.Web.UI.Page
 
 
         ListboxWithTooltip kazanimlar = new ListboxWithTooltip();
-        kazanimlar.Kazanimlar(lbKazanimlar, sinif, brans, ogrenmeAlani, 0);
+        kazanimlar.Kazanimlar(lbKazanimlar, sinif, brans);
     }
     protected void btnAsama1eDon_OnClick(object sender, EventArgs e)
     {
@@ -166,7 +166,7 @@ public partial class SoruBank_SoruEkle : System.Web.UI.Page
 
 
         ListboxWithTooltip kazanimlar = new ListboxWithTooltip();
-        kazanimlar.Kazanimlar(lbKazanimlar, sinif, brans, ogrenmeAlani, altOgrenmeAlani);
+        kazanimlar.Kazanimlar(lbKazanimlar, sinif, brans);
     }
     protected void btnKazanimlar_OnClick(object sender, EventArgs e)
     {

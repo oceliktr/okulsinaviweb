@@ -33,6 +33,7 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
 
            
             ddlSoruYazarlari.Items.Insert(0, new ListItem("Önce Branş Seçiniz", ""));
+            ddlKazanim.Items.Insert(0, new ListItem("Kazanım Seçiniz", ""));
 
 
             SinavlarDb sinav = new SinavlarDb();
@@ -59,6 +60,9 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
                         txtKazanim.Text = sbMkInfo.Kazanim;
                         ddlBrans.SelectedValue = sbMkInfo.BransId.ToString();
 
+
+                        KazanimlariListele();
+
                         KullanicilarDb kDb = new KullanicilarDb();
                         ddlSoruYazarlari.DataSource = kDb.OgretmenleriGetir("LgsYazari", sbMkInfo.BransId);
                         ddlSoruYazarlari.DataValueField = "Id";
@@ -66,6 +70,7 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
                         ddlSoruYazarlari.DataBind();
                         ddlSoruYazarlari.Items.Insert(0, new ListItem("Soru Yazarı Seçiniz", ""));
 
+                       
                         ddlSoruYazarlari.SelectedValue = sbMkInfo.KullaniciId.ToString();
 
                         cbOnay.Checked = sbMkInfo.Onay.ToBoolean();
@@ -82,8 +87,8 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
         int id = hfSoruId.Value.ToInt32();
          int sinavId = ddlSinavlar.SelectedValue.ToInt32();
         int kullaniciId =ddlSoruYazarlari.SelectedValue.ToInt32();
+        int kazanimId =ddlKazanim.SelectedValue.ToInt32();
         int sinif = ddlSinif.SelectedValue.ToInt32();
-        string kazanim = txtKazanim.Text;
         int onay = cbOnay.Checked?1:0;
 
 
@@ -116,7 +121,7 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
 
                     if (id == 0)
                     {
-                        KayitEkle(sinavId, bransId, kullaniciId, sinif, dosya,onay);
+                        KayitEkle(sinavId, bransId, kullaniciId, sinif, dosya,onay, kazanimId);
                     }
                     else
                     {
@@ -132,7 +137,7 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
                             SoruUrl = dosya,
                             SinavId = sinavId,
                             Sinif = sinif,
-                            Kazanim = kazanim,
+                            KazanimId = kazanimId,
                             KullaniciId = kullaniciId,
                             Onay = onay,
                             Id = id
@@ -169,7 +174,7 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
                     SoruUrl = dosya,
                     SinavId = sinavId,
                     Sinif = sinif,
-                    Kazanim = kazanim,
+                    KazanimId = kazanimId,
                     KullaniciId = kullaniciId,
                     Onay = onay,
                     Id = id
@@ -180,7 +185,7 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
         }
     }
 
-    private void KayitEkle(int sinavId, int bransId, int kullaniciId, int sinif, string dosya,int onay)
+    private void KayitEkle(int sinavId, int bransId, int kullaniciId, int sinif, string dosya,int onay,int kazanimId)
     {
         LgsSorularDB sgDb = new LgsSorularDB();
         LgsSorularInfo sgInfo = new LgsSorularInfo
@@ -189,7 +194,7 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
             SoruUrl = dosya,
             SinavId = sinavId,
             Sinif = sinif,
-            Kazanim = txtKazanim.Text.ToTemizMetin(),
+            KazanimId =kazanimId, 
             KullaniciId = kullaniciId,
             Onay = onay,
             Tarih = DateTime.Now
@@ -201,7 +206,6 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
     protected void ddlBrans_OnSelectedIndexChanged(object sender, EventArgs e)
     {
         int bransId = ddlBrans.SelectedValue.ToInt32();
-
         KullanicilarDb kDb = new KullanicilarDb();
 
         ddlSoruYazarlari.DataSource = kDb.OgretmenleriGetir("LgsYazari",bransId);
@@ -209,5 +213,27 @@ public partial class LGSSoruBank_SoruEkleAdmin : System.Web.UI.Page
         ddlSoruYazarlari.DataTextField = "AdiSoyadi";
         ddlSoruYazarlari.DataBind();
         ddlSoruYazarlari.Items.Insert(0, new ListItem("Soru Yazarı Seçiniz", ""));
+
+        KazanimlariListele();
+        
+    }
+
+    protected void KazanimlariListele()
+    {
+        int bransId = ddlBrans.SelectedValue.ToInt32();
+        int sinif = ddlSinif.SelectedValue.ToInt32();
+       
+
+        LgsKazanimlarDB kznmDb = new LgsKazanimlarDB();
+        ddlKazanim.DataSource = kznmDb.KazanimNoKazanimBirlestir(bransId, sinif);
+        ddlKazanim.DataValueField = "Id";
+        ddlKazanim.DataTextField = "KazanimNoKazanim";
+        ddlKazanim.DataBind();
+        ddlKazanim.Items.Insert(0, new ListItem("Kazanım Seçiniz", ""));
+    }
+
+    protected void ddlSinif_OnSelectedIndexChanged(object sender, EventArgs e)
+    {
+        KazanimlariListele();
     }
 }

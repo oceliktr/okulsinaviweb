@@ -128,9 +128,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="col-sm-4 control-label">
-                                                                    Branşı
-                                                                    <asp:RequiredFieldValidator ControlToValidate="ddlBrans" ValidationGroup="form" ID="RequiredFieldValidator5" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
+                                                                <label class="col-sm-4 control-label">Branşı</label>
                                                                 <div class="col-sm-8">
                                                                     <asp:DropDownList runat="server" CssClass="form-control" ID="ddlBrans" ValidationGroup="form"></asp:DropDownList>
                                                                 </div>

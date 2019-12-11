@@ -12,6 +12,7 @@ namespace DAL
         public int SinavId { get; set; }
         public int BransId { get; set; }
         public int Sinif { get; set; }
+        public int KazanimId { get; set; }
         public string Kazanim { get; set; }
         public string SoruUrl { get; set; }
         public DateTime Tarih { get; set; }
@@ -31,8 +32,9 @@ namespace DAL
         }
         public DataTable KayitlariGetir(int sinavId, int kullanicId, int bransId, int sinif, int durum)
         {
-            string sql = @"SELECT k.AdiSoyadi, b.BransAdi,lgs.* FROM lgssorular AS lgs
+            string sql = @"SELECT CONCAT(lk.KazanimNo,' - ',lk.Kazanim) AS KazanimNoKazanim,k.AdiSoyadi, b.BransAdi,lgs.* FROM lgssorular AS lgs
                             left JOIN branslar AS b ON lgs.BransId=b.Id
+                            left JOIN lgskazanimlar AS lk ON lgs.KazanimId=lk.Id
                             left JOIN kullanicilar AS k ON k.Id=lgs.KullaniciId where lgs.Onay=?Onay";
 
             if (sinavId != 0)
@@ -64,7 +66,8 @@ namespace DAL
         }
         public DataTable KayitlariGetir(int kullaniciId)
         {
-            const string sql = "select * from lgssorular where KullaniciId=?KullaniciId order by Id desc";
+            const string sql = @"select CONCAT(lk.KazanimNo,' - ',lk.Kazanim) AS KazanimNoKazanim,lgs.* from lgssorular AS lgs
+                                left JOIN lgskazanimlar AS lk ON lgs.KazanimId = lk.Id where lgs.KullaniciId =?KullaniciId order by Id desc";
             MySqlParameter param = new MySqlParameter("?KullaniciId", MySqlDbType.Int32) { Value = kullaniciId };
             return helper.ExecuteDataSet(sql, param).Tables[0];
         }
@@ -79,6 +82,7 @@ namespace DAL
                 info.SinavId = dr.GetMySayi("SinavId");
                 info.BransId = dr.GetMySayi("BransId");
                 info.Sinif = dr.GetMySayi("Sinif");
+                info.KazanimId = dr.GetMySayi("KazanimId");
                 info.Kazanim = dr.GetMyMetin("Kazanim");
                 info.SoruUrl = dr.GetMyMetin("SoruUrl");
                 info.Onay = dr.GetMySayi("Onay");
@@ -107,6 +111,7 @@ namespace DAL
                 info.SinavId = dr.GetMySayi("SinavId");
                 info.BransId = dr.GetMySayi("BransId");
                 info.Sinif = dr.GetMySayi("Sinif");
+                info.KazanimId = dr.GetMySayi("KazanimId");
                 info.Kazanim = dr.GetMyMetin("Kazanim");
                 info.SoruUrl = dr.GetMyMetin("SoruUrl");
                 info.Onay = dr.GetMySayi("Onay");
@@ -132,6 +137,7 @@ namespace DAL
                 info.SinavId = dr.GetMySayi("SinavId");
                 info.BransId = dr.GetMySayi("BransId");
                 info.Sinif = dr.GetMySayi("Sinif");
+                info.KazanimId = dr.GetMySayi("KazanimId");
                 info.Kazanim = dr.GetMyMetin("Kazanim");
                 info.SoruUrl = dr.GetMyMetin("SoruUrl");
                 info.Onay = dr.GetMySayi("Onay");
@@ -150,14 +156,14 @@ namespace DAL
 
         public void KayitEkle(LgsSorularInfo info)
         {
-            const string sql = @"insert into lgssorular (KullaniciId,SinavId,BransId,Sinif,Kazanim,SoruUrl,Tarih,Onay) values (?KullaniciId,?SinavId,?BransId,?Sinif,?Kazanim,?SoruUrl,?Tarih,?Onay)";
+            const string sql = @"insert into lgssorular (KullaniciId,SinavId,BransId,Sinif,KazanimId,SoruUrl,Tarih,Onay) values (?KullaniciId,?SinavId,?BransId,?Sinif,?KazanimId,?SoruUrl,?Tarih,?Onay)";
             MySqlParameter[] pars =
             {
              new MySqlParameter("?KullaniciId", MySqlDbType.Int32),
              new MySqlParameter("?SinavId", MySqlDbType.Int32),
              new MySqlParameter("?BransId", MySqlDbType.Int32),
              new MySqlParameter("?Sinif", MySqlDbType.Int32),
-             new MySqlParameter("?Kazanim", MySqlDbType.String),
+             new MySqlParameter("?KazanimId", MySqlDbType.Int32),
              new MySqlParameter("?SoruUrl", MySqlDbType.String),
              new MySqlParameter("?Tarih", MySqlDbType.DateTime),
              new MySqlParameter("?Onay", MySqlDbType.Int32),
@@ -166,7 +172,7 @@ namespace DAL
             pars[1].Value = info.SinavId;
             pars[2].Value = info.BransId;
             pars[3].Value = info.Sinif;
-            pars[4].Value = info.Kazanim;
+            pars[4].Value = info.KazanimId;
             pars[5].Value = info.SoruUrl;
             pars[6].Value = info.Tarih;
             pars[7].Value = info.Onay;
@@ -174,14 +180,14 @@ namespace DAL
         }
         public void KayitGuncelleAdmin(LgsSorularInfo info)
         {
-            const string sql = @"update lgssorular set KullaniciId=?KullaniciId,SinavId=?SinavId,BransId=?BransId,Sinif=?Sinif,Kazanim=?Kazanim,SoruUrl=?SoruUrl,Onay=?Onay where Id=?Id";
+            const string sql = @"update lgssorular set KullaniciId=?KullaniciId,SinavId=?SinavId,BransId=?BransId,Sinif=?Sinif,KazanimId=?KazanimId,SoruUrl=?SoruUrl,Onay=?Onay where Id=?Id";
             MySqlParameter[] pars =
             {
                 new MySqlParameter("?KullaniciId", MySqlDbType.Int32),
                 new MySqlParameter("?SinavId", MySqlDbType.Int32),
                 new MySqlParameter("?BransId", MySqlDbType.Int32),
                 new MySqlParameter("?Sinif", MySqlDbType.Int32),
-                new MySqlParameter("?Kazanim", MySqlDbType.String),
+                new MySqlParameter("?KazanimId", MySqlDbType.Int32),
                 new MySqlParameter("?SoruUrl", MySqlDbType.String),
                 new MySqlParameter("?Onay", MySqlDbType.Int32),
                 new MySqlParameter("?Id", MySqlDbType.Int32),
@@ -190,7 +196,7 @@ namespace DAL
             pars[1].Value = info.SinavId;
             pars[2].Value = info.BransId;
             pars[3].Value = info.Sinif;
-            pars[4].Value = info.Kazanim;
+            pars[4].Value = info.KazanimId;
             pars[5].Value = info.SoruUrl;
             pars[6].Value = info.Onay;
             pars[7].Value = info.Id;
@@ -198,14 +204,14 @@ namespace DAL
         }
         public void KayitGuncelle(LgsSorularInfo info)
         {
-            const string sql = @"update lgssorular set Kazanim=?Kazanim,SoruUrl=?SoruUrl where Id=?Id";
+            const string sql = @"update lgssorular set KazanimId=?KazanimId,SoruUrl=?SoruUrl where Id=?Id";
             MySqlParameter[] pars =
             {
-                new MySqlParameter("?Kazanim", MySqlDbType.String),
+                new MySqlParameter("?KazanimId", MySqlDbType.Int32),
                 new MySqlParameter("?SoruUrl", MySqlDbType.String),
                 new MySqlParameter("?Id", MySqlDbType.Int32)
             };
-            pars[0].Value = info.Kazanim;
+            pars[0].Value = info.KazanimId;
             pars[1].Value = info.SoruUrl;
             pars[2].Value = info.Id;
             helper.ExecuteNonQuery(sql, pars);
@@ -221,6 +227,19 @@ namespace DAL
             pars[0].Value = onay;
             pars[1].Value = id;
             helper.ExecuteNonQuery(sql, pars);
+        }
+
+        /// <summary>
+        /// Kazanýma ait soru kontrolü
+        /// </summary>
+        /// <param name="kazanimNo"></param>
+        /// <returns></returns>
+        public bool KayitKontrol(int kazanimNo)
+        {
+            string cmdText = "select count(Id) from lgssorular where KazanimId=?KazanimId";
+            MySqlParameter pars = new MySqlParameter("?KazanimId", MySqlDbType.Int32) {Value = kazanimNo};
+            bool sonuc = Convert.ToInt32(helper.ExecuteScalar(cmdText, pars)) > 0;
+            return sonuc;
         }
     }
 

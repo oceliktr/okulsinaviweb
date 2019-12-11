@@ -26,43 +26,59 @@
             <div class="login-logo">
                 <img src="/images/logo.png" alt="Erzurum İl Milli Eğitim Müdürlüğü Ölçme Değerlendirme Merkezi" />
             </div>
+
             <div runat="server" id="divHata" visible="false" class="alert alert-danger alert-dismissible login-box">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                 <h4><i class="icon fa fa-ban"></i>Uyarı!</h4>
                 <asp:Literal ID="ltrHata" runat="server"></asp:Literal>
             </div>
             <div class="login-box" id="divGiris" runat="server">
-
-                <div class="login-box-body">
-                    <p class="login-box-msg">Kullanıcı Girişi</p>
-                    <div class="form-group has-feedback">
-                        <asp:TextBox ID="txtKullaniciAdi" CssClass="form-control" runat="server" placeholder="Kullanıcı Adı"></asp:TextBox>
-                        <span class="glyphicon glyphicon-user form-control-feedback"></span>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <asp:TextBox ID="txtSifre" runat="server" TextMode="Password" CssClass="form-control" placeholder="Şifre"></asp:TextBox>
-                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                    </div>
+            <div class="container">
+                <div class="col-12">
                     <div class="row">
-                        <div class="col-xs-8">
-                            <div class="checkbox icheck">
-                                <label>
-                                    <asp:CheckBox ID="cbBeniHatirla" Checked="true" runat="server" Text="Beni Hatırla" />
-                                </label>
+                        <div class="offset-sm-2 offset-md-3 col-md-4">
+                            <div class="login-box-body">
+                                <p class="login-box-msg">Kullanıcı Girişi</p>
+                                <div class="form-group has-feedback">
+                                    <asp:TextBox ID="txtKullaniciAdi" CssClass="form-control" runat="server" placeholder="Kullanıcı Adı/Kurum Kodu"></asp:TextBox>
+                                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                                </div>
+                                <div class="form-group has-feedback">
+                                    <asp:TextBox ID="txtSifre" runat="server" TextMode="Password" CssClass="form-control" placeholder="Şifre"></asp:TextBox>
+                                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-8">
+                                        <div class="checkbox icheck">
+                                            <label>
+                                                <asp:CheckBox ID="cbBeniHatirla" Checked="true" runat="server" Text="Beni Hatırla" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <asp:Button ID="btnGiris" runat="server" Text="Giriş" CssClass="btn btn-primary btn-block btn-flat" OnClick="btnGiris_Click" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4"></div>
+                                    <div class="col-xs-8 pull-right">
+                                        <asp:LinkButton ID="lnkSifremiUnuttum" CssClass="pull-right" runat="server" OnClick="lnkSifremiUnuttum_OnClick">Şifremi Unuttum</asp:LinkButton>
+                                    </div>
+                                </div>
+                                <br />
                             </div>
+
                         </div>
-                        <div class="col-xs-4">
-                            <asp:Button ID="btnGiris" runat="server" Text="Giriş" CssClass="btn btn-primary btn-block btn-flat" OnClick="btnGiris_Click" />
-                        </div>
+                        <div class="col-md-4"> <div runat="server" class="alert alert-info alert-dismissible login-box">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-info"></i>Bilgi!</h4>
+                           İlk defa giriş yapacak okullar giriş ekranına yalnızca kurum kodlarını yazarak giriş yapacaklardır. Sistem ilk girişte sizden yeni şifre oluşturmanızı isteyecektir.<br/>
+                          
+                        </div></div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-4"></div>
-                        <div class="col-xs-8 pull-right">
-                            <asp:LinkButton ID="lnkSifremiUnuttum" CssClass="pull-right" runat="server" OnClick="lnkSifremiUnuttum_OnClick">Şifremi Unuttum</asp:LinkButton>
-                        </div>
-                    </div>
-                    <br />
                 </div>
+            </div>
+                
             </div>
             <div class="login-box" id="divsifreUnuttum" runat="server" visible="False">
 
@@ -78,7 +94,7 @@
                         <asp:TextBox ID="txtKurumKodu" CssClass="form-control" runat="server" placeholder="Okulunuz kurum kodunu giriniz"></asp:TextBox>
                     </div>
                     <div class="form-group has-feedback">
-                        <asp:TextBox ID="txtKullaniciAdi2" CssClass="form-control" runat="server" placeholder="Kullanıcı adını giriniz"></asp:TextBox>
+                        <asp:TextBox ID="txtKullaniciAdi2" CssClass="form-control" runat="server" placeholder="Kullanıcı adını/Kurum kodunu giriniz"></asp:TextBox>
                     </div>
                     <div class="row">
                         <div class="col-xs-4">

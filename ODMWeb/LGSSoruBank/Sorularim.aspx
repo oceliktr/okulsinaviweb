@@ -40,8 +40,9 @@
                                                     <ItemTemplate>
                                                         <tr role="row" class="odd">
                                                             <td><%#Eval("Sinif") %></td>
-                                                            <td><a title="İndirmek için tıklayınız" href="<%#Eval("SoruUrl") %>"><i class="fa fa-file-word-o"></i></a></td>
-                                                            <td><%#Eval("Kazanim") %> </td>
+                                                            <td><a title="İndirmek için tıklayınız" href="<%#Eval("SoruUrl") %>"><i class="fa fa-file-word-o"></i></a>
+                                                                <a title="Önizleme" href="#" type="button" class="view" data-toggle="modal" data-url='https://docs.google.com/gview?url=http://erzurumodm.meb.gov.tr<%#Eval("SoruUrl")%>&embedded=true' data-target="#modalYT" id="#modalx"><i class="fa fa-eye"></i></a></td>
+                                                            <td><%#Eval("KazanimNoKazanim") %> </td>
                                                             <td><%#Eval("Tarih").ToDateTime().TarihYaz() %></td>
                                                             <td><%#Eval("Onay").ToInt32().LgsDurumBul() %></td>
                                                             <td>
@@ -61,7 +62,48 @@
             </div>
         </section>
     </div>
+    <div class="modal fade" id="modalYT" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+
+            <!--Content-->
+            <div class="modal-content">
+                <!--Body-->
+                <div class="modal-body mb-0 p-0">
+                    <div class="embed-responsive embed-responsive-16by9 z-depth-1-half">
+                        <iframe class="embed-responsive-item" src="" allowfullscreen></iframe>
+                    </div>
+
+                </div>
+                <!--Footer-->
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-outline-primary btn-rounded btn-md ml-4" data-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+            <!--/.Content-->
+        </div>
+    </div>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="footer" Runat="Server">
+    <script>
+        $(function () {
+            //Initialize Select2 Elements
+            $(".select2").select2();
+
+            $("[data-mask]").inputmask();
+        });
+    </script>
+        
+    <script>
+        $(function () {
+            $("body").on("click",
+                ".view",
+                function () {
+                    var url = $(this).data("url");
+                    $('.modal').on('shown.bs.modal',function(){
+                        $(this).find('iframe').attr('src',url)
+                    })
+                });
+        });
+    </script>
 </asp:Content>
 

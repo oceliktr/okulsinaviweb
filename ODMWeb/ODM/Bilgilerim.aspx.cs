@@ -26,14 +26,7 @@ public partial class OdmBilgilerim : System.Web.UI.Page
 
             ddlKurum.Items.Insert(0, new ListItem("Önce İlçe Seçiniz", ""));
             
-            BranslarDb brnsDb = new BranslarDb();
-            ddlBrans.DataSource = brnsDb.KayitlariGetir();
-             ddlBrans.DataValueField = "Id";
-            ddlBrans.DataTextField = "BransAdi";
-            ddlBrans.DataBind();
-            ddlBrans.Items.Insert(0, new ListItem("Branş Seçiniz", ""));
-
-
+         
             KullanicilarDb veriDb = new KullanicilarDb();
             KullanicilarInfo info = veriDb.KayitBilgiGetir(Master.UyeId());
             KurumlariGetir(info.IlceId);
@@ -49,14 +42,8 @@ public partial class OdmBilgilerim : System.Web.UI.Page
             {
                 //
             }
-            try
-            {
-                ddlBrans.SelectedValue = info.Bransi.ToString();
-            }
-            catch
-            {
-                //
-            }
+
+            ltrGiris.Text = info.TcKimlik;
             txtEpostaAdresi.Text = info.Email;
 
             Master.UyariBilgilendirme("Şifre değiştirilmeyecekse boş bırakınız. Düzenlenmeyen alanlar için ÖDM ile iletişime geçiniz.", phUyari);

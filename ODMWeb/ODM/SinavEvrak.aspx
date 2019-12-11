@@ -102,6 +102,13 @@
                                                     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                                                         <ContentTemplate>
                                                             <div class="form-group">
+                                                            <label class="col-sm-1 control-label">Okul Türü</label>
+                                                            <div class="col-sm-4">
+                                                                <asp:DropDownList ID="ddlOkulTuru" CssClass="form-control" AutoPostBack="True" OnSelectedIndexChanged="ddlOkulTuru_OnSelectedIndexChanged" runat="server"></asp:DropDownList>
+                                                            </div>
+                                                            </div>
+
+                                                            <div class="form-group">
                                                                 <label class="col-sm-1 control-label">Okullar</label>
                                                                 <div class="col-sm-5">
                                                                     <asp:ListBox ID="lbKurumlar" Rows="15" CssClass="form-control" runat="server" SelectionMode="Multiple"></asp:ListBox>

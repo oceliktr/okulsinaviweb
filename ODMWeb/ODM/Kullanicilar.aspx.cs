@@ -13,7 +13,7 @@ namespace ODM
             {
                 if (!Master.Yetki().Contains("Root"))
                     Response.Redirect("Giris.aspx");
-                
+
                 IlcelerDb ilcelerDb = new IlcelerDb();
                 ddlIlce.DataSource = ilcelerDb.KayitlariGetir();
                 ddlIlce.DataValueField = "Id";
@@ -35,8 +35,8 @@ namespace ODM
                 ddlBranslar.DataTextField = ddlBrans.DataTextField = "BransAdi";
                 ddlBrans.DataBind();
                 ddlBranslar.DataBind();
-                ddlBrans.Items.Insert(0, new ListItem("Branş Seçiniz", ""));
-                ddlBranslar.Items.Insert(0, new ListItem("Branş Seçiniz", ""));
+                ddlBrans.Items.Insert(0, new ListItem("Branş Seçiniz", "0"));
+                ddlBranslar.Items.Insert(0, new ListItem("Branş Seçiniz", "0"));
             }
         }
         private void KayitlariListele()
@@ -49,7 +49,7 @@ namespace ODM
                 string yetki = ddlYetki.SelectedValue;
 
                 KullanicilarDb veriDb = new KullanicilarDb();
-                rptKullanicilar.DataSource = veriDb.KayitlariGetir(ilce, kurumlar, brans,yetki);
+                rptKullanicilar.DataSource = veriDb.KayitlariGetir(ilce, kurumlar, brans, yetki);
                 rptKullanicilar.DataBind();
             }
             catch (Exception)
@@ -165,7 +165,7 @@ namespace ODM
                 yetki += "LgsYazari|";
             if (cbLgsIlKomisyonu.Checked)
                 yetki += "LgsIlKomisyonu|";
-           
+
             int ilce = ddlIlce.SelectedValue.ToInt32();
             int id = hfId.Value.ToInt32();
 
@@ -180,15 +180,6 @@ namespace ODM
                 Email = email,
                 CepTlf = cepTlf
             };
-            if (sifre != "")
-            {
-                info.Sifre = sifre.Md5Sifrele();
-            }
-            else
-            {
-                KullanicilarInfo infoVeri = veriDb.KayitBilgiGetir(id);
-                info.Sifre = infoVeri.Sifre;
-            }
             if (tcKimlik != "")
             {
                 info.TcKimlik = tcKimlik;
@@ -201,26 +192,25 @@ namespace ODM
             // Yeni bir kayıt ise.
             if (id == 0)
             {
-                if (sifre != "")
-                {
-                    if (veriDb.KayitKontrol(tcKimlik, 0))
-                        Master.UyariTuruncu("Bu Tc Kimlik zaten kayıtlı.", phUyari);
-                    else
-                    {
-                        info.TcKimlik = tcKimlik;
-                        veriDb.KayitEkle(info);
-                        Master.UyariIslemTamam("Yeni bir kullanıcı eklendi.", phUyari);
-                        FormuTemizle();
-                    }
-                }
+
+                if (veriDb.KayitKontrol(tcKimlik, 0))
+                    Master.UyariTuruncu("Bu Tc Kimlik zaten kayıtlı.", phUyari);
                 else
                 {
-                    Master.UyariTuruncu("Yeni bir kullanıcı eklenirken şifre boş olmamalı.", phUyari);
+                    info.Sifre = sifre != "" ? sifre.Md5Sifrele() : null; //yeni kayıtta şifre yok ise null yap
+                    info.TcKimlik = tcKimlik;
+                    veriDb.KayitEkle(info);
+                    Master.UyariIslemTamam("Yeni bir kullanıcı eklendi.", phUyari);
+                    FormuTemizle();
                 }
+
             }
             else
             {
                 info.Id = id;
+                KullanicilarInfo infoVeri = veriDb.KayitBilgiGetir(id);
+                info.Sifre = sifre != "" ? sifre.Md5Sifrele() : infoVeri.Sifre; //boş ise eski şifreyi gir
+
                 veriDb.KayitGuncelle(info);
                 Master.UyariIslemTamam("Kullanıcı bilgileri güncellendi.", phUyari);
                 FormuTemizle();
