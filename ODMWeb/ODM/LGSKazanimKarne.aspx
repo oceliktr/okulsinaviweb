@@ -20,7 +20,7 @@
                     <asp:PlaceHolder ID="phUyari" runat="server"></asp:PlaceHolder>
                     <div class="box box-default">
                         <div class="box-header">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <b>Sınav :  <asp:RequiredFieldValidator ControlToValidate="ddlSinavlar" ValidationGroup="form" ID="RequiredFieldValidator2" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></b>
                                 <asp:DropDownList runat="server" CssClass="form-control" ValidationGroup="form" ID="ddlSinavlar"></asp:DropDownList>
                             </div>
@@ -69,6 +69,10 @@
                             <div class="col-md-2">
                                 <b>&nbsp;</b>
                                 <asp:Button ID="btnIlKarnesi" CssClass="form-control btn btn-success" runat="server" ValidationGroup="form2" Text="İl Karnesi" OnClick="btnIlKarnesi_OnClick" />
+                            </div>
+                            <div class="col-md-2">
+                                <b>&nbsp;</b>
+                                <asp:HyperLink ID="lgIstatistik" NavigateUrl="LgsIstatistik.aspx" CssClass="form-control btn btn-warning" runat="server">İstatistik</asp:HyperLink>
                             </div>
                         </div>
                         <div class="box-body">

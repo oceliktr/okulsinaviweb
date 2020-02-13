@@ -39,5 +39,22 @@ namespace ODM.CKYazdirDb
         public string KitapcikTuru { get; set; }
         [StringLength(350)]
         public string Cevaplar { get; set; }
+
+        public Kutuk(long opaqId, string ilceAdi, int kurumKodu, string kurumAdi, int ogrenciNo, string adi, string soyadi, int sinifi, string sube)
+        {
+            OpaqId = opaqId;
+            IlceAdi = ilceAdi;
+            KurumKodu = kurumKodu;
+            KurumAdi = kurumAdi;
+            OgrenciNo = ogrenciNo;
+            Adi = adi;
+            Soyadi = soyadi;
+            Sinifi = sinifi;
+            Sube = sube;
+        }
+
+        public Kutuk()
+        {
+        }
     }
 }

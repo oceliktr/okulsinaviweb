@@ -1,0 +1,53 @@
+﻿@using ErzurumOdmMvc.Entities
+@using ErzurumOdmMvc.Library
+@{
+    Kullanici kullanici = CurrentSession.Kullanici;
+    if (kullanici == null)
+    {
+        CurrentSession.Get<Kullanici>();
+    }
+    string controllerName = "";
+    string actionName = "";
+
+    if (Request.RequestContext.RouteData.Values["controller"] != null)
+    {
+        controllerName = Request.RequestContext.RouteData.Values["controller"].ToString();
+    }
+    if (Request.RequestContext.RouteData.Values["action"] != null)
+    {
+        actionName = Request.RequestContext.RouteData.Values["action"].ToString();
+    }
+}
+<nav class="mt-5">
+    <ul class="nav nav-pills nav-sidebar flex-column text-sm nav-flat nav-compact nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+
+        <li class="nav-header">GENEL</li>
+
+        <li class="nav-item">
+            <a href="@Url.Action("Bilgilerim","Kullanici")" class="nav-link @(controllerName=="Kullanici"&&actionName=="Bilgilerim"?"active":"")"><i class="nav-icon far fa-user"></i><p>Bilgilerim</p></a>
+        </li>
+        @if (CurrentSession.Kullanici.Yetki.Contains("Root") || CurrentSession.Kullanici.Yetki.Contains("Admin"))
+        {
+            <li class="nav-item">
+                <a href="@Url.Action("Index", "Brans")" class="nav-link @(controllerName == "Brans" ? "active" : "")">
+                    <i class="nav-icon fas fa-code-branch"></i>
+                    <p>Branşlar</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="@Url.Action("Index", "Kurum")" class="nav-link @(controllerName == "Kurum" ? "active" : "")">
+                    <i class="nav-icon fa fa-school"></i>
+                    <p>Kurumlar</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="@Url.Action("Index", "Kullanici")" class="nav-link @(controllerName == "Kullanici" ? "active" : "")">
+                    <i class="nav-icon fa fa-users"></i>
+                    <p>Kullanıcılar</p>
+                </a>
+            </li>
+        }
+
+    </ul>
+</nav>

@@ -21,7 +21,7 @@ namespace ODM.CKYazdirDb.Library
             dakika = dakika % 60; //son olarak mod alarak dakikamizi hesapliyoruz
             
             string kalanSure =
-                string.Format("Tahmini süre : {0:00}:{1:00}:{2:00}", saat, dakika, saniye);
+                string.Format("Tahmini kalan süre : {0:00}:{1:00}:{2:00}", saat, dakika, saniye);
             return kalanSure;
         }
     }

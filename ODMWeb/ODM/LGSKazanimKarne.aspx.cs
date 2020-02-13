@@ -38,7 +38,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
                 CkSinavAdiInfo aktifSinav = sinav.AktifSinavAdi();
                 ddlSinavlar.SelectedValue = aktifSinav.SinavId.ToString();
 
-
+                lgIstatistik.Visible = false;
                 btnIlKarnesi.Visible = false;
             }
 
@@ -53,6 +53,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
                 CkSinavAdiInfo aktifSinav = sinav.AktifSinavAdi();
                 ddlSinavlar.SelectedValue = aktifSinav.SinavId.ToString();
 
+                lgIstatistik.Visible = false;
                 btnIlKarnesi.Visible = false;
 
             }
@@ -75,7 +76,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
 
 
             CkKarneKutukDB kutukDb = new CkKarneKutukDB();
-            rptKurumlar.DataSource = kutukDb.KayitlariGetir(aktifSinav.SinavId, info.KurumKodu.ToInt32(),sinif);
+            rptKurumlar.DataSource = kutukDb.KayitlariGetir(sinavId, info.KurumKodu.ToInt32(),sinif);
             rptKurumlar.DataBind();
 
         }
@@ -783,7 +784,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
         }
     }
 
-    private int a=0;
+    private int a;
     protected void rptKurumlar_OnItemDataBound(object sender, RepeaterItemEventArgs e)
     {
         a++;

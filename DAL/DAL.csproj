@@ -79,7 +79,6 @@
     <Compile Include="CkKarne\CkkarnekazanimlarDB.cs" />
     <Compile Include="CkKarne\CkkarnekutukDB.cs" />
     <Compile Include="CkKarne\CkkarnelogDB.cs" />
-    <Compile Include="CkKarne\CkKarneOgrenciCevaplariDB.cs" />
     <Compile Include="CkKarne\CksinavadiDB.cs" />
     <Compile Include="KarneRaporDB.cs" />
     <Compile Include="KazanimKarneDB.cs" />

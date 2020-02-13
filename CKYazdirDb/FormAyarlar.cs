@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using ODM.CKYazdirDb.Business;
 using ODM.CKYazdirDb.Library;
 using ODM.CKYazdirDb.Model;
 
@@ -40,24 +41,22 @@ namespace ODM.CKYazdirDb
 
         private void FormAyarlar_Load(object sender, EventArgs e)
         {
-            Sablon sablon = new Sablon();
-            //cbSablonTurleri.DataSource = sablon.Sablonlar();
-            //cbSablonTurleri.DisplayMember = "SablonAdi";
-            //cbSablonTurleri.ValueMember = "Id";
 
-         
-
-            List<Sablon> brns = new List<Sablon> { new Sablon("0", "Şablon Seçiniz") };
-            brns.AddRange(sablon.Sablonlar().Select(t => new Sablon(t.Id, t.SablonAdi)));
-
-            cbSablonTurleri.ValueMember = "Id";
-            cbSablonTurleri.DisplayMember = "SablonAdi";
-
-            foreach (var o in brns)
+            List<ComboboxItem> sinif = new List<ComboboxItem> { new ComboboxItem("0", "Sınıf Seçiniz") };
+            for (int i = 1; i <= 12; i++)
             {
-                cbSablonTurleri.Items.Add(new Brans(o.Id.ToInt32(), o.SablonAdi));
+                sinif.Add(new ComboboxItem(i.ToString(), i + ". sınıf"));
             }
-            cbSablonTurleri.DataSource = brns;
+
+            cbSinif.ValueMember = "Text";
+            cbSinif.DisplayMember = "Value";
+
+            foreach (var s in sinif)
+            {
+                cbSinif.Items.Add(new ComboboxItem(s.Value, s.Text));
+            }
+            cbSinif.DataSource = sinif;
+
 
 
             Ayarlar ayar = ayarlarManager.AyarlariGetir();
@@ -65,10 +64,9 @@ namespace ODM.CKYazdirDb
             txtIlAdi.Text = ayar.IlAdi;
             pbLogo.ImageLocation = ayar.Logo;
             txtLogo.Text = ayar.Logo;
-            txtCk.Text = ayar.CkSablon;
             txtSinifListesi.Text = ayar.SinifListesiSablon;
-            cbSablonTurleri.SelectedValue = ayar.SablonTuru;
-            if (ayar.DegerlendirmeTuru==DegerlendirmeTurleri.DegerlendirmeTuru.KazanimBazli.ToInt32())
+            cbSinif.SelectedValue = ayar.SablonTuru;
+            if (ayar.DegerlendirmeTuru == DegerlendirmeTurleri.DegerlendirmeTuru.KazanimBazli.ToInt32())
             {
                 rbKazanim.Checked = true;
             }
@@ -79,26 +77,45 @@ namespace ODM.CKYazdirDb
             txtOdmAdres.Text = ayar.OdmAdres;
             txtWeb.Text = ayar.OdmWeb;
             txtEposta.Text = ayar.OdmEmail;
-
+            SablonlariListele();
         }
         private void btnCkGozat_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            int sinif = cbSinif.SelectedValue.ToInt32();
+            if (sinif == 0)
             {
-                if (ofd.ShowDialog() == DialogResult.OK)
+                MessageBox.Show("Sınıf Seçiniz.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
                 {
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                    {
 
-                    string startPath = Application.StartupPath + "\\Files";
-                    string dosyaAdi = startPath + "\\" + Path.GetFileName(ofd.FileName);
+                        string dosyaAdi = ofd.FileName;
 
-                    //klasör yoksa oluştur
-                    if (!DizinIslemleri.DizinKontrol(startPath))
-                        DizinIslemleri.DizinOlustur(startPath);
+                        CkSablonManager sablonManager = new CkSablonManager();
+                        
+                        if (sablonManager.Find(x => x.Sinif == sinif) != null)
+                        {
+                            MessageBox.Show("Bu sınıf için bir şablon var", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        }
+                        else
+                        {
+                            CkSablon ckSablon = new CkSablon
+                            {
+                                Sablon = dosyaAdi,
+                                Sinif = sinif
+                            };
+                            sablonManager.Insert(ckSablon);
 
+                            SablonlariListele();
+                        }
 
-                    DizinIslemleri.DosyaKopyala(ofd.FileName, dosyaAdi, true);
-                    txtCk.Text = dosyaAdi;
+                    }
                 }
+
             }
         }
 
@@ -138,18 +155,10 @@ namespace ODM.CKYazdirDb
             ayar.Id = 1;
             ayar.Logo = txtLogo.Text;
             ayar.IlAdi = txtIlAdi.Text;
-            ayar.CkSablon = txtCk.Text;
             ayar.SinifListesiSablon = txtSinifListesi.Text;
-            ayar.SablonTuru = cbSablonTurleri.SelectedValue.ToString();
+            ayar.SablonTuru = cbSinif.SelectedValue.ToString();
             ayar.SinavAdi = txtSinavAdi.Text;
-            if (rbKazanim.Checked==true)
-            {
-                ayar.DegerlendirmeTuru = DegerlendirmeTurleri.DegerlendirmeTuru.KazanimBazli.ToInt32();
-            }
-            else
-            {
-                ayar.DegerlendirmeTuru = DegerlendirmeTurleri.DegerlendirmeTuru.KonuBazli.ToInt32();
-            }
+            ayar.DegerlendirmeTuru = rbKazanim.Checked ? DegerlendirmeTurleri.DegerlendirmeTuru.KazanimBazli.ToInt32() : DegerlendirmeTurleri.DegerlendirmeTuru.KonuBazli.ToInt32();
             ayar.OdmAdres = txtOdmAdres.Text;
             ayar.OdmWeb = txtWeb.Text;
             ayar.OdmEmail = txtEposta.Text;
@@ -161,9 +170,43 @@ namespace ODM.CKYazdirDb
                 Close();
         }
 
-        private void FormAyarlar_Activated(object sender, EventArgs e)
+        private void SablonlariListele()
         {
+            //cevapları listele
+            CkSablonManager sablonManager = new CkSablonManager();
+            dataGridView1.DataSource = sablonManager.List().OrderBy(x => x.Sinif).ToList();
 
+            dataGridView1.Columns[0].Visible = false;
+            dataGridView1.Columns[1].HeaderText = "Sınıf";
+            dataGridView1.Columns[1].Width = 70;
+            dataGridView1.Columns[2].HeaderText = "Şablon";
+            dataGridView1.Columns[2].Width = 195;
+        }
+
+        private void seçileniSilToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialog = new DialogResult();
+            dialog = MessageBox.Show("Seçilen şablonu silmek istediğinizden emin misiniz? (Bilgisayardaki dosyayı silmez)", "Uyarı", MessageBoxButtons.YesNo);
+            if (dialog == DialogResult.Yes)
+            {
+
+                int id = dataGridView1.SelectedRows[0].Cells[0].Value.ToInt32();
+                CkSablonManager sablonManager = new CkSablonManager();
+                CkSablon cvp = sablonManager.Find(x => x.Id == id);
+                sablonManager.Delete(cvp);
+                SablonlariListele();
+            }
+        }
+
+        private void tümünüSilToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialog = MessageBox.Show("Tümünü silmek istediğinizden emin misiniz? (Bilgisayardaki dosyayı silmez)", "Uyarı", MessageBoxButtons.YesNo);
+            if (dialog == DialogResult.Yes)
+            {
+                CkSablonManager sablonManager = new CkSablonManager();
+                sablonManager.TumunuSil();
+                SablonlariListele();
+            }
         }
     }
 }

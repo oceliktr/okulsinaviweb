@@ -50,6 +50,7 @@
             this.BgwSinifListesi = new System.ComponentModel.BackgroundWorker();
             this.btnDosyaAdresleri = new System.Windows.Forms.Button();
             this.btnKutukCek = new System.Windows.Forms.Button();
+            this.btnCkPdfOlustur = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbCkA5Dosyasi)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -278,11 +279,22 @@
             this.btnKutukCek.UseVisualStyleBackColor = true;
             this.btnKutukCek.Click += new System.EventHandler(this.btnKutukCek_Click);
             // 
+            // btnCkPdfOlustur
+            // 
+            this.btnCkPdfOlustur.Location = new System.Drawing.Point(528, 226);
+            this.btnCkPdfOlustur.Name = "btnCkPdfOlustur";
+            this.btnCkPdfOlustur.Size = new System.Drawing.Size(175, 36);
+            this.btnCkPdfOlustur.TabIndex = 190;
+            this.btnCkPdfOlustur.Text = "CK Okulştur Pdf";
+            this.btnCkPdfOlustur.UseVisualStyleBackColor = true;
+            this.btnCkPdfOlustur.Click += new System.EventHandler(this.btnCkPdfOlustur_Click);
+            // 
             // FormCkOlustur
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(907, 333);
+            this.Controls.Add(this.btnCkPdfOlustur);
             this.Controls.Add(this.btnKutukCek);
             this.Controls.Add(this.btnDosyaAdresleri);
             this.Controls.Add(this.statusStrip1);
@@ -334,5 +346,6 @@
         private System.ComponentModel.BackgroundWorker BgwSinifListesi;
         private System.Windows.Forms.Button btnDosyaAdresleri;
         private System.Windows.Forms.Button btnKutukCek;
+        private System.Windows.Forms.Button btnCkPdfOlustur;
     }
 }

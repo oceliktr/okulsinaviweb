@@ -36,7 +36,7 @@ namespace ODM.CKYazdirDb.Business
 
         public void TumunuSil()
         {
-            repo.DeleteAll("Kazanim");
+            repo.DeleteAll("Kazanimlar");
 
         }
     }

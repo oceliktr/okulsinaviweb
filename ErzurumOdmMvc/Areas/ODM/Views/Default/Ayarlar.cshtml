@@ -1,0 +1,175 @@
+﻿@using ErzurumOdmMvc.Library
+@model ErzurumOdmMvc.Entities.SiteAyar
+@{
+    ViewBag.Title = "Ayarlar";
+}
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>@ViewBag.Title</h1>
+                </div>
+                <div class="col-sm-6">
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-8 offset-sm-2">
+                    <div class="card card-primary">
+                        <div class="card-header p-0 pt-1">
+
+                        </div>
+                        <div class="card-body">
+                            <div id="uyari" class="alert hidden alert-success alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                                <div id="mesajAlert"> @Html.ValidationSummary()</div>
+                            </div>
+                            @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-label-left" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(x => x.Id)
+
+                                if (CurrentSession.Kullanici.Yetki.Contains("Root"))
+                                {
+                                    <div class="form-group text-right"><button id="send" type="button" class="btn btn-info pull-right" onclick="EpostaGonder()">E-posta Test</button></div>
+                                }
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                       Merkezin Adı
+                                    </label>
+                                    <div>
+                                        @Html.TextBoxFor(x => x.SiteAdi, new { @class = "form-control"})
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                       Adres
+                                    </label>
+                                    <div>
+                                        @Html.TextBoxFor(x => x.SiteAdres, new { @class = "form-control"})
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                        E-posta Server
+                                    </label>
+                                    <div>
+                                        @Html.TextBoxFor(x => x.MailServer, new { @class = "form-control", placeholder = "E-posta Server adresi" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                        Gönderen Adres
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        @Html.TextBoxFor(x => x.MailAdresi, new { @class = "form-control", placeholder = "E-posta gönderen adres" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                        Şifre
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        @Html.TextBoxFor(x => x.MailSifresi, new { @class = "form-control", placeholder = "Gönderen e-posta şifresi" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                        Gönderen
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        @Html.TextBoxFor(x => x.MailGonderenIsim, new { @class = "form-control", placeholder = "Gönderen kişi adı" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                        Port
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        @Html.TextBoxFor(x => x.MailPort, new { @class = "form-control", placeholder = "Port" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                        Site e-posta adresi
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        @Html.TextBoxFor(x => x.SiteMail, new { @class = "form-control", placeholder = "Site e-posta adresi" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                                        Alıcı
+                                    </label>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        @Html.TextBoxFor(x => x.AliciMailAdresi, new { @class = "form-control", placeholder = "Alıcı e-posta adresi" })
+                                    </div>
+                                </div>
+
+                                <button id="send" type="submit" class="btn btn-success">Kaydet</button>
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@section FooterScript{
+    <script>
+        function EpostaGonder() {
+            var eposta = $("#AliciMailAdresi").val();
+
+            $.ajax({
+                type: "GET",
+                data: null,
+                dataType: "json",
+                url: "/ODM/Default/TestMailiGonder?eposta=" + eposta,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.Sonuc) {
+                        $("#uyari").removeClass("hidden");
+                        $("#uyari").removeClass("alert-danger");
+                        $("#uyari").addClass("alert-success");
+                        $("#mesajAlert").html(res.Mesaj);
+                    } else {
+                        $("#uyari").removeClass("hidden");
+                        $("#uyari").removeClass("alert-success");
+                        $("#uyari").addClass("alert-danger");
+                        $("#mesajAlert").html(res.Mesaj);
+                    }
+                },
+                error: function (res) {
+                    $("#uyari").removeClass("hidden");
+                    $("#uyari").removeClass("alert-success");
+                    $("#uyari").addClass("alert-danger");
+                    $("#mesajAlert").html(res.Mesaj);
+                }
+            });
+        }
+    </script>
+    @if (ViewBag.Uyari != null && ViewBag.Uyari.ToString() == "islemTamam")
+    {
+        <script>document.getElementById("uyari").className = "alert alert-success alert-dismissible";</script>
+    }
+    @if (ViewBag.Uyari != null && ViewBag.Uyari.ToString() == "uyari")
+    {
+        <script>document.getElementById("uyari").className = "alert alert-danger alert-dismissible";</script>
+    }
+}

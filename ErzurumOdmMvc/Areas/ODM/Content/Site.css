@@ -1,0 +1,9 @@
+﻿.hidden {
+    display: none;
+}
+.toggle .btn {
+    cursor: pointer;
+}
+.toggle .btn .btn-success {
+    width: 87px;
+}

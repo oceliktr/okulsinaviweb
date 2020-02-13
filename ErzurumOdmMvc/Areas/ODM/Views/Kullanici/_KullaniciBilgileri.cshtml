@@ -1,0 +1,75 @@
+﻿@using ErzurumOdmMvc.Common.Enums
+@using ErzurumOdmMvc.Common.Library
+@model ErzurumOdmMvc.Areas.ODM.Model.KullaniciBilgileriViewModel
+@{
+    string[] yetki = Model.Yetki.Split('|');
+    Layout = null;
+}
+<table class="table">
+    <tbody>
+    <tr>
+        <td style="width: 150px"><strong>#Id</strong></td>
+        <td>@Model.Id</td>
+    </tr>
+        <tr>
+            <td><strong>İlçesi</strong></td>
+            <td>
+                @Model.IlceAdi
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Kurumu</strong></td>
+            <td>
+                @Model.KurumKodu - @Model.KurumAdi
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Adı Soyadı</strong></td>
+            <td>
+                @Model.AdiSoyadi
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Branşı</strong></td>
+            <td>
+                @Model.BransAdi
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Giriş Bilgisi</strong></td>
+            <td>@Model.TcKimlik</td>
+        </tr>
+        <tr>
+            <td><strong>E-posta Adresi</strong></td>
+            <td>@Model.Email</td>
+        </tr>
+        <tr>
+            <td><strong>Cep Telefonu</strong></td>
+            <td>@Model.CepTlf</td>
+        </tr>
+        <tr>
+            <td><strong>Yetkisi</strong></td>
+            <td>
+                @foreach (var s in yetki)
+                {
+                    if (!string.IsNullOrEmpty(s))
+                    {
+                        @(Yetki.Getir(s) + ", ")
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Son Giriş Tarihi</strong></td>
+            <td>@Model.SonGiris.TarihYaz()</td>
+        </tr>
+        <tr>
+            <td><strong>Önceki Giriş Tarihi</strong></td>
+            <td>@Model.OncekiGiris.TarihYaz()</td>
+        </tr>
+        <tr>
+            <td><strong>Giriş Sayısı</strong></td>
+            <td>@Model.GirisSayisi kez</td>
+        </tr>
+    </tbody>
+</table>

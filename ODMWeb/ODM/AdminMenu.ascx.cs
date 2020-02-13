@@ -28,6 +28,7 @@ namespace ODM
                 liLgsSoruBankasi.Visible = true;
                 liLgsKazanimKarne.Visible = true;
                 liCkDataYukle.Visible = true;
+                liLgsRapor.Visible = true;
             }
 
             if (kInfo.Yetki.Contains("Admin"))

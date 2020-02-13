@@ -191,7 +191,7 @@ namespace ODM
                         }
 
 
-                        Master.UyariIslemTamam("Dosya başarıya yüklendi.", phUyari);
+                        Master.UyariIslemTamam(fuFile.FileName+" isimli dosya başarıya yüklendi.", phUyari);
                     }
                     else
                     {

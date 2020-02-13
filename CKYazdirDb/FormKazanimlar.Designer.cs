@@ -44,6 +44,9 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.düzenleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.silToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tümünüSilToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnVazgec = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.txtSorulari = new System.Windows.Forms.TextBox();
@@ -51,9 +54,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.cbSinif = new System.Windows.Forms.ComboBox();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tümünüSilToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKazanimlar)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -183,7 +183,7 @@
             this.seçiliSınıfKazanımlarınıSilToolStripMenuItem,
             this.tümünüSilToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(261, 134);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(261, 106);
             // 
             // düzenleToolStripMenuItem
             // 
@@ -198,6 +198,25 @@
             this.silToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
             this.silToolStripMenuItem.Text = "Sil";
             this.silToolStripMenuItem.Click += new System.EventHandler(this.SilToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(257, 6);
+            // 
+            // seçiliSınıfKazanımlarınıSilToolStripMenuItem
+            // 
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Name = "seçiliSınıfKazanımlarınıSilToolStripMenuItem";
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Text = "Seçili Sınıf Kazanımlarını Sil";
+            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Click += new System.EventHandler(this.seçiliSınıfKazanımlarınıSilToolStripMenuItem_Click);
+            // 
+            // tümünüSilToolStripMenuItem
+            // 
+            this.tümünüSilToolStripMenuItem.Name = "tümünüSilToolStripMenuItem";
+            this.tümünüSilToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
+            this.tümünüSilToolStripMenuItem.Text = "Tümünü Sil";
+            this.tümünüSilToolStripMenuItem.Click += new System.EventHandler(this.tümünüSilToolStripMenuItem_Click);
             // 
             // btnVazgec
             // 
@@ -272,25 +291,6 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(257, 6);
-            // 
-            // seçiliSınıfKazanımlarınıSilToolStripMenuItem
-            // 
-            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Name = "seçiliSınıfKazanımlarınıSilToolStripMenuItem";
-            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
-            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Text = "Seçili Sınıf Kazanımlarını Sil";
-            this.seçiliSınıfKazanımlarınıSilToolStripMenuItem.Click += new System.EventHandler(this.seçiliSınıfKazanımlarınıSilToolStripMenuItem_Click);
-            // 
-            // tümünüSilToolStripMenuItem
-            // 
-            this.tümünüSilToolStripMenuItem.Name = "tümünüSilToolStripMenuItem";
-            this.tümünüSilToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
-            this.tümünüSilToolStripMenuItem.Text = "Tümünü Sil";
-            this.tümünüSilToolStripMenuItem.Click += new System.EventHandler(this.tümünüSilToolStripMenuItem_Click);
-            // 
             // FormKazanimlar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -320,7 +320,7 @@
             this.MinimizeBox = false;
             this.Name = "FormKazanimlar";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "FormKazanimlar";
+            this.Text = "Kazanımlar";
             this.Load += new System.EventHandler(this.FormKazanimlar_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvKazanimlar)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);

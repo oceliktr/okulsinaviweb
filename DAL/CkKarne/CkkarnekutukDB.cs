@@ -40,6 +40,11 @@ public class CkKarneKutukInfo
         
     }
 
+    public CkKarneKutukInfo(int kurumKodu, string kurumAdi)
+    {
+        KurumKodu = kurumKodu;
+        KurumAdi = kurumAdi;
+    }
     public CkKarneKutukInfo(int id, int opaqId, string ilceAdi, int kurumKodu, string kurumAdi, int ogrenciNo, string adi, string soyadi, int sinifi, string sube, int sinavId, string katilimDurumu, string kitapcikTuru, string cevaplar)
     {
         Id = id;
@@ -99,6 +104,45 @@ public class CkKarneKutukDB
         var table = helper.ExecuteDataSet(sql, pars).Tables[0];
         return table;
     }
+
+    public DataTable SinifSubeSayilari(int sinavId, int sinif)
+    {
+        string sql =@"SELECT DISTINCT(ktk.KurumKodu),ktk.IlceAdi,ktk.KurumAdi,ktk.Sinifi,COUNT(Id) AS OgrenciSayisi
+                    FROM ckkarnekutuk AS ktk WHERE ktk.SinavId=?SinavId AND ktk.Sinifi=?Sinifi
+                    GROUP BY ktk.KurumKodu,ktk.Sinifi
+                    ORDER BY ktk.IlceAdi,ktk.KurumAdi";
+
+        MySqlParameter[] pars =
+        {
+            new MySqlParameter("?SinavId", MySqlDbType.Int32),
+            new MySqlParameter("?Sinifi", MySqlDbType.Int32)
+        };
+        pars[0].Value = sinavId;
+        pars[1].Value = sinif;
+
+        var table = helper.ExecuteDataSet(sql, pars).Tables[0];
+        return table;
+    }
+    public List<CkKarneKutukInfo> IlceninOkullari(int sinif, string ilce)
+    {
+        string sql = "SELECT DISTINCT ktk.KurumKodu,ktk.KurumAdi FROM ckkarnekutuk AS ktk WHERE ktk.Sinifi=?Sinif AND ktk.IlceAdi=?Ilce";
+        MySqlParameter[] p =
+        {
+            new MySqlParameter("?Sinif", MySqlDbType.Int32),
+            new MySqlParameter("?Ilce", MySqlDbType.String)
+        };
+        p[0].Value = sinif;
+        p[1].Value = ilce;
+
+        DataTable dt = helper.ExecuteDataSet(sql, p).Tables[0];
+        List<CkKarneKutukInfo> karne = new List<CkKarneKutukInfo>();
+        foreach (DataRow k in dt.Rows)
+        {
+            karne.Add(new CkKarneKutukInfo(Convert.ToInt32(k["KurumKodu"]), k["KurumAdi"].ToString()));
+        }
+        return karne;
+    }
+
     public List<CkKarneKutukInfo> KayitlariDizeGetir(int sinavId, int kurumKodu)
     {
         string sql = "select * from ckkarnekutuk where SinavId=?SinavId and KurumKodu=?KurumKodu";
@@ -122,6 +166,13 @@ public class CkKarneKutukDB
     public CkKarneKutukInfo KayitBilgiGetir(string cmdText, params MySqlParameter[] param)
     {
         MySqlDataReader dr = helper.ExecuteReader(cmdText, param);
+        var info = TabloAlanlar(dr);
+
+        return info;
+    }
+
+    private static CkKarneKutukInfo TabloAlanlar(MySqlDataReader dr)
+    {
         CkKarneKutukInfo info = new CkKarneKutukInfo();
         while (dr.Read())
         {
@@ -142,8 +193,8 @@ public class CkKarneKutukDB
             info.KitapcikTuru = dr.GetMyMetin("KitapcikTuru");
             info.Cevaplar = dr.GetMyMetin("Cevaplar");
         }
-        dr.Close();
 
+        dr.Close();
         return info;
     }
 
@@ -152,27 +203,24 @@ public class CkKarneKutukDB
         string cmdText = "select * from ckkarnekutuk where Id=?Id";
         MySqlParameter param = new MySqlParameter("?Id", MySqlDbType.Int32) { Value = id };
         MySqlDataReader dr = helper.ExecuteReader(cmdText, param);
-        CkKarneKutukInfo info = new CkKarneKutukInfo();
-        while (dr.Read())
+        var info = TabloAlanlar(dr);
+
+        return info;
+    }
+    public CkKarneKutukInfo KayitBilgiGetir(int sinif, int kurumkodu)
+    {
+        //Kütükte her hangi bir öðrencinin sýnýf ve kurum kodu verilen herhangi bir öðrencinin okul bilgisi
+        string sql = "SELECT * FROM ckkarnekutuk AS ktk WHERE ktk.Sinifi=?Sinif AND ktk.KurumKodu=?KurumKodu";
+        MySqlParameter[] p =
         {
-            info.Id = dr.GetMySayi("Id");
-            info.OpaqId = dr.GetMySayi("OpaqId");
-            info.IlAdi = dr.GetMyMetin("IlAdi");
-            info.IlceAdi = dr.GetMyMetin("IlceAdi");
-            info.KurumKodu = dr.GetMySayi("KurumKodu");
-            info.KurumAdi = dr.GetMyMetin("KurumAdi");
-            info.OgrenciNo = dr.GetMySayi("OgrenciNo");
-            info.Adi = dr.GetMyMetin("Adi");
-            info.Soyadi = dr.GetMyMetin("Soyadi");
-            info.Sinifi = dr.GetMySayi("Sinifi");
-            info.Sube = dr.GetMyMetin("Sube");
-            info.SinavId = dr.GetMySayi("SinavId");
-            info.DersKodu = dr.GetMySayi("DersKodu");
-            info.KatilimDurumu = dr.GetMyMetin("KatilimDurumu");
-            info.KitapcikTuru = dr.GetMyMetin("KitapcikTuru");
-            info.Cevaplar = dr.GetMyMetin("Cevaplar");
-        }
-        dr.Close();
+            new MySqlParameter("?Sinif", MySqlDbType.Int32),
+            new MySqlParameter("?KurumKodu", MySqlDbType.Int32)
+        };
+        p[0].Value = sinif;
+        p[1].Value = kurumkodu;
+
+        MySqlDataReader dr = helper.ExecuteReader(sql, p);
+        var info = TabloAlanlar(dr);
 
         return info;
     }
@@ -257,6 +305,27 @@ public class CkKarneKutukDB
         pars[12].Value = info.Cevaplar;
         pars[13].Value = info.Id;
         helper.ExecuteNonQuery(sql, pars);
+    }
+
+    public int SinavaGirmeyenSayisi(int sinavId,int kurumKodu, int sinif)
+    {
+        string sql = @"SELECT COUNT(ktk.Id) FROM ckkarnekutuk AS ktk WHERE ktk.SinavId=?SinavId AND ktk.KurumKodu=?KurumKodu and ktk.Sinifi=?Sinifi AND                                   (ktk.KatilimDurumu='0' OR (
+                        ktk.Cevaplar NOT LIKE '%A%' and ktk.Cevaplar NOT LIKE '%B%' and ktk.Cevaplar NOT LIKE '%C%' and ktk.Cevaplar NOT LIKE '%D%' and ktk.Cevaplar NOT LIKE '%E%'
+                        ))";
+
+        MySqlParameter[] pars =
+        {
+            new MySqlParameter("?SinavId", MySqlDbType.Int32),
+            new MySqlParameter("?KurumKodu", MySqlDbType.Int32),
+            new MySqlParameter("?Sinifi", MySqlDbType.Int32)
+        };
+        pars[0].Value = sinavId;
+        pars[1].Value = kurumKodu;
+        pars[2].Value = sinif;
+
+
+        int ogrenciSayisi = Convert.ToInt32(helper.ExecuteScalar(sql, pars));
+        return ogrenciSayisi;
     }
 }
 

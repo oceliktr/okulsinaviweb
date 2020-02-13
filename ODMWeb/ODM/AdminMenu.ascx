@@ -11,6 +11,7 @@
     <li id="liKazanimKarne" runat="server" visible="False"><a href="KazanimKarne.aspx"><i class="fa fa-file-image-o"></i><span>Kazanım Karneleri</span></a></li>
     <li id="liLgsKazanimKarne" runat="server" visible="False"><a href="LGSKazanimKarne.aspx"><i class="fa fa-file-image-o"></i><span>Kazanım Karneleri</span></a></li>
     <li id="liCkDataYukle" runat="server" visible="False"><a href="CKDataYukle.aspx"><i class="fa fa-file-image-o"></i><span>CK Yazılım Veri Yükle</span></a></li>
+    <li id="liLgsRapor" runat="server" visible="False"><a href="LgsRapor.aspx"><i class="fa fa-file-image-o"></i><span>Sınav Rapor</span></a></li>
     <li id="liKazanimKarneAdmin" runat="server" visible="False"><a href="KazanimKarneAdmin.aspx"><i class="fa fa-file-image-o"></i><span>Kazanım Karneleri</span></a></li>
     <li id="liPuanlayciIslemleri" runat="server" visible="False"><a href="PuanlayiciIslemleri.aspx"><i class="fa fa-file-image-o"></i><span>Puanlayıcı İşlemleri</span></a></li>
     <li id="liKazanim" runat="server" visible="False"><a href="Kazanimlar.aspx"><i class="fa fa-file-image-o"></i><span>Kazanımlar</span></a></li>

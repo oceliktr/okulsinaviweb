@@ -17,7 +17,8 @@ public class CkKarneSonuclariInfo
     public int Dogru { get; set; }
     public int Yanlis { get; set; }
     public int Bos { get; set; }
-
+    public string SinavAdi { get; set; }
+    public string BransAdi { get; set; }
     public CkKarneSonuclariInfo()
     {
         
@@ -26,6 +27,22 @@ public class CkKarneSonuclariInfo
     public CkKarneSonuclariInfo(int id, int sinavId, int bransId, string ilce, int kurumKodu, int sinif, string sube, string kitapcikTuru, int soruNo, int dogru, int yanlis, int bos)
     {
         Id = id;
+        SinavId = sinavId;
+        BransId = bransId;
+        Ilce = ilce;
+        KurumKodu = kurumKodu;
+        Sinif = sinif;
+        Sube = sube;
+        KitapcikTuru = kitapcikTuru;
+        SoruNo = soruNo;
+        Dogru = dogru;
+        Yanlis = yanlis;
+        Bos = bos;
+    }
+    public CkKarneSonuclariInfo(string sinavAdi,string bransAdi, int sinavId, int bransId, string ilce, int kurumKodu, int sinif, string sube, string kitapcikTuru, int soruNo, int dogru, int yanlis, int bos)
+    {
+        SinavAdi = sinavAdi;
+        BransAdi = bransAdi;
         SinavId = sinavId;
         BransId = bransId;
         Ilce = ilce;
@@ -92,6 +109,28 @@ public class CkKarneSonuclariDB
         {
             karne.Add(new CkKarneSonuclariInfo(Convert.ToInt32(k["Id"]), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["BransId"]), k["Ilce"].ToString(),
                 Convert.ToInt32(k["KurumKodu"]), Convert.ToInt32(k["Sinif"]), k["Sube"].ToString(), k["KitapcikTuru"].ToString(), Convert.ToInt32(k["SoruNo"]), Convert.ToInt32(k["Dogru"]), Convert.ToInt32(k["Yanlis"]), Convert.ToInt32(k["Bos"])));
+        }
+        return karne;
+    }
+    public List<CkKarneSonuclariInfo> KayitlariDizeGetir(int kurumKodu, int sinif)
+    {
+        string sql = @"SELECT sinav.SinavAdi,brans.BransAdi, ks.* FROM ckkarnesonuclari AS ks 
+                        INNER JOIN cksinavadi AS sinav ON sinav.SinavId = ks.SinavId
+                        INNER JOIN ckkarnebranslar AS brans ON brans.BransId = ks.BransId 
+                        where ks.KurumKodu=?KurumKodu and ks.Sinif=?Sinif";
+        MySqlParameter[] p =
+        {
+            new MySqlParameter("?KurumKodu", MySqlDbType.Int32),
+            new MySqlParameter("?Sinif", MySqlDbType.Int32)
+        };
+        p[0].Value = kurumKodu;
+        p[1].Value = sinif;
+
+        DataTable dt = helper.ExecuteDataSet(sql, p).Tables[0];
+        List<CkKarneSonuclariInfo> karne = new List<CkKarneSonuclariInfo>();
+        foreach (DataRow k in dt.Rows)
+        {
+            karne.Add(new CkKarneSonuclariInfo(k["SinavAdi"].ToString(), k["BransAdi"].ToString(), Convert.ToInt32(k["SinavId"]), Convert.ToInt32(k["BransId"]), k["Ilce"].ToString(),Convert.ToInt32(k["KurumKodu"]), Convert.ToInt32(k["Sinif"]), k["Sube"].ToString(), k["KitapcikTuru"].ToString(), Convert.ToInt32(k["SoruNo"]), Convert.ToInt32(k["Dogru"]), Convert.ToInt32(k["Yanlis"]), Convert.ToInt32(k["Bos"])));
         }
         return karne;
     }

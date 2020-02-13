@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using ODM.CKYazdirDb.Library;
 using ODM.CKYazdirDb.Model;
 
@@ -77,118 +79,53 @@ namespace ODM.CKYazdirDb
             frm.ShowDialog();
         }
 
-        private string sinavAdi = "";
-        private string dosyaAdi = "";
-        private void btnSqlExport_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            string sinavInputBox = Interaction.InputBox("Sınav Adı", "Bu sınav için bir açıklama giriniz", "... tarihinde yapılan izleme sınavı");
-            if (sinavInputBox.Length < 5)
-            {
-                MessageBox.Show("Sınavı tanımlayan bir isim giriniz. Örneğin 12 Kasım 2019 tarihli İzleme Sınavı", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            }
-            else
-            {
-                sinavAdi = sinavInputBox;
-                using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
-                {
-                    folderDialog.ShowNewFolderButton = true; //yeni klasör oluşturmayı aç
-                    folderDialog.RootFolder = Environment.SpecialFolder.Desktop;
-                    folderDialog.SelectedPath =
-                        Environment.SpecialFolder.Desktop
-                            .ToString(); //başlangıç dizini programın bulunduğu dizin => AppDomain.CurrentDomain.BaseDirectory
-                    folderDialog.Description = @"Veri dosyasının oluşturulacağı dizini seçiniz.";
-                    if (folderDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        dosyaAdi = folderDialog.SelectedPath + @"\ckdata.ck";
+            Document document = new Document();
+            PdfWriter writer = PdfWriter.GetInstance(document, new FileStream("D:/a.pdf", FileMode.Create));
+            document.Open();
+            Paragraph p = new Paragraph("Test");
 
-                        backgroundWorker1.RunWorkerAsync();
+            ColumnText.ShowTextAligned(writer.DirectContent,
+                Element.ALIGN_CENTER, new Phrase("single line"), 200, 800, 0);
 
-                    }
-                }
-            }
+
+          
+            iTextSharp.text.Image jpg = iTextSharp.text.Image.GetInstance(@"C:\Users\osman\Desktop\ÜDS2\UDS7.png");
+
+            jpg.ScaleToFit(document.PageSize.Width, document.PageSize.Height); //fotoğrafın boyutu
+            jpg.SetAbsolutePosition(0, 0); //başlangıç pozisyonu
+            jpg.SpacingBefore = 0f; //Görüntüden önce boşluk boyutu
+            jpg.SpacingAfter = 0f; //Görüntüden sonra boşluk boyutu
+            jpg.Alignment = Element.ALIGN_LEFT;
+
+           // ndurx.Value= Convert.ToDecimal(document.PageSize.Width);
+          //  ndury.Value= Convert.ToDecimal(document.PageSize.Height);
+
+            float llx = Convert.ToSingle(ndllx.Value); //112
+            float lly = Convert.ToSingle(ndlly.Value); //665
+            float urx = Convert.ToSingle(ndurx.Value);//550
+            float ury = Convert.ToSingle(ndury.Value);//0
+            float leading = Convert.ToSingle(ndleading.Value);//15
+
+    
+
+            ColumnText ct = new ColumnText(writer.DirectContent);
+            Phrase myText = new Phrase(textBox1.Text, new Font(iTextSharp.text.Font.FontFamily.HELVETICA, Convert.ToSingle(ndFontSize.Value)));
+
+            ct.SetSimpleColumn(myText,llx , lly, urx, ury, leading, Element.ALIGN_LEFT);
+            ct.Go();
+
+            document.Add(p);
+            document.Add(jpg);
+            //
+            //document.NewPage();
+            ////
+            //document.Add(p);
+            //document.Add(jpg);
+
+            document.Close();
+            System.Diagnostics.Process.Start("D:/a.pdf");
         }
-
-        private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-            KutukManager kutukManager = new KutukManager();
-            BransManager bransManager = new BransManager();
-            DogruCevaplarManager dogruCevaplarManager = new DogruCevaplarManager();
-            KazanimManager kazanimManager = new KazanimManager();
-            KarneSonucManager karneSonucManager = new KarneSonucManager();
-            //OgrenciCevapManager ogrenciCevapManager = new OgrenciCevapManager();
-
-            var kutukList = kutukManager.List();
-            var dogruCvplarList = dogruCevaplarManager.List();
-            //var ocList = ogrenciCevapManager.List();
-            var karneSonucList = karneSonucManager.List();
-            var bransList = bransManager.List();
-            var kazanimlarList = kazanimManager.List();
-
-            int kayitSayisi = kutukList.Count + dogruCvplarList.Count + bransList.Count + kazanimlarList.Count+ karneSonucList.Count;
-            int a = 0;
-            progressBar1.Maximum = kayitSayisi;
-
-            int sinavId = kutukList.First().SinavId; //Sınavın numarasını aldık
-
-            StreamWriter yaz = new StreamWriter(dosyaAdi);
-
-            yaz.WriteLine("{SinavAdi}|" + sinavId + "|" + sinavAdi);
-
-            //Kütük
-            foreach (var kutuk in kutukList)
-            {
-                a++;
-                progressBar1.Value = a;
-                lblBilgi.Text = "Kütük tablosu hazırlanıyor.";
-                yaz.WriteLine("{Kutuk}|" + kutuk.OpaqId + "|" + kutuk.IlceAdi + "|" + kutuk.KurumKodu + "|" +
-                                   kutuk.KurumAdi + "|" + kutuk.OgrenciNo + "|" + kutuk.Adi + "|" + kutuk.Soyadi + "|" +
-                                   kutuk.Sinifi + "|" + kutuk.Sube + "|" + kutuk.SinavId + "|" + kutuk.KatilimDurumu + "|" + kutuk.KitapcikTuru + "|" + kutuk.Cevaplar);
-
-                sinavId = kutuk.SinavId;
-            }
-
-            //DogruCevaplar
-            foreach (var dogruCevap in dogruCvplarList)
-            {
-                a++;
-                progressBar1.Value = a;
-                lblBilgi.Text = "Doğru cevaplar tablosu hazırlanıyor.";
-
-                yaz.WriteLine("{DogruCevaplar}|" + sinavId + "|" + dogruCevap.Sinif + "|" + dogruCevap.BransId + "|" + dogruCevap.KitapcikTuru + "|" + dogruCevap.Cevaplar);
-            }
-
-            //KarneSonuclari
-            foreach (var sonuc in karneSonucList)
-            {
-                a++;
-                progressBar1.Value = a;
-                lblBilgi.Text = "Karne sonuçları tablosu hazırlanıyor.";
-
-                yaz.WriteLine("{KarneSonuclari}|" + sinavId + "|" + sonuc.BransId + "|" + sonuc.Ilce + "|" + sonuc.KurumKodu + "|" + sonuc.Sinif + "|" + sonuc.Sube + "|" + sonuc.KitapcikTuru + "|" + sonuc.SoruNo + "|" + sonuc.Dogru + "|" + sonuc.Yanlis + "|" + sonuc.Bos);
-            }
-            //Branslar
-            foreach (var brans in bransList)
-            {
-                a++;
-                progressBar1.Value = a;
-                lblBilgi.Text = "Branşlar tablosu hazırlanıyor.";
-
-                yaz.WriteLine("{Branslar}|" + sinavId + "|" + brans.Id + "|" + brans.BransAdi);
-            }
-            //Kazanimlar
-            foreach (var kazanim in kazanimlarList)
-            {
-                a++;
-                progressBar1.Value = a;
-                lblBilgi.Text = "Kazanımlar tablosu hazırlanıyor.";
-                yaz.WriteLine("{Kazanimlar}|" + kazanim.Id + "|" + sinavId + "|" + kazanim.Sinif + "|" + kazanim.BransId + "|" + kazanim.KazanimNo + "|" + kazanim.KazanimAdi + "|" + kazanim.KazanimAdiOgrenci + "|" + kazanim.Sorulari);
-            }
-
-            lblBilgi.Text = "Dosyaya yazma işlemi tamamlanıyor.";
-            yaz.Close();
-            progressBar1.Value = 0;
-            lblBilgi.Text = "Verilerin dışarı aktarılması tamamlandı." + dosyaAdi + " adresindeki dosyayı webe yükleyiniz";
-        }
-
     }
 }

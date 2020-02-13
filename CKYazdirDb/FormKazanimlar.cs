@@ -47,7 +47,7 @@ namespace ODM.CKYazdirDb
                 if (sonKarakter != ",")
                     sorulari += ",";
 
-                string kazanimOgrenci = txtKazanimOgrenci.Text == "" ? txtKazanim.Text:"";
+                string kazanimOgrenci = txtKazanimOgrenci.Text == "" ? txtKazanim.Text: txtKazanimOgrenci.Text;
                 if (kazanimId == 0)
                 {
                     Kazanim kazanim = new Kazanim()

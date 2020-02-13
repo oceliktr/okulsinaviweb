@@ -8,11 +8,14 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using Microsoft.Office.Interop.Excel;
 using ODM.CKYazdirDb.Library;
 using ThoughtWorks.QRCode.Codec;
 using Application = System.Windows.Forms.Application;
 using Font = System.Drawing.Font;
+using Image = System.Drawing.Image;
 
 namespace ODM.CKYazdirDb
 {
@@ -217,7 +220,7 @@ namespace ODM.CKYazdirDb
                                 return;
                             default: //a5 veya a4
 
-                                pbCkA5Dosyasi.ImageLocation = ayar.CkSablon;
+                                pbCkA5Dosyasi.ImageLocation = @"E:\TYT2\TYT 12. Sınıf A4 Optik Form Turuncu-01.png";
                                 BgwCkOlustur.RunWorkerAsync();
                                 break;
                         }
@@ -309,12 +312,11 @@ namespace ODM.CKYazdirDb
         }
         private void CKCizimIslemleri(OgrencilerInfo ogr)
         {
-            string dizin = $"{ckDizinAdresi}{kagitEbatDizin}{ogr.DersKodu}_{ogr.Sinifi}\\{ogr.IlceAdi}";
+            string dizin = $"{ckDizinAdresi}{kagitEbatDizin}{ogr.Sinifi}\\{ogr.IlceAdi}";
             if (!DizinIslemleri.DizinKontrol(dizin))
                 DizinIslemleri.DizinOlustur(dizin);
 
-            QRCodeEncoder qrCodeEncoder = QrCodeEncoder(); //karekod oluşturucu.
-
+         
             int ogrBilgiX = 0;
             int ogrBilgiY = 0;
             int ogrBilgiH = 62;
@@ -935,6 +937,37 @@ namespace ODM.CKYazdirDb
                 cbSinifi.Items.Add(o);
             }
             cbSinifi.DataSource = snf;
+        }
+
+        private void btnCkPdfOlustur_Click(object sender, EventArgs e)
+        {
+            Document document = new Document();
+            PdfWriter writer = PdfWriter.GetInstance(document, new FileStream("D:/a.pdf", FileMode.Create));
+            document.Open();
+            Paragraph p = new Paragraph("Test");
+
+            ColumnText.ShowTextAligned(writer.DirectContent,
+                Element.ALIGN_CENTER, new Phrase("single line"), 80, 780,0);
+
+
+            iTextSharp.text.Image jpg = iTextSharp.text.Image.GetInstance(@"C:\Users\osman\Desktop\ÜDS2\UDS7.png");
+
+            jpg.ScaleToFit(document.PageSize.Width, document.PageSize.Height); //fotoğrafın boyutu
+            jpg.SetAbsolutePosition(0, 0); //başlangıç pozisyonu
+            jpg.SpacingBefore = 0f; //Görüntüden önce boşluk boyutu
+            jpg.SpacingAfter = 0f; //Görüntüden sonra boşluk boyutu
+            jpg.Alignment = Element.ALIGN_LEFT;
+
+
+            document.Add(p);
+            document.Add(jpg);
+            //
+            document.NewPage();
+            //
+            document.Add(p);
+            document.Add(jpg);
+
+            document.Close();
         }
     }
 }

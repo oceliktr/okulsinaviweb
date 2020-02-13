@@ -1,0 +1,48 @@
+﻿@using ErzurumOdmMvc.Common.Enums
+@using ErzurumOdmMvc.Common.Library
+@model System.Threading.Tasks.Task<IEnumerable<ErzurumOdmMvc.Areas.ODM.Model.KullaniciBilgileriViewModel>>
+@{
+    Layout = null;
+
+    if (Model.Result.Count() > 0)
+    {
+          <table class="table table-bordered table-hover table-responsive-sm text-nowrap">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Adı Soyadı</th>
+                            <th>Branşı</th>
+                            <th>Yetki</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var kullanici in Model.Result)
+                    {
+                        string[] yetki = kullanici.Yetki.Split('|');
+                        <tr>
+                            <td>
+                                <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#kullanicilarDetay" data-kullanici="@kullanici.TcKimlik" title="@kullanici.AdiSoyadi Bilgileri" href="#"><i class="fas fa-user"></i></a>
+
+                                @kullanici.AdiSoyadi
+                            </td>
+                            <td>@kullanici.BransAdi</td>
+                            <td>
+                                @foreach (var s in yetki)
+                                {
+                                    if (!string.IsNullOrEmpty(s))
+                                    {
+                                        @(Yetki.Getir(s) + ", ")
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+
+                </table>
+
+    }
+    else
+    {
+        <p>Bu kuruma ait kullanıcı bulunamadı.</p>
+    }
+}
