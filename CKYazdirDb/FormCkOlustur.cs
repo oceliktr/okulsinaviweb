@@ -1,5 +1,4 @@
-﻿using CKYazdir;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -11,11 +10,14 @@ using System.Windows.Forms;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.Office.Interop.Excel;
+using ODM.CKYazdirDb.Business;
 using ODM.CKYazdirDb.Library;
+using ODM.CKYazdirDb.Model;
 using ThoughtWorks.QRCode.Codec;
 using Application = System.Windows.Forms.Application;
 using Font = System.Drawing.Font;
 using Image = System.Drawing.Image;
+using ODM.CKYazdirDb.Entities;
 
 namespace ODM.CKYazdirDb
 {
@@ -24,10 +26,11 @@ namespace ODM.CKYazdirDb
         private readonly List<OgrencilerInfo> ogrencilerKutuk = new List<OgrencilerInfo>();
         private Bitmap img;
         private string ckDizinAdresi = "";
+        private string dizin = "";
         private string sinifListesiDizinAdresi = "";
-        private const string kagitEbatDizin = "CKDosyalar\\";
-        private static readonly AyarlarManager ayarlarManager = new AyarlarManager();
-        readonly Ayarlar ayar = ayarlarManager.AyarlariGetir();
+        private const string KagitEbatDizin = "CKDosyalar\\";
+        private static readonly AyarlarManager AyarlarManager = new AyarlarManager();
+        private readonly Ayarlar ayar = AyarlarManager.AyarlariGetir();
         public FormCkOlustur()
         {
             InitializeComponent();
@@ -206,24 +209,8 @@ namespace ODM.CKYazdirDb
                             return;
                         }
 
-                        string sablonTuru = ayar.SablonTuru;
-                        switch (sablonTuru)
-                        {
-                            case "3" when !DizinIslemleri.DosyaKontrol(ayar.CkSablon):
-                                MessageBox.Show("CK A4 boyutlu şablon dosyası bulunamadı. \nAyarlar ekranından üç dersli CK A4 şablonunu seçiniz.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            case "2" when !DizinIslemleri.DosyaKontrol(ayar.CkSablon):
-                                MessageBox.Show("CK A5 boyutlu şablon dosyası bulunamadı. \nAyarlar ekranından CK A5 şablonunu seçiniz.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            case "1" when !DizinIslemleri.DosyaKontrol(ayar.CkSablon):
-                                MessageBox.Show("CK A4 boyutlu şablon dosyası bulunamadı. \nAyarlar ekranından CK A4 şablonunu seçiniz.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            default: //a5 veya a4
+                        BgwCkOlustur.RunWorkerAsync();
 
-                                pbCkA5Dosyasi.ImageLocation = @"E:\TYT2\TYT 12. Sınıf A4 Optik Form Turuncu-01.png";
-                                BgwCkOlustur.RunWorkerAsync();
-                                break;
-                        }
                     }
                 }
             }
@@ -243,8 +230,13 @@ namespace ODM.CKYazdirDb
 
             foreach (OgrencilerInfo ogr in ogrenciler)
             {
+                dizin = $"{ckDizinAdresi}{KagitEbatDizin}{ogr.Sinifi}\\{ogr.IlceAdi}";
+                if (!DizinIslemleri.DizinKontrol(dizin))
+                    DizinIslemleri.DizinOlustur(dizin);
 
-                CKCizimIslemleri(ogr);
+                string dosyaAdresi = $"{dizin}\\{ogr.KurumAdi} {ogr.Sinifi} - {ogr.Sube} Şubesi {ogr.OpaqId}.png";
+
+                CkCizimIslemleri(ogr, dosyaAdresi);
 
                 progressBar1.Value = a;
                 lblBilgi.Text = string.Format("{0} - {1}  CK dosyası oluşturuluyor. ({2}/{3})", ogr.IlceAdi, ogr.KurumAdi, a, ogrenciler.Count);
@@ -267,11 +259,11 @@ namespace ODM.CKYazdirDb
             ButonlariAc();
             DialogResult dialog =
                 MessageBox.Show(
-                    a +
+                    (a - 1) +
                     " adet cevap kağıdı oluşturuldu.\nŞimdi cevap kağıtlarının oluşturulduğu dizini açmak ister misiniz?",
                     @"Bilgi", MessageBoxButtons.YesNo);
             if (dialog == DialogResult.Yes)
-                Process.Start("explorer.exe", Path.GetDirectoryName(ckDizinAdresi + "\\" + kagitEbatDizin));
+                Process.Start("explorer.exe", Path.GetDirectoryName(ckDizinAdresi + "\\" + KagitEbatDizin));
         }
 
         private void ButonlariKapat()
@@ -310,34 +302,11 @@ namespace ODM.CKYazdirDb
                 .ThenBy(x => x.Adi).ThenBy(x => x.Soyadi).ToList();
             return ogrencilerInfos;
         }
-        private void CKCizimIslemleri(OgrencilerInfo ogr)
+        private void CkCizimIslemleri(OgrencilerInfo ogr, string dosyaAdresi)
         {
-            string dizin = $"{ckDizinAdresi}{kagitEbatDizin}{ogr.Sinifi}\\{ogr.IlceAdi}";
-            if (!DizinIslemleri.DizinKontrol(dizin))
-                DizinIslemleri.DizinOlustur(dizin);
-
-         
-            int ogrBilgiX = 0;
-            int ogrBilgiY = 0;
-            int ogrBilgiH = 62;
-            if (ayar.SablonTuru == "1")
-            {
-                //a4 kağıt için
-                ogrBilgiX = 480;
-                ogrBilgiY = 680;
-            }
-            else if (ayar.SablonTuru == "2")
-            {
-                //A5
-                ogrBilgiX = 465;
-                ogrBilgiY = 330;
-            }
-            else if (ayar.SablonTuru == "3")
-            {
-                //a4 kağıt için
-                ogrBilgiX = 480;
-                ogrBilgiY = 765;
-            }
+            int ogrBilgiX = ndOgrBilgiX.Value.ToInt32();
+            int ogrBilgiY = ndOgrBilgiY.Value.ToInt32();
+            int ogrBilgiH = ndOgrBilgiH.Value.ToInt32();
 
             //bitmap sınıfından bir nesne üreterek pictureboxu tanımlıyoruz.
             img = new Bitmap(pbCkA5Dosyasi.Image);
@@ -354,101 +323,22 @@ namespace ODM.CKYazdirDb
             ckImage.DrawString($"{ogr.Sinifi} / {ogr.Sube}", f, Brushes.Black, ogrBilgiX, ogrBilgiY + (ogrBilgiH * 2));
             ckImage.DrawString(ogr.KurumAdi, f, Brushes.Black, ogrBilgiX, ogrBilgiY + (ogrBilgiH * 3));
             ckImage.DrawString(ogr.IlceAdi, f, Brushes.Black, ogrBilgiX, ogrBilgiY + (ogrBilgiH * 4));
-            if (ayar.SablonTuru != "3") //a4 üç ders değilse
-                ckImage.DrawString(ogr.DersKodu.DersAdi(), f, Brushes.Black, ogrBilgiX, ogrBilgiY + (ogrBilgiH * 5)); //ders
 
             //dolgu renk ve font ayarlarını yap
             Brush dolgu = new SolidBrush(Color.Black);
 
-            //bARKOD OLUŞTUR
-            //Bitmap qrc = new Bitmap("");
-            //if (ogr.Barkod != null)
-            //    qrc = qrCodeEncoder.Encode(ogr.Barkod);
 
             //optikte işaretlenecek alanların bilgileri
-            int w = 39;
-            int h = 39;
-            int x = 0; //başlangıç x koordinatı
-            int y = 0; //başlangıç y koordinatı
-            int artim = 50; // iki boşluk arasındaki fark
-            if (ayar.SablonTuru == "1")
-            {
-                //A4 BUBBLE AYARLARI
-                x = 1555;
-                y = 2103;
+            int w = ndBubbleW.Value.ToInt32();
+            int h = ndBubbleH.Value.ToInt32();
+            int x = ndBubbleX.Value.ToInt32(); //başlangıç x koordinatı
+            int y = ndBubbleY.Value.ToInt32(); //başlangıç y koordinatı
+            int artim = ndBubbleArtim.Value.ToInt32(); // iki boşluk arasındaki fark
 
-                switch (ogr.DersKodu)
-                {
-                    case 1:
-                        ckImage.FillEllipse(dolgu, 1405, 2154, w, h);
-                        break;
-                    case 2:
-                        ckImage.FillEllipse(dolgu, 1405, 2354, w, h);
-                        break;
-                    case 4:
-                        ckImage.FillEllipse(dolgu, 1405, 2554, w, h);
-                        break;
-                }
-                string logoUrl = ayar.Logo;
 
-                Bitmap logo = new Bitmap(logoUrl);
-                //A4 Karekod Konumu
-                //if (ogr.Barkod != null)
-                //    ckImage.DrawImage(qrc, 1580, 1480, 300, 300);
-                ckImage.DrawImage(logo, 730, 1320, 300, 300);
-            }
-            else if (ayar.SablonTuru == "2")
-            {
-
-                //sablons.Add(new Sablon(1, "Tek Dersli - A4"));
-                //sablons.Add(new Sablon(2, "Tek Dersli - A5"));
-                //sablons.Add(new Sablon(3, "Üç Dersli - A4"));
-
-                x = 1104;
-                y = 1554;
-
-                switch (ogr.DersKodu)
-                {
-                    case 1:
-                        ckImage.FillEllipse(dolgu, 954, 1605, w, h);
-                        break;
-                    case 2:
-                        ckImage.FillEllipse(dolgu, 954, 1805, w, h);
-                        break;
-                    case 4:
-                        ckImage.FillEllipse(dolgu, 954, 2005, w, h);
-                        break;
-                }
-
-                Bitmap logo = new Bitmap(ayar.Logo);
-                //A5 Karekod Konumu
-                // ckImage.DrawImage(qrc, 1130, 960, 300, 300);
-                ckImage.DrawImage(logo, 520, 750, 230, 230);
-            }
-            else if (ayar.SablonTuru == "3")
-            {
-                //A4 BUBBLE AYARLARI
-                x = 1656;
-                y = 2156;
-
-                //3 derste ders dolgusun GEREK YOK
-                //switch (ogr.DersKodu)
-                //{
-                //    case 1:
-                //        ckImage.FillEllipse(dolgu, 1405, 2154, w, h);
-                //        break;
-                //    case 2:
-                //        ckImage.FillEllipse(dolgu, 1405, 2354, w, h);
-                //        break;
-                //    case 4:
-                //        ckImage.FillEllipse(dolgu, 1405, 2554, w, h);
-                //        break;
-                //}
-
-            }
             string ogrenciId = ogr.OpaqId.ToString();
 
-            //Ders bubble işaretle
+            //bubble işaretle
             for (int sag = 0; sag < 11; sag++)
             {
                 for (int asagi = 0; asagi < 10; asagi++)
@@ -469,14 +359,11 @@ namespace ODM.CKYazdirDb
 
             img.SetResolution(300, 300);
 
-            string dosyaAdresi = $"{dizin}\\{ogr.KurumAdi} {ogr.Sinifi} - {ogr.Sube} Şubesi {ogr.OpaqId}.png";
-            //string dosyaAdresi = string.Format(@"{0}\{1} {2} {3}.png", ckDizinAdresi + kagitEbatDizin + ogr.DersKodu + "\\" + ogr.IlceAdi, ogr.KurumAdi, $"{ogr.Sinifi}-{ogr.Sube}", ogr.OpaqId);
             img.Save(dosyaAdresi, ImageFormat.Png);
 
             ckImage.Clear(Color.Transparent);
             ckImage.Dispose();
             img.Dispose();
-            //qrc.Dispose();
         }
         private static QRCodeEncoder QrCodeEncoder()
         {
@@ -700,7 +587,7 @@ namespace ODM.CKYazdirDb
             lblBilgi.Text = "Şube listesi oluşturuluyor.";
             int s = 0;
             int o = 0;
-            int il = 0;
+            // int il = 0;
             List<SinifSube> ilceBilgi = new List<SinifSube>();
             List<SinifSube> okulBilgi = new List<SinifSube>();
             List<SinifSube> subeBilgi = new List<SinifSube>();
@@ -713,7 +600,7 @@ namespace ODM.CKYazdirDb
                 {
                     o++;
                     int ilceOgrSayisi = (from ogr in ogrencilerKutuk select ogr).GroupBy(x => x.OpaqId).Select(x => x.First()).Count(x => x.IlceAdi == ilce.IlceAdi && x.Sinifi == sinif.Sinifi);
-                    ilceBilgi.Add(new SinifSube(o, ilce.IlceAdi, 0, "", sinif.Sinifi,"", ilceOgrSayisi));
+                    ilceBilgi.Add(new SinifSube(o, ilce.IlceAdi, 0, "", sinif.Sinifi, "", ilceOgrSayisi));
 
                     var okullar = (from ogr in ogrencilerKutuk select ogr).Where(x => x.IlceAdi == ilce.IlceAdi).GroupBy(x => x.KurumKodu).Select(x => x.First()).OrderBy(x => x.KurumAdi);
                     foreach (var okul in okullar)
@@ -740,7 +627,7 @@ namespace ODM.CKYazdirDb
             int ilceSayisi = ilceBilgi.Count;
             int okulSayisi = okulBilgi.Count;
             int subeSayisi = subeBilgi.Count;
-            int islemSayisi = subeSayisi + okulSayisi+ilceSayisi;
+            int islemSayisi = subeSayisi + okulSayisi + ilceSayisi;
             progressBar1.Maximum = islemSayisi;
             progressBar1.Value = 0;
 
@@ -885,7 +772,7 @@ namespace ODM.CKYazdirDb
                     string dosya_yolu = Application.StartupPath + @"\ck_dizin.txt";
                     FileStream fs = new FileStream(dosya_yolu, FileMode.OpenOrCreate, FileAccess.Write);
                     StreamWriter sw = new StreamWriter(fs);
-
+                    sw.Write("");
                     foreach (FileInfo dsy in dosyalar.OrderBy(x => x.FullName))
                     {
                         string dosyaYolu = dsy.FullName;
@@ -937,6 +824,19 @@ namespace ODM.CKYazdirDb
                 cbSinifi.Items.Add(o);
             }
             cbSinifi.DataSource = snf;
+
+
+            OptikKonumManager konumManager = new OptikKonumManager();
+            var konum = konumManager.OptikKonumlariGetir();
+            ndOgrBilgiX.Value = konum.OgrBilgiX;
+            ndOgrBilgiY.Value = konum.OgrBilgiY;
+            ndOgrBilgiH.Value = konum.OgrBilgiH;
+            ndBubbleX.Value = konum.BubleX;
+            ndBubbleY.Value = konum.BubleY;
+            ndBubbleArtim.Value = konum.BubleArtim;
+            ndBubbleW.Value = konum.BubleW;
+            ndBubbleH.Value = konum.BubleH;
+            pbCkA5Dosyasi.ImageLocation = konum.Sablon;
         }
 
         private void btnCkPdfOlustur_Click(object sender, EventArgs e)
@@ -947,7 +847,7 @@ namespace ODM.CKYazdirDb
             Paragraph p = new Paragraph("Test");
 
             ColumnText.ShowTextAligned(writer.DirectContent,
-                Element.ALIGN_CENTER, new Phrase("single line"), 80, 780,0);
+                Element.ALIGN_CENTER, new Phrase("single line"), 80, 780, 0);
 
 
             iTextSharp.text.Image jpg = iTextSharp.text.Image.GetInstance(@"C:\Users\osman\Desktop\ÜDS2\UDS7.png");
@@ -968,6 +868,290 @@ namespace ODM.CKYazdirDb
             document.Add(jpg);
 
             document.Close();
+        }
+
+        private void btnCkYazdir_Click(object sender, EventArgs e)
+        {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            int a = 1;
+            List<OgrencilerInfo> ogrenciler = OgrenciListesi(true).Take(5).ToList();
+            int islemSayisi = ogrenciler.Count;
+            progressBar1.Maximum = islemSayisi;
+            progressBar1.Value = 0;
+
+            foreach (OgrencilerInfo ogr in ogrenciler)
+            {
+
+                string dizin = $"{ckDizinAdresi}{KagitEbatDizin}{ogr.Sinifi}\\{ogr.IlceAdi}";
+                if (!DizinIslemleri.DizinKontrol(dizin))
+                    DizinIslemleri.DizinOlustur(dizin);
+
+
+                int ogrBilgiX = 0;
+                int ogrBilgiY = 0;
+                int ogrBilgiH = 62;
+                //if (ayar.SablonTuru == "1")
+                //{
+                //    //a4 kağıt için
+                //    ogrBilgiX = 480;
+                //    ogrBilgiY = 680;
+                //}
+                //else if (ayar.SablonTuru == "2")
+                //{
+                //    //A5
+                //    ogrBilgiX = 465;
+                //    ogrBilgiY = 330;
+                //}
+                //else if (ayar.SablonTuru == "3")
+                //{
+                //    //a4 kağıt için
+                //    ogrBilgiX = 480;
+                //    ogrBilgiY = 765;
+                //}
+
+                //bitmap sınıfından bir nesne üreterek pictureboxu tanımlıyoruz.
+                // img = new Bitmap(pbCkA5Dosyasi.Image);
+
+                //çizilecek nesne tanımlanıyor
+                Graphics ckImage = Graphics.FromImage(img);
+
+                //dolgu renk ve font ayarlarını yap
+                Font f = new Font(Font.FontFamily, 23, FontStyle.Regular);
+
+                //grafik çizimlerini başlatıyoruz.
+                ckImage.DrawString(ogr.Adi + " " + ogr.Soyadi, f, Brushes.Black, ogrBilgiX, ogrBilgiY); //adı soyadı
+                ckImage.DrawString(ogr.OgrenciNo.ToString(), f, Brushes.Black, ogrBilgiX, ogrBilgiY + (ogrBilgiH));
+                ckImage.DrawString($"{ogr.Sinifi} / {ogr.Sube}", f, Brushes.Black, ogrBilgiX, ogrBilgiY + (ogrBilgiH * 2));
+                ckImage.DrawString(ogr.KurumAdi, f, Brushes.Black, ogrBilgiX, ogrBilgiY + (ogrBilgiH * 3));
+                ckImage.DrawString(ogr.IlceAdi, f, Brushes.Black, ogrBilgiX, ogrBilgiY + (ogrBilgiH * 4));
+                //if (ayar.SablonTuru != "3") //a4 üç ders değilse
+                //    ckImage.DrawString(ogr.DersKodu.DersAdi(), f, Brushes.Black, ogrBilgiX, ogrBilgiY + (ogrBilgiH * 5)); //ders
+
+                //dolgu renk ve font ayarlarını yap
+                Brush dolgu = new SolidBrush(Color.Black);
+
+                int w = 39;
+                int h = 39;
+                int x = 0; //başlangıç x koordinatı
+                int y = 0; //başlangıç y koordinatı
+                int artim = 50; // iki boşluk arasındaki fark
+                //if (ayar.SablonTuru == "1")
+                //{
+                //    //A4 BUBBLE AYARLARI
+                //    x = 1555;
+                //    y = 2103;
+
+                //    switch (ogr.DersKodu)
+                //    {
+                //        case 1:
+                //            ckImage.FillEllipse(dolgu, 1405, 2154, w, h);
+                //            break;
+                //        case 2:
+                //            ckImage.FillEllipse(dolgu, 1405, 2354, w, h);
+                //            break;
+                //        case 4:
+                //            ckImage.FillEllipse(dolgu, 1405, 2554, w, h);
+                //            break;
+                //    }
+                //    string logoUrl = ayar.Logo;
+
+                //    Bitmap logo = new Bitmap(logoUrl);
+
+                //    ckImage.DrawImage(logo, 730, 1320, 300, 300);
+                //}
+                //else if (ayar.SablonTuru == "2")
+                //{
+                //    x = 1104;
+                //    y = 1554;
+
+                //    switch (ogr.DersKodu)
+                //    {
+                //        case 1:
+                //            ckImage.FillEllipse(dolgu, 954, 1605, w, h);
+                //            break;
+                //        case 2:
+                //            ckImage.FillEllipse(dolgu, 954, 1805, w, h);
+                //            break;
+                //        case 4:
+                //            ckImage.FillEllipse(dolgu, 954, 2005, w, h);
+                //            break;
+                //    }
+
+                //    Bitmap logo = new Bitmap(ayar.Logo);
+                //    //A5 Karekod Konumu
+                //    // ckImage.DrawImage(qrc, 1130, 960, 300, 300);
+                //    ckImage.DrawImage(logo, 520, 750, 230, 230);
+                //}
+                //else if (ayar.SablonTuru == "3")
+                //{
+                //    //A4 BUBBLE AYARLARI
+                //    x = 1656;
+                //    y = 2156;
+
+
+                //}
+                string ogrenciId = ogr.OpaqId.ToString();
+
+                //Ders bubble işaretle
+                for (int sag = 0; sag < 11; sag++)
+                {
+                    for (int asagi = 0; asagi < 10; asagi++)
+                    {
+                        for (int z = 0; z < ogrenciId.Length; z++)
+                        {
+                            //sadece gelen değerleri işaretlemek için sorgu
+                            if (sag == 10 - (ogrenciId.Length - (z + 1)) &&
+                                asagi == Convert.ToInt32(ogrenciId.Substring(z, 1)))
+                            {
+                                ckImage.FillEllipse(dolgu, x + (artim * sag), y + (artim * asagi), w, h);
+                                ckImage.DrawString(ogrenciId.Substring(z, 1), f, Brushes.Black, x + (50 * sag), y - artim); //opaq Id
+                            }
+                        }
+                    }
+                }
+
+
+                img.SetResolution(300, 300);
+
+                string dosyaAdresi = $"{dizin}\\{ogr.KurumAdi} {ogr.Sinifi} - {ogr.Sube} Şubesi {ogr.OpaqId}.png";
+                //string dosyaAdresi = string.Format(@"{0}\{1} {2} {3}.png", ckDizinAdresi + kagitEbatDizin + ogr.DersKodu + "\\" + ogr.IlceAdi, ogr.KurumAdi, $"{ogr.Sinifi}-{ogr.Sube}", ogr.OpaqId);
+                img.Save(dosyaAdresi, ImageFormat.Png);
+
+                ckImage.Clear(Color.Transparent);
+                ckImage.Dispose();
+                img.Dispose();
+
+                progressBar1.Value = a;
+                lblBilgi.Text = string.Format("{0} - {1}  CK dosyası oluşturuluyor. ({2}/{3})", ogr.IlceAdi, ogr.KurumAdi, a, ogrenciler.Count);
+
+                try
+                {
+                    toolSslKalanSure.Text = islemSayisi.KalanSureHesapla(a, watch);
+                }
+                catch (Exception)
+                {
+                    toolSslKalanSure.Text = "Hesaplanıyor...";
+                }
+                Application.DoEvents();
+                a++;
+            }
+        }
+
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            e.Graphics.DrawImage(img, 0, 0);
+        }
+
+        private void şablonSeçToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog file = new OpenFileDialog();
+            file.Filter = "Resim Dosyası|*.png;*.jgp;*.jpeg";
+            file.FilterIndex = 1;
+            file.RestoreDirectory = true;
+            file.CheckFileExists = false;
+            file.Title = "Excel Dosyası Seçiniz..";
+            file.Multiselect = true;
+
+            if (file.ShowDialog() == DialogResult.OK)
+            {
+                pbCkA5Dosyasi.ImageLocation = file.FileName;
+
+                OptikKonumManager konumManager = new OptikKonumManager();
+                var konum = konumManager.OptikKonumlariGetir();
+                konum.Sablon = file.FileName;
+                konumManager.Update(konum);
+            }
+        }
+
+        private void btnOrnekGoster_Click(object sender, EventArgs e)
+        {
+            if (pbCkA5Dosyasi.Image == null)
+            {
+                MessageBox.Show("Şablon seçilmedi. Önce şablon seçiniz.");
+            }
+            else
+            {
+                OgrencilerInfo ogr = new OgrencilerInfo
+                {
+                    Adi = "Osman",
+                    Soyadi = "ÇELİK",
+                    OgrenciNo = 253,
+                    KurumAdi = "Erzurum Ölçme Değerlendirme Merkezi",
+                    Sinifi = 8,
+                    Sube = "A",
+                    IlceAdi = "Aziziye",
+                    OpaqId = 43648111660
+                };
+                string dosyaAdresi = $"{Application.StartupPath}\\Ornek.png";
+                CkCizimIslemleri(ogr, dosyaAdresi);
+
+                Process.Start(dosyaAdresi);
+            }
+        }
+
+        private void ndOgrBilgiX_ValueChanged(object sender, EventArgs e)
+        {
+            OptikKonumManager konumManager = new OptikKonumManager();
+            var konum = konumManager.OptikKonumlariGetir();
+            konum.OgrBilgiX = ndOgrBilgiX.Value.ToInt32();
+            konumManager.Update(konum);
+        }
+
+        private void ndOgrBilgiY_ValueChanged(object sender, EventArgs e)
+        {
+            OptikKonumManager konumManager = new OptikKonumManager();
+            var konum = konumManager.OptikKonumlariGetir();
+            konum.OgrBilgiY = ndOgrBilgiY.Value.ToInt32();
+            konumManager.Update(konum);
+        }
+
+        private void ndOgrBilgiH_ValueChanged(object sender, EventArgs e)
+        {
+            OptikKonumManager konumManager = new OptikKonumManager();
+            var konum = konumManager.OptikKonumlariGetir();
+            konum.OgrBilgiH = ndOgrBilgiH.Value.ToInt32();
+            konumManager.Update(konum);
+        }
+
+        private void ndBubbleX_ValueChanged(object sender, EventArgs e)
+        {
+            OptikKonumManager konumManager = new OptikKonumManager();
+            var konum = konumManager.OptikKonumlariGetir();
+            konum.BubleX = ndBubbleX.Value.ToInt32();
+            konumManager.Update(konum);
+        }
+
+        private void ndBubbleY_ValueChanged(object sender, EventArgs e)
+        {
+            OptikKonumManager konumManager = new OptikKonumManager();
+            var konum = konumManager.OptikKonumlariGetir();
+            konum.BubleY = ndBubbleY.Value.ToInt32();
+            konumManager.Update(konum);
+        }
+
+        private void ndBubbleArtim_ValueChanged(object sender, EventArgs e)
+        {
+            OptikKonumManager konumManager = new OptikKonumManager();
+            var konum = konumManager.OptikKonumlariGetir();
+            konum.BubleArtim = ndBubbleArtim.Value.ToInt32();
+            konumManager.Update(konum);
+        }
+
+        private void ndBubbleW_ValueChanged(object sender, EventArgs e)
+        {
+            OptikKonumManager konumManager = new OptikKonumManager();
+            var konum = konumManager.OptikKonumlariGetir();
+            konum.BubleW = ndBubbleW.Value.ToInt32();
+            konumManager.Update(konum);
+        }
+
+        private void ndBubbleH_ValueChanged(object sender, EventArgs e)
+        {
+            OptikKonumManager konumManager = new OptikKonumManager();
+            var konum = konumManager.OptikKonumlariGetir();
+            konum.BubleH = ndBubbleH.Value.ToInt32();
+            konumManager.Update(konum);
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using DAL;
 
 public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
 {
@@ -66,7 +65,7 @@ public partial class LGSSoruBank_SoruEkle : System.Web.UI.Page
         int sinif = ddlSinif.SelectedValue.ToInt32();
 
 
-        LgsKazanimlarDB kznmDb = new LgsKazanimlarDB();
+        LgsKazanimlarDb kznmDb = new LgsKazanimlarDb();
         ddlKazanim.DataSource = kznmDb.KazanimNoKazanimBirlestir(bransId, sinif);
         ddlKazanim.DataValueField = "Id";
         ddlKazanim.DataTextField = "KazanimNoKazanim";

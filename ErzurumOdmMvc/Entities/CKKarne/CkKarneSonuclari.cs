@@ -26,7 +26,5 @@ namespace ErzurumOdmMvc.Entities.CKKarne
         public int Dogru { get; set; }
         public int Yanlis { get; set; }
         public int Bos { get; set; }
-        public string SinavAdi { get; set; }
-        public string BransAdi { get; set; }
     }
 }

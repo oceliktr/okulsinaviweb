@@ -43,27 +43,7 @@ namespace ErzurumOdmMvc.Common.Library
         }
 
 
-        public static string RastgeleMetinUret(int adet)
-        {
-            Random random = new Random();
-            string s = "";
-            for (int i = 0; i < adet; i++)
-            {
-                int a = random.Next(2);
-                switch (a)
-                {
-                    case 0:
-                        char c = Convert.ToChar(65 + random.Next(26));
-                        s = string.Concat(s, Convert.ToString(c));
-                        break;
-                    default:
-                        s = string.Concat(s, random.Next(10).ToString());
-                        break;
-                }
-            }
-
-            return s;
-        }
+       
         public static bool isEmail(this string inputEmail)
         {
             if (string.IsNullOrEmpty(inputEmail)) return false;
@@ -135,5 +115,7 @@ namespace ErzurumOdmMvc.Common.Library
             s = s.Replace("--", "-");
             return s;
         }
+
+
     }
 }

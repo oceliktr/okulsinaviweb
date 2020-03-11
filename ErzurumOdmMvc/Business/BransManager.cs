@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using ErzurumOdmMvc.Business.Abstract;
 using ErzurumOdmMvc.Entities;
 
-namespace ErzurumOdmMvc
+namespace ErzurumOdmMvc.Business
 {
     public class BransManager:ManagerBase<Brans>
     {

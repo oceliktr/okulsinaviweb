@@ -5,9 +5,11 @@ using System.Web;
 using System.Web.Mvc;
 using ErzurumOdmMvc.Business;
 using ErzurumOdmMvc.Entities;
+using ErzurumOdmMvc.Filter;
 
 namespace ErzurumOdmMvc.Areas.ODM.Controllers
 {
+    [YetkiKontrol(Roles = "Root")]
     public class IlceController : Controller
     {
         // GET: ODM/Ilceler

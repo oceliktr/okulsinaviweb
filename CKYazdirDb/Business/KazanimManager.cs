@@ -1,10 +1,9 @@
-﻿using System;
+﻿using ODM.CKYazdirDb.DAL;
+using ODM.CKYazdirDb.Entities;
+using ODM.CKYazdirDb.Library;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ODM.CKYazdirDb.DAL;
-using ODM.CKYazdirDb.Library;
+using ODM.CKYazdirDb.Model;
 
 namespace ODM.CKYazdirDb.Business
 {

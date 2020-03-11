@@ -7,8 +7,9 @@ using System.Text;
 using System.Windows.Forms;
 using ODM.CKYazdirDb.Business;
 using ODM.CKYazdirDb.Library;
+using ODM.CKYazdirDb.Model;
 
-namespace CKYazdir
+namespace ODM.CKYazdirDb
 {
     public partial class FormTxtOlustur : Form
     {
@@ -21,6 +22,19 @@ namespace CKYazdir
             lvBolumler.Columns.Add("Başlangıç", 80);
             lvBolumler.Columns.Add("Karakter", 70);
             lvBolumler.Columns.Add("Değer", 70);
+            lvBolumler.Activation = ItemActivation.OneClick;
+            //Listview tek tıklamada aktif hale gelir.
+
+            lvBolumler.View = View.Details;
+            // Listview üzerindeki sütun isimleri görünmesi için değiştirilmesi gereklidir.
+
+            lvBolumler.GridLines = true;
+            //Listview üzerinde ayırt edici çizgilerin görünmesi için gereklidir.
+
+            lvBolumler.FullRowSelect = true;
+            // Listview üzerinde satırın tamamını seçebilmek için bu özelliğin true olması gerekir.
+
+
 
         }
 
@@ -53,18 +67,6 @@ namespace CKYazdir
 
                 ofData.Dispose();
             }
-
-            lvBolumler.Activation = ItemActivation.OneClick;
-            //Listview tek tıklamada aktif hale gelir.
-
-            lvBolumler.View = View.Details;
-            // Listview üzerindeki sütun isimleri görünmesi için değiştirilmesi gereklidir.
-
-            lvBolumler.GridLines = true;
-            //Listview üzerinde ayırt edici çizgilerin görünmesi için gereklidir.
-
-            lvBolumler.FullRowSelect = true;
-            // Listview üzerinde satırın tamamını seçebilmek için bu özelliğin true olması gerekir.
 
 
             int sonSatirIndexi = txtData.TextLength;
@@ -154,9 +156,7 @@ namespace CKYazdir
                         {
                             ornekMetin += deger + txtAraKarakter.Text;
                         }
-
                     }
-
                 }
 
                 if (txtAraKarakter.Text == "")
@@ -304,12 +304,12 @@ namespace CKYazdir
                                     }
                                     else //sabit değer tanımlanmamış ise kesme noktalarından kopyala
                                     {
-                                        string deger = file.Substring(lvBolumler.Items[i].SubItems[1].Text.ToInt32(),lvBolumler.Items[i].SubItems[2].Text.ToInt32());
+                                        string deger = file.Substring(lvBolumler.Items[i].SubItems[1].Text.ToInt32(), lvBolumler.Items[i].SubItems[2].Text.ToInt32());
 
                                         if (lvBolumler.Items[i].SubItems[0].Text == "Girmedi") //Girmedi ise
                                         {
                                             //Gelen değer G ise 0, yoksa 1 yaz.
-                                            if (deger== "G")
+                                            if (deger == "G")
                                                 yeniData += "0" + txtAraKarakter.Text;
                                             else
                                                 yeniData += "1" + txtAraKarakter.Text;
@@ -332,7 +332,7 @@ namespace CKYazdir
                         }
                         catch (Exception)
                         {
-                          //  MessageBox.Show("Hata: " + ex.Message);
+                            //  MessageBox.Show("Hata: " + ex.Message);
                         }
 
                         writer.Dispose();
@@ -358,7 +358,7 @@ namespace CKYazdir
         }
         private void BranslariListele()
         {
-            BransManager bransManager= new BransManager();
+            BransManager bransManager = new BransManager();
             dgBranslar.DataSource = bransManager.List().OrderBy(x => x.Id).ToList();
 
             dgBranslar.Columns[0].HeaderText = "Branş No";
@@ -369,13 +369,221 @@ namespace CKYazdir
         private void FormTxtOlustur_Load(object sender, EventArgs e)
         {
             BranslariListele();
-            blAciklama.Text =
-                @"'Data Aç' butonu ile *.txt veya *.dat dosyasını seçiniz. Modül ilk satırı örnek olarak gösterecektir."+Environment.NewLine+
-                "Oluşturmak istediğiniz format için her grup arasına kullanacağınız ara karakteri de girerek başlangıç noktasını ve karakter sayısını seçip ekle butonuna tıklayınız." + Environment.NewLine +
-                "Katılım Durumu ('G') alanı için açıklama alanına 'Girmedi' yazınız. Modül girmeyenler için 0, girenler için 1 değerini atayacaktır." + Environment.NewLine +
-                "İstenilen formatı örnekte görüldüğü gibi oluşturduktan sonra 'Text Oluştur' butonuna tıklayınız.\nBu uygulama için aşağıdaki formatta txt oluşturunuz." + Environment.NewLine +
-            "20649649#A#1#2#CBBBBBACACBABCBAACAB#2#CBBBBBACACBABCBAACAB" + Environment.NewLine +
-            "OPAKNO/TC#KTUR#KD#DERSID#CEVAPLAR#DERSID#CEVAPLAR";
+        }
+
+        private void btnOturumlariBirlestir_Click(object sender, EventArgs e)
+        {
+
+            if (lvBolumler.Items.Count == 0)
+            {
+                MessageBox.Show("Herhangi bir aralık seçilmedi.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+            else if (txtAraKarakter.Text == "")
+            {
+                MessageBox.Show("Ara karakter giriniz.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                txtAraKarakter.Focus();
+            }
+            else if (lvBolumler.Items.Count > 4)
+            {
+                MessageBox.Show("OpaqId#Oturum#KTür#Cevaplar formatında olmalı", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                txtAraKarakter.Focus();
+            }
+            else
+            {
+                using (SaveFileDialog saveFileDialog1 = new SaveFileDialog())
+                {
+                    saveFileDialog1.DefaultExt = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    saveFileDialog1.Title = @"Txt dosyalarının oluşturulacağı dizini seçiniz.";
+
+                    saveFileDialog1.FileName = "Dosya Adı.txt";
+                    saveFileDialog1.Filter = "Text Dosyası | *.txt";
+
+
+                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                    {
+                        List<OturumBirlestir> txtVerileri = CevaplariDizeyeAl();
+
+                        //Mükerrer kontrolü yap. Varsa çık.
+                        if (MukerrerKontrol(txtVerileri, saveFileDialog1)) return;
+
+
+                        //her oturumu bir opaq id değerine toplayan medot
+                        CevaplariOpaqIdyeBirlestir(saveFileDialog1, txtVerileri);
+
+                        seciliDosya = saveFileDialog1.FileName;
+                        this.Text = seciliDosya;
+                        lvBolumler.Items.Clear();
+
+                        DialogResult dialog = MessageBox.Show("Txt Dosyaları oluşturuldu. Dizini açmak ister misiniz?", @"Bilgi", MessageBoxButtons.YesNo);
+                        if (dialog == DialogResult.Yes)
+                            Process.Start("explorer.exe", Path.GetFileName(saveFileDialog1.FileName));
+                    }
+                }
+
+            }
+        }
+
+        private static bool MukerrerKontrol(List<OturumBirlestir> txtVerileri, SaveFileDialog saveFileDialog1)
+        {
+            var mukerrerList = txtVerileri.GroupBy(x => new { x.OpaqId, x.Oturum })
+                .Where(g => g.Count() > 1)
+                .Select(y => y.Key)
+                .ToList();
+            if (mukerrerList.Count > 0)
+            {
+                StreamWriter writer = new StreamWriter(saveFileDialog1.OpenFile());
+
+                writer.WriteLine("------- MÜKERRER KAYITLAR -------");
+                foreach (var q in mukerrerList)
+                {
+                    writer.WriteLine("Opaq:" + q.OpaqId + " Oturum:" + q.Oturum);
+                }
+
+                writer.Dispose();
+                writer.Close();
+                Process.Start("explorer.exe", Path.GetFileName(saveFileDialog1.FileName));
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Diziye alınan cevapları birleştiren medot.
+        /// </summary>
+        /// <param name="saveFileDialog1"></param>
+        /// <param name="txtVerileri"></param>
+        private void CevaplariOpaqIdyeBirlestir(SaveFileDialog saveFileDialog1, List<OturumBirlestir> txtVerileri)
+        {
+            StreamWriter writer = new StreamWriter(saveFileDialog1.OpenFile());
+
+            int cevapUzunluk = lvBolumler.Items[3].SubItems[2].Text.ToInt32();
+            List<OturumBirlestir> oturumSayisi = txtVerileri.DistinctBy(x => x.Oturum).OrderBy(x => x.Oturum).ToList();
+            string yeniTxt = "";
+
+            string cevapBosluk = ""; //oturuma katılmamış ise cevaplar bölümünün uzunluğu kadar ara bırakalım.
+            for (int i = 0; i < cevapUzunluk; i++)
+                cevapBosluk += " ";
+
+            foreach (var opaq in txtVerileri.DistinctBy(x => x.OpaqId).ToList())
+            {
+                string kitTuru = "";
+                string yeniCevaplar = "";
+
+                foreach (var otrm in oturumSayisi)
+                {
+                    //opaqId ve oturum kontrolü yapmak gerekiyor. Çünkü oturumu yoksa o alanın boşlukla doldurulması gerekiyor. Aksi halde halde ders cevapları bölerken kaymalar olacaktr.
+                    var cvplar = txtVerileri.FirstOrDefault(x => x.OpaqId == opaq.OpaqId && x.Oturum == otrm.Oturum);
+
+                    if (cvplar == null) //eğer öğrencinin oturumu yoksa alanı boş bırakacağım
+                    {
+                        kitTuru += " ";
+                        yeniCevaplar += cevapBosluk;
+                    }
+                    else
+                    {
+                        kitTuru += cvplar.KitTur;
+                        yeniCevaplar += cvplar.Cevaplar;
+                    }
+                }
+
+                //Çıkacak veri=> OpaqId#KTürKTür#CevaplarCevaplar
+                string sonuc = opaq.OpaqId + kitTuru + yeniCevaplar;
+                yeniTxt = sonuc; //en son satırı txtData alanına eklemek için gerekli
+                writer.WriteLine(sonuc);
+            }
+
+            writer.Dispose();
+            writer.Close();
+            txtData.Text = yeniTxt;
+        }
+
+        /// <summary>
+        /// Txt dosyasından gelen cevapları parçalayıp diziye alan metod.
+        /// </summary>
+        /// <returns></returns>
+        private List<OturumBirlestir> CevaplariDizeyeAl()
+        {
+            List<OturumBirlestir> txtVerileri = new List<OturumBirlestir>();
+            try
+            {
+                string[] lines = File.ReadAllLines(seciliDosya, Encoding.UTF8);
+                foreach (string file in lines)
+                {
+                    string yeniData = "";
+                    for (int i = 0; i < lvBolumler.Items.Count; i++)
+                    {
+                        if (lvBolumler.Items[i].SubItems[3].Text != "null") //sabit değer tanımlanmış ise
+                        {
+                            yeniData += lvBolumler.Items[i].SubItems[3].Text + txtAraKarakter.Text;
+                        }
+                        else //sabit değer tanımlanmamış ise kesme noktalarından kopyala
+                        {
+                            string deger = file.Substring(lvBolumler.Items[i].SubItems[1].Text.ToInt32(),
+                                lvBolumler.Items[i].SubItems[2].Text.ToInt32());
+
+                            yeniData += deger + txtAraKarakter.Text;
+                        }
+                    }
+
+                    //sonunda karakter olmasın denilmiş ise sondaki karakteri sil
+                    if (txtAraKarakter.Text != "" && yeniData.Length > 0)
+                        yeniData = yeniData.Substring(0, yeniData.Length - 1);
+
+                    string[] yeniDataArray = yeniData.Split(txtAraKarakter.Text.ToCharArray(0, 1));
+
+                    //Gelen veri=> OpaqId#Oturum#KTür#Cevaplar
+                    string opaqId = yeniDataArray[0];
+                    int oturum = yeniDataArray[1] == " " ? 0 : yeniDataArray[1].ToInt32();
+                    string kTur = yeniDataArray[2];
+                    string cevaplar = yeniDataArray[3];
+
+                    txtVerileri.Add(new OturumBirlestir(opaqId, oturum, kTur, cevaplar));
+                    Application.DoEvents();
+                }
+            }
+            catch (Exception)
+            {
+                //  MessageBox.Show("Hata: " + ex.Message);
+            }
+
+            return txtVerileri;
+        }
+
+        private void dgBranslar_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                cbAlanAdi.Text = dgBranslar[1, e.RowIndex].Value.ToString();
+                txtSabitDeger.Text = dgBranslar[0, e.RowIndex].Value.ToString();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+        }
+
+
+        private void lvBolumler_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                foreach (ListViewItem bilgi in lvBolumler.SelectedItems)
+                {
+                    bilgi.Remove();
+                    OrnekOlustur();
+                }
+            }
+            if (e.KeyCode == Keys.Up)
+            {
+                ListViewElemanTasi(lvBolumler, TasimaYonu.Yukari);
+                OrnekOlustur();
+            }
+            if (e.KeyCode == Keys.Down)
+            {
+                ListViewElemanTasi(lvBolumler, TasimaYonu.Asagi);
+                OrnekOlustur();
+            }
         }
 
     }

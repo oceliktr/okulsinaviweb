@@ -120,6 +120,15 @@
   <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="blAciklama.Text" xml:space="preserve">
+    <value>'Data Aç' butonu ile *.txt veya *.dat dosyasını seçiniz. Modül ilk satırı örnek olarak gösterecektir.
+Oluşturmak istediğiniz format için her grup arasına kullanacağınız ara karakteri de girerek başlangıç noktasını ve karakter sayısını seçip ekle butonuna tıklayınız.
+Katılım Durumu ('G') alanı için açıklama alanına 'Girmedi' yazınız. Modül girmeyenler için 0, girenler için 1 değerini atayacaktır.
+İstenilen formatı örnekte görüldüğü gibi oluşturduktan sonra 'Text Oluştur' butonuna tıklayınız.
+----Bu uygulama için aşağıdaki formatta txt oluşturunuz.---
+20649649#2#A#CBBBBBACACBABCBAACAB#2#A#CBBBBBACACBABCBAACAB
+OpaqId/TC#DersId#KitTur#Cevaplar#DersId#KitTur#Cevaplar</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnEkle.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -150,6 +159,11 @@
         lww1/lMq7GKkt9wv05eg7xzcIV8F58cc1Meum5KUi/zOPV3957EL3hq0BR8WceHzDWof7SbZUh1n0Nxd
         jS3oPAvPp64j1IK1TAQumfL1+dFx90mcFkBrJXyRV1X8OXrFFF0meH1rb+BUGfZJDlSVwnXzGAY3Q5oW
         SXeL7eqMrWKH2LkJhWKbKMj7Rc0jfgPdA4hcbxbnbAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="label5.Text" xml:space="preserve">
+    <value>Birden fazla oturumlar için öncelikle bu ekranda birleştirme yapılmalıdır. Kesme noktarını OpaqId, Oturum No, KitapçıkTürü ve Cevaplar olarak seçiniz ve 'Oturum Verilerini Birleştir' butonuna tıklayınız.
+Örnek: OpaqId#Oturum#KTür#Cevaplar
 </value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

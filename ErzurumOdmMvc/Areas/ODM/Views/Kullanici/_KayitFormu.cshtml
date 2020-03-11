@@ -1,0 +1,164 @@
+﻿@using ErzurumOdmMvc.Common.Enums
+@model ErzurumOdmMvc.Areas.ODM.Model.KullanicilarViewModel
+@{
+    string ilceId =Model.Kullanici.IlceId.ToString()=="0"?Request.Form["Kullanici.IlceId"]:Model.Kullanici.IlceId.ToString();
+    string kurumKodu = Request.Form["okullar"] ?? Model.Kullanici.KurumKodu.ToString();
+}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">@ViewBag.Title</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-10 col-lg-8 offset-md-1 offset-lg-2">
+                    <div id="uyari" class="alert alert-success alert-dismissible hidden">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h5><i class="icon fas fa-check"></i> Uyarı!</h5>
+                        @Html.ValidationSummary()
+                    </div>
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">@ViewBag.Title</h3>
+                        </div>
+
+                        @using (Html.BeginForm(null, null, FormMethod.Post,new { autocomplete="off"}))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(x => x.Kullanici.Id)
+                            <div class="card-body">
+
+                            
+                            <div class="row">
+                                <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label>Giriş Bilgisi</label>
+                                        @Html.TextBoxFor(x => x.Kullanici.TcKimlik, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Şifre</label>
+                                        @Html.PasswordFor(x => x.Kullanici.Sifre, new { @class = "form-control", autocomplete="off" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Adı Soyadı</label>
+                                        @Html.TextBoxFor(x => x.Kullanici.AdiSoyadi, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Telefon</label>
+                                        @Html.TextBoxFor(x => x.Kullanici.CepTlf, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label>E-mail Adresi</label>
+                                        @Html.TextBoxFor(x => x.Kullanici.Email, new { @class = "form-control", autocomplete="on" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4">Branşı</label>
+                                        @Html.DropDownListFor(x => x.Kullanici.Bransi,
+                                            new SelectList(Model.Branslar, "Id", "BransAdi"), "--- Seçiniz ---", new { @class = "form-control" })
+                                    </div>
+                                   
+
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+
+                                    <div class="form-group">
+                                        <label class="col-md-4">İlçe</label>
+                                        @Html.DropDownListFor(x => x.Kullanici.IlceId,
+                                            new SelectList(Model.Ilceler, "Id", "IlceAdi"), "--- Seçiniz ---", new { @class = "form-control" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-4">Kurumu</label>
+                                        <select id="okullar" name="okullar" class="form-control">
+                                            <option value="">--- İlçe Seçiniz ---</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-4">Yetki</label>
+                                        @foreach (var yetki in Model.KullaniciYetkileri)
+                                        {
+                                            string isaretle= (Model.Kullanici.Yetki != null && Model.Kullanici.Yetki.Contains(yetki.ToString()) ? "checked" : "");
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="@yetki.ToString()" name="@yetki.ToString()" @isaretle>
+                                                <label class="custom-control-label" for="@yetki.ToString()">@Yetki.Getir(yetki.ToString())</label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary float-right">Kaydet</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section FooterScript
+{
+    <script>
+        $(function() {
+            
+            OkullariGetir(@ilceId);
+            
+        });
+        $("#Kullanici_IlceId").on('change', function () {
+
+            var ilceId = $(this).val();
+            OkullariGetir(ilceId);
+            
+        });
+        function OkullariGetir(ilceId) {
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/ODM/Kurum/IlceKurumlari?ilce=" + ilceId,
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+
+                        var okullarSelect = $('#okullar');
+
+                        okullarSelect.empty();
+
+                        okullarSelect.append('<option selected="true" disabled>--- Okul Seçiniz ---</option>');
+                        okullarSelect.prop('selectedIndex', 0);
+
+                        $.each(data, function (key, entry) {
+                            okullarSelect.append($('<option></option>')
+                                .attr('value', entry.KurumKodu)
+                                .text(entry.KurumAdi));
+
+                            //post sonrası okulu seçili yap
+                            $('#okullar option').filter(function () {
+                                return ($(this).val() === '@kurumKodu');
+                            }).prop('selected', true);
+
+                        });
+                    }
+                }
+            );
+        }
+
+    </script>
+    @if (ViewBag.Uyari != null && ViewBag.Uyari.ToString() == "islemTamam")
+    {
+        <script>document.getElementById("uyari").className = "alert alert-info alert-dismissible";</script>
+    }
+    @if (ViewBag.Uyari != null && ViewBag.Uyari.ToString() == "uyari")
+    {
+        <script>document.getElementById("uyari").className = "alert alert-danger alert-dismissible";</script>
+    }
+}

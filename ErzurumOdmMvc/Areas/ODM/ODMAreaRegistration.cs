@@ -2,7 +2,7 @@
 
 namespace ErzurumOdmMvc.Areas.ODM
 {
-    public class ODMAreaRegistration : AreaRegistration 
+    public class OdmAreaRegistration : AreaRegistration 
     {
         public override string AreaName 
         {

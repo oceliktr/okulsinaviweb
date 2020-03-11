@@ -6,7 +6,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using DAL;
 
 public partial class LGSSoruBank_Sorular : System.Web.UI.Page
 {
@@ -162,7 +161,7 @@ public partial class LGSSoruBank_Sorular : System.Web.UI.Page
 
         if (e.CommandName.Equals("Download"))
         {
-            LgsKazanimlarDB kznmDb = new LgsKazanimlarDB();
+            LgsKazanimlarDb kznmDb = new LgsKazanimlarDb();
             LgsKazanimlarInfo kznmInfo = kznmDb.KayitBilgiGetir(info.KazanimId);
 
             //File to be downloaded.

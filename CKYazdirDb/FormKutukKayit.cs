@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using ODM.CKYazdirDb.Business;
+using ODM.CKYazdirDb.Entities;
+using ODM.CKYazdirDb.Model;
 
 namespace ODM.CKYazdirDb
 {

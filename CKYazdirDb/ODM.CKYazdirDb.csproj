@@ -102,6 +102,7 @@
   <ItemGroup>
     <Compile Include="Business\Abstract\IDataAccess.cs" />
     <Compile Include="Business\Abstract\ManagerBase.cs" />
+    <Compile Include="Business\OptikKonumManager.cs" />
     <Compile Include="Business\Abstract\RandomExtensions.cs" />
     <Compile Include="Business\BransManager.cs" />
     <Compile Include="Business\CevapTxtManager.cs" />
@@ -178,33 +179,45 @@
     <Compile Include="FormTxtOlustur.Designer.cs">
       <DependentUpon>FormTxtOlustur.cs</DependentUpon>
     </Compile>
-    <Compile Include="Library\CevapveKutuk.cs" />
-    <Compile Include="Library\CevapveSinif.cs" />
-    <Compile Include="Library\DegerlendirmeTurleri.cs" />
     <Compile Include="Library\DersAdi.cs" />
+    <Compile Include="Library\MoreEnumerable.cs" />
+    <Compile Include="Model\CevapveKutuk.cs" />
+    <Compile Include="Model\CevapveSinif.cs" />
+    <Compile Include="Library\DegerlendirmeTurleri.cs" />
     <Compile Include="Library\DizinIslemleri.cs" />
-    <Compile Include="Library\DogruCevapveBrans.cs" />
+    <Compile Include="Model\DogruCevapveBrans.cs" />
     <Compile Include="Library\GenelIslemler.cs" />
     <Compile Include="Library\KalanSureHesapla.cs" />
-    <Compile Include="Library\KazanimveBrans.cs" />
-    <Compile Include="Library\KutukRapor.cs" />
-    <Compile Include="Library\Ogrenciler.cs" />
+    <Compile Include="Model\KazanimveBrans.cs" />
+    <Compile Include="Model\KutukRapor.cs" />
+    <Compile Include="Model\Ogrenciler.cs" />
+    <Compile Include="Model\OpaqKontrol.cs" />
     <Compile Include="Library\PdfIslemleri.cs" />
-    <Compile Include="Library\SinifSube.cs" />
-    <Compile Include="Library\TableModel.cs" />
+    <Compile Include="Model\OturumBirlestir.cs" />
+    <Compile Include="Model\SinifSube.cs" />
+    <Compile Include="Model\TableModel.cs" />
+    <Compile Include="Migrations\202002250811004_konum.cs" />
+    <Compile Include="Migrations\202002250811004_konum.Designer.cs">
+      <DependentUpon>202002250811004_konum.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002250832029_sablon.cs" />
+    <Compile Include="Migrations\202002250832029_sablon.Designer.cs">
+      <DependentUpon>202002250832029_sablon.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Model\Ayarlar.cs" />
-    <Compile Include="Model\Brans.cs" />
-    <Compile Include="Model\CevapTxt.cs" />
-    <Compile Include="Model\CkSablon.cs" />
-    <Compile Include="Model\DogruCevap.cs" />
+    <Compile Include="Entities\Ayarlar.cs" />
+    <Compile Include="Entities\Brans.cs" />
+    <Compile Include="Entities\CevapTxt.cs" />
+    <Compile Include="Entities\CkSablon.cs" />
+    <Compile Include="Entities\DogruCevap.cs" />
     <Compile Include="Model\IlIlceDogruYanlisBosModeli.cs" />
     <Compile Include="Model\KarneModel.cs" />
-    <Compile Include="Model\KarneSonuc.cs" />
-    <Compile Include="Model\Kazanim.cs" />
-    <Compile Include="Model\Kutuk.cs" />
-    <Compile Include="Model\OgrenciCevabi.cs" />
+    <Compile Include="Entities\KarneSonuc.cs" />
+    <Compile Include="Entities\Kazanim.cs" />
+    <Compile Include="Entities\Kutuk.cs" />
+    <Compile Include="Entities\OgrenciCevabi.cs" />
     <Compile Include="Model\OgrenciSonucModel.cs" />
+    <Compile Include="Entities\OptikKonum.cs" />
     <Compile Include="Model\ResultList.cs" />
     <Compile Include="Model\ComboboxItem.cs" />
     <Compile Include="Program.cs" />
@@ -239,6 +252,12 @@
     <EmbeddedResource Include="FormTxtOlustur.resx">
       <DependentUpon>FormTxtOlustur.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002250811004_konum.resx">
+      <DependentUpon>202002250811004_konum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002250832029_sablon.resx">
+      <DependentUpon>202002250832029_sablon.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -249,6 +268,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

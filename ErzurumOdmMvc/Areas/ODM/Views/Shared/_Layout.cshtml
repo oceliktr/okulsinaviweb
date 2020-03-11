@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
     <link rel="stylesheet" href="~/Areas/ODM/Content/dist/css/adminlte.min.css" />
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet" />
-    <link rel="shortcut icon" type="image/x-icon" href="~/Areas/Admin/Images/icon_admin.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="~/Areas/ODM/Content/images/Odm_logo_seffaf.ico" />
     <link href="~/Areas/ODM/Content/Site.css" rel="stylesheet" />
     @RenderSection("HeaderSection", false)
 </head>
@@ -37,7 +37,7 @@
                 @if (CurrentSession.Kullanici.Yetki.Contains("Root") || CurrentSession.Kullanici.Yetki.Contains("Admin"))
                 {
                     <li class="nav-item">
-                        <a class="nav-link" title="Site Ayarları" href="@Url.Action("Ayarlar","Default")">
+                        <a class="nav-link" title="Site Ayarları" href="@Url.Action("Ayarlar","Yonetim")">
                             <i class="fas fa-cogs"></i>
                         </a>
                     </li>

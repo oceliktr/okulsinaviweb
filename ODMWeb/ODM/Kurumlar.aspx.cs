@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web.UI.WebControls;
-using DAL;
 
 namespace ODM
 {
@@ -62,7 +61,6 @@ namespace ODM
                 hfId.Value = info.Id.ToString();
                 txtKurumAdi.Text = info.KurumAdi;
                 txtKurumKodu.Text = info.KurumKodu;
-                txtEpostaAdresi.Text = info.Email;
                 ddlIlce.SelectedValue = info.IlceId.ToString();
                 ddlKurumTuru.SelectedItem.Text = info.KurumTuru;
                 ddlKurumTuru.SelectedItem.Value = info.Tur;
@@ -75,7 +73,6 @@ namespace ODM
         {
             string kurumAdi = txtKurumAdi.Text;
             string kurumkodu = txtKurumKodu.Text;
-            string email = txtEpostaAdresi.Text;
         
             int ilce = ddlIlce.SelectedValue.ToInt32();
             string kurumTuru = ddlKurumTuru.SelectedValue;
@@ -88,8 +85,7 @@ namespace ODM
                 IlceId = ilce,
                 KurumKodu = kurumkodu,
                 KurumTuru = ddlKurumTuru.SelectedItem.Text,
-                Tur = kurumTuru,
-                Email = email
+                Tur = kurumTuru
             };
        
 
@@ -125,7 +121,6 @@ namespace ODM
             hfId.Value = "0";
             txtKurumKodu.Text = "";
             txtKurumAdi.Text = "";
-            txtEpostaAdresi.Text = "";
             ddlKurumTuru.SelectedValue = "";
             ddlIlce.SelectedValue = "";
 

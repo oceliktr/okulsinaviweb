@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ODM.CKYazdirDb.Business;
+using ODM.CKYazdirDb.Entities;
 using ODM.CKYazdirDb.Library;
 using ODM.CKYazdirDb.Model;
 
@@ -40,7 +42,7 @@ namespace ODM.CKYazdirDb
             else
             {
 
-                string sorulari = txtSorulari.Text;
+                string sorulari = txtSorulari.Text.Replace(" ", "");//boşlukları kaldır;
 
                 //Son karakter virgül değil ise , ekleyelim.
                 string sonKarakter = sorulari.Substring(sorulari.Length - 1, 1);
@@ -243,6 +245,59 @@ namespace ODM.CKYazdirDb
 
                 KayitlariListele();
 
+            }
+        }
+
+        private void btnDosyadanYukle_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofData = new OpenFileDialog())
+            {
+                ofData.Reset();
+                ofData.ReadOnlyChecked = true;
+                ofData.Multiselect = true;
+                ofData.ShowReadOnly = true;
+                ofData.Filter = "Veri dosyası (*.txt;*.dat)|*.txt;*.dat";
+                ofData.Title = "Veri dosyasını seçiniz.";
+                ofData.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                ofData.CheckPathExists = true;
+
+                if (ofData.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        int a = 0;
+                        string[] lines = File.ReadAllLines(ofData.FileName, Encoding.UTF8);
+                        foreach (var s in lines)
+                        {
+                            string[] veri = s.Split('#');
+                            //Son karakter virgül değil ise , ekleyelim.
+                            string sorulari = veri[5].Replace(" ","");//boşlukları kaldır
+                            string sonKarakter = sorulari.Substring(sorulari.Length - 1, 1);
+                            if (sonKarakter != ",")
+                                sorulari += ",";
+                            Kazanim kazanim = new Kazanim()
+                            {
+                                Sinif = veri[0].ToInt32(),
+                                BransId = veri[1].ToInt32(),
+                                KazanimNo = veri[2],
+                                KazanimAdi = veri[3],
+                                KazanimAdiOgrenci = veri[4],
+                                Sorulari = sorulari,
+                            };
+                            a+=  kazanimManager.Insert(kazanim);
+                        }
+
+                        MessageBox.Show(a + " kayıt yüklendi.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        KayitlariListele();
+                    }
+                    catch (Exception exception)
+                    {
+                        MessageBox.Show("Hata oluştu. "+ exception.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    }
+                }
+
+                ofData.Dispose();
             }
         }
     }

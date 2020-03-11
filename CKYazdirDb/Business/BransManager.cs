@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ODM.CKYazdirDb.Model;
+﻿using ODM.CKYazdirDb.Entities;
 
 namespace ODM.CKYazdirDb.Business
 {
-   public class BransManager:ManagerBase<Brans>
+    public class BransManager:ManagerBase<Brans>
     {
+       
     }
 }

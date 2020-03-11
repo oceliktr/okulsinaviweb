@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web.UI.WebControls;
-using DAL;
 
 namespace ODM
 {
@@ -89,18 +88,11 @@ namespace ODM
                 }
                 else
                 {
-                    SonucAuDB cvbDb = new SonucAuDB();
-                    if (cvbDb.KayitKontrol(id))
-                    {
-                        Master.UyariKirmizi(string.Format("Bu döneme ait kayıt olduğu için silinmesi durumunda geriye dönüşü mümkün olmayacaktır. <a href=Sinavlar.aspx?del=ok&id={0}>Yinede silmek istiyor musunuz?</a>", id), phUyari);
-                    }
-                    else
-                    {
                         veriDb.KayitSil(id);
                         KayitlariListele();
                         Master.UyariIslemTamam("Kayıt başarıyla silindi.", phUyari);
                         FormuTemizle();
-                    }
+                    
                 }
                 hfId.Value = "0";
                 SinavleriListele();

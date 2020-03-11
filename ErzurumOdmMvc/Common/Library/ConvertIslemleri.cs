@@ -4,10 +4,7 @@ namespace ErzurumOdmMvc.Common.Library
 {
     public static class ConvertIslemleri
     {
-        public static string YeniGuid()
-        {
-            return Guid.NewGuid().ToString().Replace("-", "").ToUpper();
-        }
+  
         public static bool IsInteger(this object obj)
         {
             try

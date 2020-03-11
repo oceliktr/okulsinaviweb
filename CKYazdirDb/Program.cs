@@ -17,6 +17,7 @@ namespace ODM.CKYazdirDb
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FormAna());
+           // Application.Run(new FormTxtOlustur());
         }
     }
 }

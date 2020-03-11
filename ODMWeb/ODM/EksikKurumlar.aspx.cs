@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using DAL;
 
 public partial class ODM_EksikKurumlar : System.Web.UI.Page
 {

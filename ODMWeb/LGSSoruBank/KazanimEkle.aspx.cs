@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using DAL;
 
 public partial class LGSSoruBank_KazanimEkle : System.Web.UI.Page
 {
@@ -24,7 +23,7 @@ public partial class LGSSoruBank_KazanimEkle : System.Web.UI.Page
 
             if (Request.QueryString["Id"] != "")
             {
-                LgsKazanimlarDB kDb = new LgsKazanimlarDB();
+                LgsKazanimlarDb kDb = new LgsKazanimlarDb();
                 LgsKazanimlarInfo kiInfo = kDb.KayitBilgiGetir(Request.QueryString["Id"].ToInt32());
                 ddlSinif.SelectedValue = kiInfo.Sinif.ToString();
                 ddlBrans.SelectedValue = kiInfo.BransId.ToString();
@@ -43,7 +42,7 @@ public partial class LGSSoruBank_KazanimEkle : System.Web.UI.Page
         int sinif = ddlSinif.SelectedValue.ToInt32();
         string kazanimNo = txtKazanimNo.Text;
 
-        LgsKazanimlarDB kDb = new LgsKazanimlarDB();
+        LgsKazanimlarDb kDb = new LgsKazanimlarDb();
         LgsKazanimlarInfo kazanimInfo = new LgsKazanimlarInfo();
         kazanimInfo.BransId = brans;
         kazanimInfo.Sinif = sinif;

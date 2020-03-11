@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 public partial class ODM_LgsRaporOkulGrafik : System.Web.UI.Page
 {
@@ -37,15 +33,10 @@ public partial class ODM_LgsRaporOkulGrafik : System.Web.UI.Page
 
             ltrIlceOkulAdi.Text = string.Format("{0} - {1} ({2}. Sınıf)",kutukInfo.IlceAdi,kutukInfo.KurumAdi,sinif);
 
-            CkKarneSonuclariDB karneSonuclariDb= new CkKarneSonuclariDB();
-            List<CkKarneSonuclariInfo> ksList = karneSonuclariDb.KayitlariDizeGetir(kurumKodu, sinif);
+            KurumunSinavlariDb karneSonuclariDb = new KurumunSinavlariDb();
+            List<KurumunSinavlari> ksList = karneSonuclariDb.KayitlariDizeGetir(kurumKodu, sinif);
 
-            List<OkulGrafikViewModel> sonucList = new List<OkulGrafikViewModel>();
-            foreach (var snv in ksList.DistinctBy(p => p.SinavId))
-            {
-
-              sonucList.Add(new OkulGrafikViewModel(snv.SinavId,snv.BransId, snv.Sinif, snv.Sube, snv.Dogru, snv.Yanlis, snv.Bos, snv.SinavAdi, snv.BransAdi, 0,0,0,0));  
-            }
+            
         }
     }
     

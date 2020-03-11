@@ -27,8 +27,6 @@ namespace ErzurumOdmMvc.Entities
         public string Sifre { get; set; }
         [DisplayName("Yetki"), Required(ErrorMessage = "{0} alanı gereklidir."), StringLength(100, ErrorMessage = "{0} alanı max. {1} karakter olmalıdır.")]
         public string Yetki { get; set; }
-        [DisplayName("Grup"), StringLength(10, ErrorMessage = "{0} alanı max. {1} karakter olmalıdır.")]
-        public string Grup { get; set; }
         public DateTime OncekiGiris { get; set; }
         public DateTime SonGiris { get; set; }
         public int GirisSayisi { get; set; }

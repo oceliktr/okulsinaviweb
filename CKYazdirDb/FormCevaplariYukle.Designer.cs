@@ -31,11 +31,14 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCevaplariYukle));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnVazgec = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.cbSinif = new System.Windows.Forms.ComboBox();
             this.cbBranslar = new System.Windows.Forms.ComboBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.düzenleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.tümünüSilToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.seçileniSilToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label5 = new System.Windows.Forms.Label();
@@ -46,9 +49,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.düzenleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnVazgec = new System.Windows.Forms.Button();
+            this.btnDosyadanYukle = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -56,12 +57,13 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnDosyadanYukle);
             this.groupBox1.Controls.Add(this.btnVazgec);
             this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.cbSinif);
             this.groupBox1.Controls.Add(this.cbBranslar);
             this.groupBox1.Controls.Add(this.dataGridView1);
-            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.btnCevabiKaydet);
             this.groupBox1.Controls.Add(this.btnRefresh);
             this.groupBox1.Controls.Add(this.txtDogruCevaplar);
@@ -71,10 +73,21 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(15, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(624, 646);
+            this.groupBox1.Size = new System.Drawing.Size(624, 606);
             this.groupBox1.TabIndex = 169;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Cevap Anahtarları";
+            // 
+            // btnVazgec
+            // 
+            this.btnVazgec.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnVazgec.Location = new System.Drawing.Point(11, 123);
+            this.btnVazgec.Name = "btnVazgec";
+            this.btnVazgec.Size = new System.Drawing.Size(121, 49);
+            this.btnVazgec.TabIndex = 175;
+            this.btnVazgec.Text = "Vazgeç";
+            this.btnVazgec.UseVisualStyleBackColor = true;
+            this.btnVazgec.Click += new System.EventHandler(this.btnVazgec_Click);
             // 
             // label7
             // 
@@ -140,28 +153,42 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(152, 82);
             // 
+            // düzenleToolStripMenuItem
+            // 
+            this.düzenleToolStripMenuItem.Name = "düzenleToolStripMenuItem";
+            this.düzenleToolStripMenuItem.Size = new System.Drawing.Size(151, 24);
+            this.düzenleToolStripMenuItem.Text = "Düzenle";
+            this.düzenleToolStripMenuItem.Click += new System.EventHandler(this.düzenleToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(148, 6);
+            // 
             // tümünüSilToolStripMenuItem
             // 
             this.tümünüSilToolStripMenuItem.Name = "tümünüSilToolStripMenuItem";
-            this.tümünüSilToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.tümünüSilToolStripMenuItem.Size = new System.Drawing.Size(151, 24);
             this.tümünüSilToolStripMenuItem.Text = "Tümünü Sil";
             this.tümünüSilToolStripMenuItem.Click += new System.EventHandler(this.TümünüSilToolStripMenuItem_Click);
             // 
             // seçileniSilToolStripMenuItem
             // 
             this.seçileniSilToolStripMenuItem.Name = "seçileniSilToolStripMenuItem";
-            this.seçileniSilToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.seçileniSilToolStripMenuItem.Size = new System.Drawing.Size(151, 24);
             this.seçileniSilToolStripMenuItem.Text = "Seçileni Sil";
             this.seçileniSilToolStripMenuItem.Click += new System.EventHandler(this.SeçileniSilToolStripMenuItem_Click);
             // 
             // label5
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(168)), true);
-            this.label5.Location = new System.Drawing.Point(10, 520);
+            this.label5.Location = new System.Drawing.Point(10, 506);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(599, 122);
+            this.label5.Size = new System.Drawing.Size(461, 99);
             this.label5.TabIndex = 171;
-            this.label5.Text = resources.GetString("label5.Text");
+            this.label5.Text = "Sınıf#Derskodu#KitapçıkTürü#Cevaplar formatında verileri dosyadan yüklemek için \'" +
+    "Dosyadan Yükle\' butonunu kullanınınz.\r\nÖrnek:\r\n8#3#A#DCBDDBBACA\r\n8#13#B#ADBCADBC" +
+    "DB";
             // 
             // btnCevabiKaydet
             // 
@@ -237,34 +264,24 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Ders Kodu :";
             // 
-            // düzenleToolStripMenuItem
+            // btnDosyadanYukle
             // 
-            this.düzenleToolStripMenuItem.Name = "düzenleToolStripMenuItem";
-            this.düzenleToolStripMenuItem.Size = new System.Drawing.Size(210, 24);
-            this.düzenleToolStripMenuItem.Text = "Düzenle";
-            this.düzenleToolStripMenuItem.Click += new System.EventHandler(this.düzenleToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(207, 6);
-            // 
-            // btnVazgec
-            // 
-            this.btnVazgec.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnVazgec.Location = new System.Drawing.Point(11, 123);
-            this.btnVazgec.Name = "btnVazgec";
-            this.btnVazgec.Size = new System.Drawing.Size(121, 49);
-            this.btnVazgec.TabIndex = 175;
-            this.btnVazgec.Text = "Vazgeç";
-            this.btnVazgec.UseVisualStyleBackColor = true;
-            this.btnVazgec.Click += new System.EventHandler(this.btnVazgec_Click);
+            this.btnDosyadanYukle.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDosyadanYukle.Location = new System.Drawing.Point(422, 534);
+            this.btnDosyadanYukle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnDosyadanYukle.Name = "btnDosyadanYukle";
+            this.btnDosyadanYukle.Size = new System.Drawing.Size(185, 58);
+            this.btnDosyadanYukle.TabIndex = 176;
+            this.btnDosyadanYukle.Text = "Dosyadan Yükle";
+            this.btnDosyadanYukle.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnDosyadanYukle.UseVisualStyleBackColor = true;
+            this.btnDosyadanYukle.Click += new System.EventHandler(this.btnDosyadanYukle_Click);
             // 
             // FormCevaplariYukle
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(649, 673);
+            this.ClientSize = new System.Drawing.Size(648, 626);
             this.Controls.Add(this.groupBox1);
             this.Name = "FormCevaplariYukle";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -298,5 +315,6 @@
         private System.Windows.Forms.ToolStripMenuItem düzenleToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.Button btnVazgec;
+        private System.Windows.Forms.Button btnDosyadanYukle;
     }
 }

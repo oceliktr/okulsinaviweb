@@ -1,5 +1,4 @@
-﻿using DAL;
-using System;
+﻿using System;
 using System.IO;
 using System.Web;
 
@@ -88,10 +87,10 @@ namespace ODM
                                     CkKarneDogruCevaplarInfo dcInfo = new CkKarneDogruCevaplarInfo()
                                     {
                                         SinavId = sinavId,
-                                        Sinif = bol[2].ToInt32(),
-                                        BransId = bol[3].ToInt32(),
-                                        KitapcikTuru = bol[4],
-                                        Cevaplar = bol[5]
+                                        Sinif = bol[1].ToInt32(),
+                                        BransId = bol[2].ToInt32(),
+                                        KitapcikTuru = bol[3],
+                                        Cevaplar = bol[4]
                                     };
                                     dcDb.KayitEkle(dcInfo);
                                 }
@@ -117,8 +116,8 @@ namespace ODM
                                     CkKarneBranslarInfo brnsInfo = new CkKarneBranslarInfo()
                                     {
                                         SinavId = sinavId,
-                                        BransId = bol[2].ToInt32(),
-                                        BransAdi = bol[3]
+                                        BransId = bol[1].ToInt32(),
+                                        BransAdi = bol[2]
                                     };
                                     brnsDb.KayitEkle(brnsInfo);
                                 }
@@ -130,12 +129,12 @@ namespace ODM
                                     {
                                         KazanimId = bol[1].ToInt32(),
                                         SinavId = sinavId,
-                                        Sinif = bol[3].ToInt32(),
-                                        BransId = bol[4].ToInt32(),
-                                        KazanimNo = bol[5],
-                                        KazanimAdi = bol[6],
-                                        KazanimAdiOgrenci = bol[7],
-                                        Sorulari = bol[8]
+                                        Sinif = bol[2].ToInt32(),
+                                        BransId = bol[3].ToInt32(),
+                                        KazanimNo = bol[4],
+                                        KazanimAdi = bol[5],
+                                        KazanimAdiOgrenci = bol[6],
+                                        Sorulari = bol[7]
                                     };
                                     kznmtDb.KayitEkle(kznmInfo);
                                 }
@@ -155,11 +154,26 @@ namespace ODM
                                         Sinifi = bol[8].ToInt32(),
                                         Sube = bol[9],
                                         SinavId = sinavId,
-                                        KatilimDurumu = bol[11],
-                                        KitapcikTuru = bol[12],
-                                        Cevaplar = bol[13]
+                                        KatilimDurumu = bol[10],
+                                        Cevaplar = bol[11]
                                     };
                                     kutukDb.KayitEkle(kutukInfo);
+                                }
+                                if (bol[0] == "{SinifDYB}") //okul ortalamaları
+                                {
+                                    CkSinifSonuclariDb sinifSonuclariDb = new CkSinifSonuclariDb();
+                                    //("{SinifDYB}|" + sinif.Ilce + "|" + okul.KurumKodu + "|" + okul.KurumAdi + "|" + sinif.Sinif +"|" + ogrSayisi + "|" + sinifSonucStr);, Cevaplar
+                                    CkSinifSonuclariInfo sinifSonucInfo = new CkSinifSonuclariInfo
+                                    {
+                                        SinavId = sinavId,
+                                        IlceAdi = bol[1],
+                                        KurumKodu = bol[2].ToInt32(),
+                                        KurumAdi = bol[3],
+                                        Sinif = bol[4].ToInt32(),
+                                        OgrenciSayisi = bol[5].ToInt32(),
+                                        Sonuclar = bol[6]
+                                    };
+                                    sinifSonuclariDb.KayitEkle(sinifSonucInfo);
                                 }
                                 if (bol[0] == "{KarneSonuclari}")
                                 {

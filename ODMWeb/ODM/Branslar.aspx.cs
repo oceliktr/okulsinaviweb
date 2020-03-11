@@ -1,5 +1,4 @@
-﻿using DAL;
-using System;
+﻿using System;
 using System.Web.UI.WebControls;
 
 public partial class ODM_Branslar : System.Web.UI.Page
@@ -8,7 +7,7 @@ public partial class ODM_Branslar : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            if (!Master.Yetki().Contains("Admin"))
+            if (!Master.Yetki().Contains("Root")&&!Master.Yetki().Contains("Admin"))
                 Response.Redirect("Giris.aspx");
 
             KayitlariListele();

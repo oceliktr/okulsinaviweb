@@ -8,15 +8,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Erzurum Ölçme Değerlendirme Merkezi</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
-    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/Content/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
-    <link rel="stylesheet" href="/dist/css/AdminLTE.min.css" />
-    <link rel="stylesheet" href="/plugins/iCheck/square/blue.css" />
+    <link rel="stylesheet" href="/Content/dist/css/AdminLTE.min.css" />
+    <link rel="stylesheet" href="/Content/plugins/iCheck/square/blue.css" />
 
     <!--[if lt IE 9]>
-  <script src="js/html5shiv.min.js"></script>
-  <script src="js/respond.min.js"></script>
+  <script src="/Content/js/html5shiv.min.js"></script>
+  <script src="/Content/js/respond.min.js"></script>
 <![endif]-->
 </head>
 <body class="hold-transition login-page">
@@ -24,7 +24,7 @@
         <div class="wrapper">
             <p></p>
             <div class="login-logo">
-                <img src="/images/logo.png" alt="Erzurum İl Milli Eğitim Müdürlüğü Ölçme Değerlendirme Merkezi" />
+                <img src="/Content/images/logo.png" alt="Erzurum İl Milli Eğitim Müdürlüğü Ölçme Değerlendirme Merkezi" />
             </div>
 
             <div runat="server" id="divHata" visible="false" class="alert alert-danger alert-dismissible login-box">
@@ -145,9 +145,9 @@
                 </div>
             </footer>
         </div>
-        <script src="/plugins/jQuery/jQuery-2.1.4.min.js"></script>
-        <script src="/bootstrap/js/bootstrap.min.js"></script>
-        <script src="/plugins/iCheck/icheck.min.js"></script>
+        <script src="/Content/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+        <script src="/Content/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/Content/plugins/iCheck/icheck.min.js"></script>
         <script>
             $(function () {
                 $('input').iCheck({

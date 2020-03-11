@@ -40,6 +40,8 @@
             this.pbAna = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.lblGecenSure = new System.Windows.Forms.Label();
+            this.btnDogruCevaplar = new System.Windows.Forms.Button();
+            this.bgwDogruYanlislariHesapla = new System.ComponentModel.BackgroundWorker();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -119,11 +121,26 @@
             this.lblGecenSure.TabIndex = 199;
             this.lblGecenSure.Text = "Geçen süre : 00:00:00";
             // 
+            // btnDogruCevaplar
+            // 
+            this.btnDogruCevaplar.Location = new System.Drawing.Point(12, 167);
+            this.btnDogruCevaplar.Name = "btnDogruCevaplar";
+            this.btnDogruCevaplar.Size = new System.Drawing.Size(207, 53);
+            this.btnDogruCevaplar.TabIndex = 200;
+            this.btnDogruCevaplar.Text = "Excel İçin Sonuçlar";
+            this.btnDogruCevaplar.UseVisualStyleBackColor = true;
+            this.btnDogruCevaplar.Click += new System.EventHandler(this.btnDogruCevaplar_Click);
+            // 
+            // bgwDogruYanlislariHesapla
+            // 
+            this.bgwDogruYanlislariHesapla.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwDogruYanlislariHesapla_DoWork);
+            // 
             // FormSonDegerlendirme
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(896, 263);
+            this.Controls.Add(this.btnDogruCevaplar);
             this.Controls.Add(this.lblGecenSure);
             this.Controls.Add(this.pbAna);
             this.Controls.Add(this.label2);
@@ -158,5 +175,7 @@
         private System.Windows.Forms.ProgressBar pbAna;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label lblGecenSure;
+        private System.Windows.Forms.Button btnDogruCevaplar;
+        private System.ComponentModel.BackgroundWorker bgwDogruYanlislariHesapla;
     }
 }

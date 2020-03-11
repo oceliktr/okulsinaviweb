@@ -8,6 +8,7 @@ namespace ErzurumOdmMvc.Entities.CKKarne
     public class CkKarneLog
     {
         public int Id { get; set; }
+        public int SinavId { get; set; }
         public int Sinif { get; set; }
         public int Brans { get; set; }
         public int KullaniciId { get; set; }

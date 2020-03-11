@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using ODM.CKYazdirDb.Business;
+using ODM.CKYazdirDb.Entities;
 using ODM.CKYazdirDb.Library;
 using ODM.CKYazdirDb.Model;
 
@@ -187,6 +188,54 @@ namespace ODM.CKYazdirDb
             txtKitapcikTuru.Text = "";
             txtDogruCevaplar.Text = "";
             cbBranslar.Focus();
+        }
+
+        private void btnDosyadanYukle_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofData = new OpenFileDialog())
+            {
+                ofData.Reset();
+                ofData.ReadOnlyChecked = true;
+                ofData.Multiselect = true;
+                ofData.ShowReadOnly = true;
+                ofData.Filter = "Veri dosyası (*.txt;*.dat)|*.txt;*.dat";
+                ofData.Title = "Veri dosyasını seçiniz.";
+                ofData.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                ofData.CheckPathExists = true;
+
+                if (ofData.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        int a = 0;
+                        string[] lines = File.ReadAllLines(ofData.FileName, Encoding.UTF8);
+                        foreach (var s in lines)
+                        {
+                            string[] veri = s.Split('#');
+
+                            DogruCevap cvp = new DogruCevap()
+                            {
+                                Sinif = veri[0].ToInt32(),
+                                BransId = veri[1].ToInt32(),
+                                KitapcikTuru = veri[2],
+                                Cevaplar = veri[3]
+                            };
+                            a+=  dogruCevaplarManager.Insert(cvp);
+                        }
+
+                        MessageBox.Show(a+" kayıt yüklendi.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        CevaplariListele();
+                    }
+                    catch (Exception exception)
+                    {
+                        MessageBox.Show("Hata oluştu. " + exception.Message, "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    }
+                }
+                
+                ofData.Dispose();
+            }
+
         }
     }
 }

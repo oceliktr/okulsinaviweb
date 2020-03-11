@@ -22,9 +22,7 @@
                                 <ul class="nav nav-tabs">
                                     <li id="tabliSayfalar" runat="server" class="active"><a href="#ContentPlaceHolder1_Sayfalar" data-toggle="tab" aria-expanded="true"><i class="fa fa-fw fa-list-alt"></i>Evrak Ýndir</a></li>
                                     <li id="tabliKayit" runat="server"><a href="#ContentPlaceHolder1_Kayit" data-toggle="tab" aria-expanded="false"><i class="fa fa-fw fa-edit"></i>Kayýt Formu</a></li>
-                                    <li id="tabliEvrakGonder" runat="server" Visible="False"><a href="#ContentPlaceHolder1_EvrakGonder" data-toggle="tab" aria-expanded="false"><i class="fa fa-fw fa-edit"></i>Sýnav Evraký Gönder</a></li>
-                                    <li id="tabliEvrakGelenler" runat="server"><a href="#ContentPlaceHolder1_EvrakGelenler" data-toggle="tab" aria-expanded="false"><i class="fa fa-fw fa-edit"></i>Gelen Evraklar</a></li>
-                                </ul>
+                                 </ul>
                                 <div class="tab-content">
                                     <div class="tab-pane active" id="Sayfalar" runat="server">
 
@@ -33,7 +31,7 @@
                                                 <tr role="row">
                                                     <th>Sýra</th>
                                                     <th>Sýnav Evraðý</th>
-                                                    <th>Sýnav Adý</th>
+                                                    <th>Açýklama</th>
                                                     <th>Ýndirme Zamaný</th>
                                                     <th>Ýþlem</th>
                                                 </tr>
@@ -46,7 +44,7 @@
                                                                 <asp:Label ID="lblSira" runat="server" Text="Label"></asp:Label></td>
                                                             <td>
                                                                 <asp:LinkButton ID="lnkUrl" runat="server" CommandName="Indir" CommandArgument='<%#Eval("Id") %>'></asp:LinkButton></td>
-                                                            <td><%#Eval("SinavAdi")%> <i class="label label-primary pull-right">#<%#Eval("Id") %></i></td>
+                                                            <td><%#Eval("Aciklama")%> <i class="label label-primary pull-right">#<%#Eval("Id") %></i></td>
                                                             <td><%#Eval("BaslangicTarihi").ToDateTime().TarihYaz() %> - <%#Eval("BitisTarihi").ToDateTime().TarihYaz() %></td>
                                                             <td>
                                                                 <asp:LinkButton ID="lnkDuzenle" runat="server" CommandName="Duzenle" CommandArgument='<%#Eval("Id") %>'><i class="glyphicon glyphicon-edit"></i></asp:LinkButton>
@@ -66,10 +64,10 @@
 
                                                     <div class="form-group">
                                                         <label class="col-sm-2 control-label">
-                                                            Sýnav
-                                                            <asp:RequiredFieldValidator ControlToValidate="txtSinavAdi" ValidationGroup="form" ID="RequiredFieldValidator5" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
+                                                            Açýklama
+                                                            <asp:RequiredFieldValidator ControlToValidate="txtAciklama" ValidationGroup="form" ID="RequiredFieldValidator5" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
                                                         <div class="col-sm-4">
-                                                            <asp:TextBox ID="txtSinavAdi" MaxLength="50" CssClass="form-control" runat="server" ValidationGroup="form"></asp:TextBox>
+                                                            <asp:TextBox ID="txtAciklama" MaxLength="50" CssClass="form-control" runat="server" ValidationGroup="form"></asp:TextBox>
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -136,64 +134,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="tab-pane" id="EvrakGonder" runat="server">
-                                        <div class="box box-solid box-default">
-                                            <div class="box-body">
-                                                <div class="col-lg-5 form-horizontal">
-                                                    <div class="form-group">
-                                                        <label class="col-sm-2 control-label">Dosya</label>
-                                                        <div class="col-sm-10">
-                                                            <asp:FileUpload ID="fuEvrakGnder" CssClass="form-control" runat="server" placeholder="Fotoðraf seçiniz"></asp:FileUpload>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="col-sm-10 control-label">
-                                                            <asp:Literal ID="Literal2" runat="server"></asp:Literal></label>
-                                                        <div class="col-sm-2">
-                                                            <asp:HiddenField ID="HiddenField1" runat="server" Value="0" />
-                                                            <asp:Button ID="btnEvrakGonder" ValidationGroup="eg" CssClass="btn btn-primary pull-right" runat="server" Text="Yükle" OnClick="btnEvrakGonder_OnClick" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane" id="EvrakGelenler" runat="server">
-                                                                                    <div class="box-body">
-                                                <div class="form-group">
-                                                    <label class="col-sm-1 control-label">Sýnav</label>
-                                                    <div class="col-sm-2">
-                                                        <asp:DropDownList ID="ddlSinavId2" CssClass="form-control" runat="server" ValidationGroup="form" AutoPostBack="True" OnSelectedIndexChanged="ddlSinavId2_OnSelectedIndexChanged"></asp:DropDownList>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <table class="table table-bordered table-hover dataTable" role="grid">
-                                            <thead>
-                                                <tr role="row">
-                                                    <th>Sýra</th>
-                                                    <th>KurumAdý</th>
-                                                    <th>Dosya</th>
-                                                    <th>Ýþlem</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <asp:Repeater ID="rptGelenEvraklar" runat="server" OnItemDataBound="rptGelenEvraklar_OnItemDataBound" OnItemCommand="rptGelenEvraklar_OnItemCommand">
-                                                    <ItemTemplate>
-                                                        <tr role="row" class="odd">
-                                                            <td>
-                                                                <asp:Label ID="lblSira" runat="server" Text="Label"></asp:Label></td>
-                                                            <td><%#Eval("IlceAdi")%> - <%#Eval("KurumAdi")%> </td>
-                                                            <td><a href="<%#Eval("Dosya")%>"><%#Eval("Dosya")%></a> </td>
-                                                            <td>
-                                                                <asp:LinkButton ID="lnkSil" runat="server" CommandName="Sil" OnClientClick="return confirm('Silmek istediðinizden emin misiniz?');" CommandArgument='<%#Eval("Id") %>'><i class="glyphicon glyphicon-trash"></i></asp:LinkButton>
-                                                            </td>
-                                                        </tr>
-                                                    </ItemTemplate>
-                                                </asp:Repeater>
-                                            </tbody>
-                                        </table>
-
                                     </div>
                                 </div>
                             </div>

@@ -136,9 +136,9 @@
 
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="footer" ID="con2">
-    <script src="plugins/knob/jquery.knob.js"></script>
+    <script src="/Content/plugins/knob/jquery.knob.js"></script>
     <!-- Sparkline -->
-    <script src="plugins/sparkline/jquery.sparkline.min.js"></script>
+    <script src="/Content/plugins/sparkline/jquery.sparkline.min.js"></script>
     <!-- page script -->
     <script>
         $(function () {

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ODM.CKYazdirDb.DAL;
+using ODM.CKYazdirDb.Entities;
 
 
-namespace ODM.CKYazdirDb
+namespace ODM.CKYazdirDb.Business
 {
    public class KutukManager:ManagerBase<Kutuk>
     {

@@ -82,17 +82,6 @@
                                                             </div>
                                                             <div class="form-group">
                                                                 <label class="col-sm-3 control-label">
-                                                                    E-mail Adresi
-                                                                   <asp:RequiredFieldValidator ID="RequiredFieldValidator6" runat="server" ControlToValidate="txtEpostaAdresi" Display="Dynamic" ErrorMessage="RequiredFieldValidator" ForeColor="Red"
-                                                                       SetFocusOnError="True" ValidationGroup="form">*</asp:RequiredFieldValidator>
-                                                                    <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="txtEpostaAdresi" Display="Dynamic" ErrorMessage="RegularExpressionValidator"
-                                                                        ForeColor="Red" SetFocusOnError="True" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" form="iletisimMesaj">*</asp:RegularExpressionValidator></label>
-                                                                <div class="col-sm-9">
-                                                                    <asp:TextBox ID="txtEpostaAdresi" CssClass="form-control" runat="server" placeholder="E-posta Adresi" ValidationGroup="form"></asp:TextBox>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="col-sm-3 control-label">
                                                                     İlçe
                                                                     <asp:RequiredFieldValidator ControlToValidate="ddlIlce" ValidationGroup="form" ID="RequiredFieldValidator3" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
                                                                 <div class="col-sm-9">

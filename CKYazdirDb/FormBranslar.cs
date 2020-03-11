@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ODM.CKYazdirDb.Business;
+using ODM.CKYazdirDb.Entities;
 using ODM.CKYazdirDb.Library;
 using ODM.CKYazdirDb.Model;
 

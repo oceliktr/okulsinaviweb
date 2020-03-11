@@ -1,5 +1,4 @@
-﻿using CKYazdir;
-using Microsoft.VisualBasic;
+﻿using Microsoft.VisualBasic;
 using ODM.CKYazdirDb.Business;
 using System;
 using System.Collections.Generic;

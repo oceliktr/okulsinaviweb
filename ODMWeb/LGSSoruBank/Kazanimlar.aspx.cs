@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using DAL;
 
 public partial class LGSSoruBank_Kazanimlar : System.Web.UI.Page
 {
@@ -35,7 +34,7 @@ public partial class LGSSoruBank_Kazanimlar : System.Web.UI.Page
     {
         int bransId = ddlBrans.SelectedValue.ToInt32();
         int sinif = ddlSinif.SelectedValue.ToInt32();
-        LgsKazanimlarDB veriDb = new LgsKazanimlarDB();
+        LgsKazanimlarDb veriDb = new LgsKazanimlarDb();
         rptKayitlar.DataSource = veriDb.KayitlariGetir(bransId, sinif);
         rptKayitlar.DataBind();
     }
@@ -53,7 +52,7 @@ public partial class LGSSoruBank_Kazanimlar : System.Web.UI.Page
 
             if (kontrol == false)
             {
-                LgsKazanimlarDB kDb = new LgsKazanimlarDB();
+                LgsKazanimlarDb kDb = new LgsKazanimlarDb();
                 kDb.KayitSil(id);
 
                 Master.UyariIslemTamam("Kazanım başarıyla silindi.", phUyari);

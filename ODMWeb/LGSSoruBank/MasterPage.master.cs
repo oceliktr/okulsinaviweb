@@ -1,8 +1,7 @@
-﻿using System;
+﻿using ODM;
+using System;
 using System.Web;
 using System.Web.UI.WebControls;
-using DAL;
-using ODM;
 
 public partial class LGSSoruBank_MasterPage : System.Web.UI.MasterPage
 {
@@ -62,7 +61,7 @@ public partial class LGSSoruBank_MasterPage : System.Web.UI.MasterPage
         string sitil = "skin-green-light";
         string kutu = "";
         string sidebar = "";
-        ltrSitil.Text = string.Format("<link rel=\"stylesheet\" href=\"/dist/css/skins/{0}.css\" />", sitil);
+        ltrSitil.Text = string.Format("<link rel=\"stylesheet\" href=\"/Content/dist/css/skins/{0}.css\" />", sitil);
         string body = string.Format("{0} {1} {2}  sidebar-mini", sitil, kutu, sidebar);
         myBody.Attributes.Add("class", body); //sabit genişlik
 
@@ -123,7 +122,7 @@ public partial class LGSSoruBank_MasterPage : System.Web.UI.MasterPage
     }
     protected void Page_Load(object sender, EventArgs e)
     {
-        string avatar = "/images/avatar.png";
+        string avatar = "/Content/images/avatar.png";
         if (IsPostBack) return;
         HttpCookie httpCookie = Request.Cookies["uyeCookie"];
         if (httpCookie == null) return;

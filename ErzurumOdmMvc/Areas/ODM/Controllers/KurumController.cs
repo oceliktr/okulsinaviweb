@@ -13,7 +13,7 @@ using ErzurumOdmMvc.Filter;
 
 namespace ErzurumOdmMvc.Areas.ODM.Controllers
 {
-    [YetkiKontrol(Roles = "Admin,Root")]
+    [YetkiKontrol(Roles = "Root")]
     public class KurumController : Controller
     {
         // GET: ODM/Kurum
@@ -116,7 +116,6 @@ namespace ErzurumOdmMvc.Areas.ODM.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Guncelle(KurumKayitModel data)
         {
-
             KurumTurleri kurumTurleri = new KurumTurleri();
             KurumManager kurumManager = new KurumManager();
             Kurum kurum = kurumManager.Find(data.Kurum.Id);
@@ -202,6 +201,14 @@ namespace ErzurumOdmMvc.Areas.ODM.Controllers
             KurumManager kurumManager = new KurumManager();
 
             IEnumerable<Kurum> ilceler = kurumManager.IlceKurumIdleri(ilce).Result;
+            return Json(ilceler, JsonRequestBehavior.AllowGet);
+        }
+        [AllowAnonymous]
+        public JsonResult Kurumlar(string tur)
+        {
+            KurumManager kurumManager = new KurumManager();
+
+            IEnumerable<Kurum> ilceler = kurumManager.Kurumlar(tur).Result;
             return Json(ilceler, JsonRequestBehavior.AllowGet);
         }
     }

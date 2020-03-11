@@ -51,6 +51,9 @@
     <Reference Include="Dapper.Contrib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.Contrib.2.0.30\lib\net461\Dapper.Contrib.dll</HintPath>
     </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.1, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13.1\lib\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data, Version=8.0.19.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -317,6 +320,9 @@
     <Content Include="Areas\ODM\Content\dist\js\pages\dashboard3.js" />
     <Content Include="Areas\ODM\Content\dropzone.min.css" />
     <Content Include="Areas\ODM\Content\dropzone.min.js" />
+    <Content Include="Areas\ODM\Content\images\icon-admin.png" />
+    <Content Include="Areas\ODM\Content\images\icon_admin.ico" />
+    <Content Include="Areas\ODM\Content\images\Odm_logo_seffaf.ico" />
     <Content Include="Areas\ODM\Content\images\web_sayfa_logo.jpg" />
     <Content Include="Areas\ODM\Content\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Areas\ODM\Content\plugins\bootstrap-switch\css\bootstrap-toggle.min.css" />
@@ -331,6 +337,12 @@
     <Content Include="Areas\ODM\Content\plugins\bootstrap\js\bootstrap.bundle.min.js" />
     <Content Include="Areas\ODM\Content\plugins\bootstrap\js\bootstrap.js" />
     <Content Include="Areas\ODM\Content\plugins\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\daterangepicker\daterangepicker.css" />
+    <Content Include="Areas\ODM\Content\plugins\daterangepicker\daterangepicker.js" />
+    <Content Include="Areas\ODM\Content\plugins\daterangepicker\moment.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\daterangepicker\package.js" />
+    <Content Include="Areas\ODM\Content\plugins\daterangepicker\website.css" />
+    <Content Include="Areas\ODM\Content\plugins\daterangepicker\website.js" />
     <Content Include="Areas\ODM\Content\plugins\ekko-lightbox\ekko-lightbox.css" />
     <Content Include="Areas\ODM\Content\plugins\ekko-lightbox\ekko-lightbox.js" />
     <Content Include="Areas\ODM\Content\plugins\ekko-lightbox\ekko-lightbox.min.js" />
@@ -353,11 +365,48 @@
     <Content Include="Areas\ODM\Content\plugins\fontawesome-free\webfonts\fa-solid-900.svg" />
     <Content Include="Areas\ODM\Content\plugins\icheck-bootstrap\icheck-bootstrap.css" />
     <Content Include="Areas\ODM\Content\plugins\icheck-bootstrap\icheck-bootstrap.min.css" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\bindings\inputmask.binding.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\dependencyLibs\inputmask.dependencyLib.jquery.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\dependencyLibs\inputmask.dependencyLib.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\global\window.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\inputmask.date.extensions.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\inputmask.extensions.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\inputmask.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\inputmask.numeric.extensions.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\inputmask\jquery.inputmask.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\jquery.inputmask.bundle.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\bindings\inputmask.binding.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\dependencyLibs\inputmask.dependencyLib.jquery.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\dependencyLibs\inputmask.dependencyLib.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\global\window.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\inputmask.date.extensions.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\inputmask.extensions.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\inputmask.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\inputmask.numeric.extensions.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\inputmask\jquery.inputmask.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\inputmask\min\jquery.inputmask.bundle.min.js" />
     <Content Include="Areas\ODM\Content\plugins\jquery\core.js" />
     <Content Include="Areas\ODM\Content\plugins\jquery\jquery.js" />
     <Content Include="Areas\ODM\Content\plugins\jquery\jquery.min.js" />
     <Content Include="Areas\ODM\Content\plugins\jquery\jquery.slim.js" />
     <Content Include="Areas\ODM\Content\plugins\jquery\jquery.slim.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\moment\locales.js" />
+    <Content Include="Areas\ODM\Content\plugins\moment\locales.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\moment\locale\en-au.js" />
+    <Content Include="Areas\ODM\Content\plugins\moment\locale\tr.js" />
+    <Content Include="Areas\ODM\Content\plugins\moment\moment-with-locales.js" />
+    <Content Include="Areas\ODM\Content\plugins\moment\moment-with-locales.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\moment\moment.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\select2\css\select2.css" />
+    <Content Include="Areas\ODM\Content\plugins\select2\css\select2.min.css" />
+    <Content Include="Areas\ODM\Content\plugins\select2\js\i18n\en.js" />
+    <Content Include="Areas\ODM\Content\plugins\select2\js\i18n\tr.js" />
+    <Content Include="Areas\ODM\Content\plugins\select2\js\select2.full.js" />
+    <Content Include="Areas\ODM\Content\plugins\select2\js\select2.full.min.js" />
+    <Content Include="Areas\ODM\Content\plugins\select2\js\select2.js" />
+    <Content Include="Areas\ODM\Content\plugins\select2\js\select2.min.js" />
     <Content Include="Areas\ODM\Content\plugins\summernote\lang\summernote-tr-TR.js" />
     <Content Include="Areas\ODM\Content\plugins\summernote\lang\summernote-tr-TR.min.js" />
     <Content Include="Areas\ODM\Content\plugins\summernote\summernote-bs4.css" />
@@ -438,11 +487,18 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\ODM\Controllers\BransController.cs" />
-    <Compile Include="Areas\ODM\Controllers\DefaultController.cs" />
+    <Compile Include="Areas\ODM\Controllers\CkKutukController.cs" />
+    <Compile Include="Areas\ODM\Controllers\CkYazilimController.cs" />
+    <Compile Include="Areas\ODM\Controllers\YonetimController.cs" />
     <Compile Include="Areas\ODM\Controllers\GirisController.cs" />
     <Compile Include="Areas\ODM\Controllers\IlceController.cs" />
+    <Compile Include="Areas\ODM\Controllers\KazanimKarneController.cs" />
     <Compile Include="Areas\ODM\Controllers\KullaniciController.cs" />
     <Compile Include="Areas\ODM\Controllers\KurumController.cs" />
+    <Compile Include="Areas\ODM\Controllers\SinavController.cs" />
+    <Compile Include="Areas\ODM\Controllers\SinavEvrakController.cs" />
+    <Compile Include="Areas\ODM\Model\CevaplarModel.cs" />
+    <Compile Include="Areas\ODM\Model\KazanimKarneViewModel.cs" />
     <Compile Include="Areas\ODM\Model\KullaniciBilgileriViewModel.cs" />
     <Compile Include="Areas\ODM\Model\BransIstatistik.cs" />
     <Compile Include="Areas\ODM\Model\GirisViewModel.cs" />
@@ -451,19 +507,36 @@
     <Compile Include="Areas\ODM\Model\KurumKayitModel.cs" />
     <Compile Include="Areas\ODM\Model\KurumlarViewModel.cs" />
     <Compile Include="Areas\ODM\Model\SifremiUnuttumViewModel.cs" />
+    <Compile Include="Areas\ODM\Model\SinavEvrakViewModel.cs" />
     <Compile Include="Areas\ODM\ODMAreaRegistration.cs" />
     <Compile Include="Business\Abstract\IDataAccess.cs" />
     <Compile Include="Business\Abstract\ManagerBase.cs" />
     <Compile Include="Business\Abstract\RandomExtensions.cs" />
     <Compile Include="Business\BransManager.cs" />
     <Compile Include="Business\BusinessResult.cs" />
+    <Compile Include="Business\CkKarne\CkIlIlceOrtalamasiManager.cs" />
+    <Compile Include="Business\CkKarne\CkKarneBranslarManager.cs" />
+    <Compile Include="Business\CkKarne\CkKarneDogruCevaplarManager.cs" />
+    <Compile Include="Business\CkKarne\CkKarneKazanimlarManager.cs" />
+    <Compile Include="Business\CkKarne\CkKarneKutukManager.cs" />
+    <Compile Include="Business\CkKarne\CkKarneLogManager.cs" />
+    <Compile Include="Business\CkKarne\CkKarneSonuclariManager.cs" />
+    <Compile Include="Business\CkKarne\CkSinavAdiManager.cs" />
     <Compile Include="Business\IlceManager.cs" />
     <Compile Include="Business\KullaniciManager.cs" />
     <Compile Include="Business\KurumManager.cs" />
+    <Compile Include="Business\LgsSoruManager.cs" />
+    <Compile Include="Business\SinavEvrakManager.cs" />
+    <Compile Include="Business\SinavManager.cs" />
     <Compile Include="Business\SiteAyarManager.cs" />
     <Compile Include="Business\ViewManager\BransIstatistikManager.cs" />
     <Compile Include="Business\ViewManager\IlceKurumViewManager.cs" />
     <Compile Include="Business\ViewManager\KullaniciBilgileriViewManager.cs" />
+    <Compile Include="CKKarneModel\DegerlendirmeTurleri.cs" />
+    <Compile Include="CKKarneModel\KarneModel.cs" />
+    <Compile Include="CKKarneModel\PdfIslemleri.cs" />
+    <Compile Include="CKKarneModel\TableModel.cs" />
+    <Compile Include="CKKarneModel\TekSayfaliKarne.cs" />
     <Compile Include="Common\Enums\Ayarlar.cs" />
     <Compile Include="Common\Enums\KullanciHesap.cs" />
     <Compile Include="Common\Enums\KullaniciSeviye.cs" />
@@ -487,6 +560,7 @@
     <Compile Include="Common\Mail\MailManager.cs" />
     <Compile Include="Common\Mail\MailResult.cs" />
     <Compile Include="Common\Mesajlar\UyariMesaji.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="DAL\Abstract\IDapperRepository.cs" />
     <Compile Include="DAL\Dapper\Repository.cs" />
     <Compile Include="Entities\Brans.cs" />
@@ -498,14 +572,14 @@
     <Compile Include="Entities\CKKarne\CkKarneLog.cs" />
     <Compile Include="Entities\CKKarne\CkKarneSonuclari.cs" />
     <Compile Include="Entities\CKKarne\CkSinavAdi.cs" />
-    <Compile Include="Entities\CKKarne\CkSinavEvrak.cs" />
+    <Compile Include="Entities\SinavEvrak.cs" />
     <Compile Include="Entities\Ilce.cs" />
     <Compile Include="Entities\Kullanici.cs" />
     <Compile Include="Entities\Kurum.cs" />
     <Compile Include="Entities\Sinav.cs" />
     <Compile Include="Entities\SiteAyar.cs" />
-    <Compile Include="Entities\SoruBank\LgsKazanimlar.cs" />
-    <Compile Include="Entities\SoruBank\LgsSorular.cs" />
+    <Compile Include="Entities\SoruBank\LgsKazanim.cs" />
+    <Compile Include="Entities\SoruBank\LgsSoru.cs" />
     <Compile Include="Filter\YetkiKontrol.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -513,8 +587,9 @@
     <Compile Include="Library\CacheHelper.cs" />
     <Compile Include="Library\CompressGzip.cs" />
     <Compile Include="Library\CurrentSession.cs" />
-    <Compile Include="Library\FotografResult.cs" />
-    <Compile Include="Library\FotografYukle.cs" />
+    <Compile Include="Library\DosyaResult.cs" />
+    <Compile Include="Library\DosyaYukle.cs" />
+    <Compile Include="Library\LinqMetods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -523,8 +598,8 @@
     <Content Include="Areas\ODM\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\ODM\Views\Giris\Index.cshtml" />
     <Content Include="Areas\ODM\Views\Shared\_PartialAdminMenu.cshtml" />
-    <Content Include="Areas\ODM\Views\Default\Index.cshtml" />
-    <Content Include="Areas\ODM\Views\Default\Ayarlar.cshtml" />
+    <Content Include="Areas\ODM\Views\Yonetim\Index.cshtml" />
+    <Content Include="Areas\ODM\Views\Yonetim\Ayarlar.cshtml" />
     <Content Include="Areas\ODM\Views\Kullanici\Bilgilerim.cshtml" />
     <Content Include="Areas\ODM\Views\Brans\Index.cshtml" />
     <Content Include="Areas\ODM\Views\Brans\_Branslar.cshtml" />
@@ -533,7 +608,20 @@
     <Content Include="Areas\ODM\Views\Kullanici\_KullaniciListesi.cshtml" />
     <Content Include="Areas\ODM\Views\Kullanici\Index.cshtml" />
     <Content Include="Areas\ODM\Views\Kullanici\_KullaniciBilgileri.cshtml" />
+    <Content Include="Areas\ODM\Views\Kullanici\_KayitFormu.cshtml" />
+    <Content Include="Areas\ODM\Views\Sinav\Index.cshtml" />
+    <Content Include="Areas\ODM\Views\Sinav\_Sinavlar.cshtml" />
+    <Content Include="Areas\ODM\Views\Ilce\Index.cshtml" />
+    <Content Include="Areas\ODM\Views\SinavEvrak\Index.cshtml" />
+    <Content Include="Areas\ODM\Views\SinavEvrak\KayitFormu.cshtml" />
+    <Content Include="Areas\ODM\Content\plugins\daterangepicker\bower.json" />
+    <Content Include="Areas\ODM\Views\Yonetim\Yetkisiz.cshtml" />
+    <Content Include="Areas\ODM\Views\SinavEvrak\Indir.cshtml" />
+    <Content Include="Areas\ODM\Views\CkYazilim\Index.cshtml" />
+    <Content Include="Areas\ODM\Views\KazanimKarne\Index.cshtml" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Default\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -543,6 +631,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\ODM\Views\CkKutuk\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
+﻿using ErzurumOdmMvc.Business;
 using ErzurumOdmMvc.Business.ViewManager;
-using ErzurumOdmMvc.Common.Library;
 using ErzurumOdmMvc.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using ErzurumOdmMvc.Filter;
 
 namespace ErzurumOdmMvc.Areas.ODM.Controllers
 {
+    [YetkiKontrol(Roles = "Root")]
     public class BransController : Controller
     {
         // GET: ODM/Brans

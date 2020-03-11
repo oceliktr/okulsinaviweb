@@ -54,6 +54,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.cbSinif = new System.Windows.Forms.ComboBox();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnDosyadanYukle = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKazanimlar)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -291,11 +293,37 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
             // 
+            // btnDosyadanYukle
+            // 
+            this.btnDosyadanYukle.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDosyadanYukle.Location = new System.Drawing.Point(788, 812);
+            this.btnDosyadanYukle.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnDosyadanYukle.Name = "btnDosyadanYukle";
+            this.btnDosyadanYukle.Size = new System.Drawing.Size(146, 40);
+            this.btnDosyadanYukle.TabIndex = 178;
+            this.btnDosyadanYukle.Text = "Dosyadan Yükle";
+            this.btnDosyadanYukle.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnDosyadanYukle.UseVisualStyleBackColor = true;
+            this.btnDosyadanYukle.Click += new System.EventHandler(this.btnDosyadanYukle_Click);
+            // 
+            // label8
+            // 
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(168)), true);
+            this.label8.Location = new System.Drawing.Point(12, 753);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(924, 99);
+            this.label8.TabIndex = 177;
+            this.label8.Text = "Derskodu#KazanımNo#Kazanım#ÖğrenciKazanım#Soruları formatında verileri dosyadan y" +
+    "üklemek için \'Dosyadan Yükle\' butonunu kullanınınz.\r\nÖrnek:\r\n3#İTA.8.2.4#..... g" +
+    "elişmeleri kavrar#Batı Çephesi#A8,B1";
+            // 
             // FormKazanimlar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(946, 762);
+            this.ClientSize = new System.Drawing.Size(946, 861);
+            this.Controls.Add(this.btnDosyadanYukle);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.cbSinif);
@@ -354,5 +382,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem seçiliSınıfKazanımlarınıSilToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tümünüSilToolStripMenuItem;
+        private System.Windows.Forms.Button btnDosyadanYukle;
+        private System.Windows.Forms.Label label8;
     }
 }

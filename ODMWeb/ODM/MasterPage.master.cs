@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Web;
 using System.Web.UI.WebControls;
-using DAL;
 
 namespace ODM
 {
@@ -63,7 +62,7 @@ namespace ODM
             string sitil = "skin-purple";
             string kutu = "";
             string sidebar = "";
-            ltrSitil.Text = string.Format("<link rel=\"stylesheet\" href=\"/dist/css/skins/{0}.css\" />", sitil);
+            ltrSitil.Text = string.Format("<link rel=\"stylesheet\" href=\"/Content/dist/css/skins/{0}.css\" />", sitil);
             string body = string.Format("{0} {1} {2}  sidebar-mini", sitil, kutu, sidebar);
             myBody.Attributes.Add("class", body); //sabit genişlik
 
@@ -118,7 +117,7 @@ namespace ODM
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-            string avatar = "/images/avatar.png";
+            string avatar = "/Content/images/avatar.png";
             if (IsPostBack) return;
             HttpCookie httpCookie = Request.Cookies["uyeCookie"];
             if (httpCookie == null) return;

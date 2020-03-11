@@ -5,6 +5,31 @@ namespace ErzurumOdmMvc.Common.Library
 {
     public static class StringIslemleri
     {
+        public static string RastgeleMetinUret(int adet)
+        {
+            Random random = new Random();
+            string s = "";
+            for (int i = 0; i < adet; i++)
+            {
+                int a = random.Next(2);
+                switch (a)
+                {
+                    case 0:
+                        char c = Convert.ToChar(65 + random.Next(26));
+                        s = string.Concat(s, Convert.ToString(c));
+                        break;
+                    default:
+                        s = string.Concat(s, random.Next(10).ToString());
+                        break;
+                }
+            }
+
+            return s;
+        }
+        public static string YeniGuid()
+        {
+            return Guid.NewGuid().ToString().Replace("-", "").ToUpper();
+        }
         public static string ToTemizMetin(this string s)
         {
             s = ToTemizMetin(s, false);
@@ -78,6 +103,26 @@ namespace ErzurumOdmMvc.Common.Library
           
 
             return value;
+        }
+
+        public static string BuyukHarfeCevir(this string metin)
+        {
+            try
+            {
+                metin = metin.Replace("i", "İ");
+                metin = metin.Replace("ç", "Ç");
+                metin = metin.Replace("ğ", "Ğ");
+                metin = metin.Replace("ö", "Ö");
+                metin = metin.Replace("ş", "Ş");
+                metin = metin.Replace("ü", "Ü");
+                CultureInfo cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
+                TextInfo textInfo = cultureInfo.TextInfo;
+                return textInfo.ToUpper(metin);
+            }
+            catch (Exception)
+            {
+                return metin;
+            }
         }
     }
 }

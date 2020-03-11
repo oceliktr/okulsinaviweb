@@ -1,11 +1,10 @@
-﻿using DAL;
+﻿using CKKarneModel;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
@@ -76,7 +75,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
 
 
             CkKarneKutukDB kutukDb = new CkKarneKutukDB();
-            rptKurumlar.DataSource = kutukDb.KayitlariGetir(sinavId, info.KurumKodu.ToInt32(),sinif);
+            rptKurumlar.DataSource = kutukDb.KayitlariGetir(sinavId, info.KurumKodu.ToInt32(), sinif);
             rptKurumlar.DataBind();
 
         }
@@ -85,11 +84,11 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
 
 
             CkKarneKutukDB kutukDb = new CkKarneKutukDB();
-            rptKurumlar.DataSource = kutukDb.KayitlariGetir(sinavId, ilceAdi,sinif);
+            rptKurumlar.DataSource = kutukDb.KayitlariGetir(sinavId, ilceAdi, sinif);
             rptKurumlar.DataBind();
 
-          
-            if (!string.IsNullOrEmpty(ilceAdi) && sinavId != 0 && rptKurumlar.Items.Count>0)
+
+            if (!string.IsNullOrEmpty(ilceAdi) && sinavId != 0 && rptKurumlar.Items.Count > 0)
                 ilceTr.Visible = true;
             else
             {
@@ -144,7 +143,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
 
         CkSinavAdiDB sinavDb = new CkSinavAdiDB();
         CkSinavAdiInfo sinav = sinavDb.KayitBilgiGetir(sinavId);
-     
+
 
 
         CkKarneKazanimlardB kazanimDb = new CkKarneKazanimlardB();
@@ -207,169 +206,184 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
                 //ÖĞRENCİ KARNESİ
                 CkKarneKutukDB kutukDb = new CkKarneKutukDB();
                 List<CkKarneKutukInfo> ogrenciListesi = kutukDb.KayitlariDizeGetir(sinavId, kurumKodu).Where(x => x.Sinifi == sinif && x.Sube == sube.Sube).ToList();
-                
+
                 CkKarneDogruCevaplarDB dogruCevapDb = new CkKarneDogruCevaplarDB();
                 List<CkKarneDogruCevaplarInfo> dogruCevapList = dogruCevapDb.KayitlariDizeGetir(sinavId);
 
 
                 PdfIslemleri pdf = new PdfIslemleri();
 
-      
+
 
                 foreach (var kutuk in ogrenciListesi)
                 {
-
-                    if (kutuk.KitapcikTuru != "")
+                    if (!string.IsNullOrEmpty(kutuk.Cevaplar))
                     {
-                        if (kutuk.KatilimDurumu != "0")
+                        string[] kTuruList = kutuk.Cevaplar.Split('#'); //cevaplarda ikinci bölüm kitapçık türünü ifade eder
+                        List<CevaplarModel> ogrCevaplarList = new List<CevaplarModel>();
+                        for (int i = 0; i < kTuruList.Length; i += 3)
                         {
-                            #region Başlık
+                            //if (i == 2 || i % 3 == 2) //her ikinci bölüm kitapçık türünü ifade eder.
+                            //{
+                            //    if (!kTuru.Contains(kTuruList[i]))
+                            //        kTuru = kTuruList[i] + " ";
+                            //}
+                            ogrCevaplarList.Add(new CevaplarModel(kTuruList[i].ToInt32(), kTuruList[i + 1], kTuruList[i + 2]));
 
-                            pdf.addParagraph(doc, "ERZURUM  İL MİLLİ EĞİTİM MÜDÜRLÜĞÜ", hizalama: Element.ALIGN_CENTER);
-                            pdf.addParagraph(doc, "Ölçme Değerlendirme Merkezi", hizalama: Element.ALIGN_CENTER);
-                            pdf.addParagraph(doc, string.Format("{0} ÖĞRENCİ KARNESİ", sinav.SinavAdi.BuyukHarfeCevir()), hizalama: Element.ALIGN_CENTER);
-
-                            #endregion
-
-                            #region Öğrenci Bilgileri Tablosu
-
-                            PdfPTable tableOgrenciBilgileri = new PdfPTable(2)
+                        }
+                        if (ogrCevaplarList.DistinctBy(x => x.KitapcikTuru).Count() > 0)
+                        {
+                            string kTuru = "";
+                            foreach (var kt in ogrCevaplarList.DistinctBy(x => x.KitapcikTuru))
                             {
-                                TotalWidth = 522f, // puan cinsinden tablonun gerçek genişliği
-                                LockedWidth = true, // tablonun mutlak genişliğini sabitle
-                                SpacingBefore = 20f, //öncesinde boşluk miktarı
-                                SpacingAfter = 0f, //sonrasında boşluk miktarı
-                                HorizontalAlignment = Element.ALIGN_LEFT
-                            };
+                                kTuru += kt.KitapcikTuru + " ";
+                            }
 
-                            //   float[] widthsOB = { 75f, 352f, 20f, 20f, 20f, 20f, 20f };
-                            float[] widthsOB = { 75f, 452f };
-                            tableOgrenciBilgileri.SetWidths(widthsOB);
-
-
-                            pdf.addCell(tableOgrenciBilgileri, "ÖĞRENCİ BİLGİLERİ", colspan: 2, fontSize: 6,
-                                bgColor: PdfIslemleri.Renkler.Gri, hizalama: Element.ALIGN_CENTER,
-                                fontStyle: Font.BOLD);
-
-                            pdf.addCell(tableOgrenciBilgileri, "ADI SOYADI :", hizalama: Element.ALIGN_RIGHT);
-                            pdf.addCell(tableOgrenciBilgileri, string.Format("{0} {1} ({2} Kitapçığı)", kutuk.Adi, kutuk.Soyadi, kutuk.KitapcikTuru));
-
-                            pdf.addCell(tableOgrenciBilgileri, "İLÇESİ / OKULU :", hizalama: Element.ALIGN_RIGHT);
-                            pdf.addCell(tableOgrenciBilgileri,
-                                string.Format("{0} / {1}", kutuk.IlceAdi, kutuk.KurumAdi));
-
-                            pdf.addCell(tableOgrenciBilgileri, "SINIFI / ŞUBE :", hizalama: Element.ALIGN_RIGHT);
-                            pdf.addCell(tableOgrenciBilgileri, string.Format("{0} / {1}", kutuk.Sinifi, kutuk.Sube));
-                            //  pdf.addCell(tableOgrenciBilgileri, "");
-
-                            doc.Add(tableOgrenciBilgileri);
-
-                            //pdf.addParagraph(doc, "SS: Soru Sayısı    D: Doğru Cevap Sayısı   Y: Yanlış Cevap Sayısı   B: Boş Sayısı   KT: Kitapçık Türü", fontSize: 6, fontStil: Font.ITALIC, hizalama: Element.ALIGN_RIGHT);
-
-                            #endregion
-
-                            foreach (var brans in branslar)
+                            if (kutuk.KatilimDurumu != "0")
                             {
-                                CkKarneDogruCevaplarInfo dogruCvplar = dogruCevapList.FirstOrDefault(x => x.Sinif == sinif && x.BransId == brans.BransId && x.KitapcikTuru == kutuk.KitapcikTuru);
+                                #region Başlık
 
-                                if (dogruCvplar != null)  //Sınavda sorulmayan dersleri ayırmak için suni kontrol
+                                pdf.addParagraph(doc, "ERZURUM  İL MİLLİ EĞİTİM MÜDÜRLÜĞÜ", hizalama: Element.ALIGN_CENTER);
+                                pdf.addParagraph(doc, "Ölçme Değerlendirme Merkezi", hizalama: Element.ALIGN_CENTER);
+                                pdf.addParagraph(doc, string.Format("{0} ÖĞRENCİ KARNESİ", sinav.SinavAdi.BuyukHarfeCevir()), hizalama: Element.ALIGN_CENTER);
+
+                                #endregion
+
+                                #region Öğrenci Bilgileri Tablosu
+
+                                PdfPTable tableOgrenciBilgileri = new PdfPTable(2)
                                 {
-                                    List<CkKarneKazanimlarInfo> kazanimlar = kazanimList.Where(x => x.BransId == brans.BransId && x.Sinif == sinif).ToList();
+                                    TotalWidth = 522f, // puan cinsinden tablonun gerçek genişliği
+                                    LockedWidth = true, // tablonun mutlak genişliğini sabitle
+                                    SpacingBefore = 20f, //öncesinde boşluk miktarı
+                                    SpacingAfter = 0f, //sonrasında boşluk miktarı
+                                    HorizontalAlignment = Element.ALIGN_LEFT
+                                };
+
+                                //   float[] widthsOB = { 75f, 352f, 20f, 20f, 20f, 20f, 20f };
+                                float[] widthsOB = { 75f, 452f };
+                                tableOgrenciBilgileri.SetWidths(widthsOB);
 
 
-                                    string ogrenciCevabi = "";
-                                    string[] cevapBilgisi = kutuk.Cevaplar.Split('#');
-                                    for (int t = 0; t < cevapBilgisi.Length - 1; t += 2)
+                                pdf.addCell(tableOgrenciBilgileri, "ÖĞRENCİ BİLGİLERİ", colspan: 2, fontSize: 6,
+                                    bgColor: PdfIslemleri.Renkler.Gri, hizalama: Element.ALIGN_CENTER,
+                                    fontStyle: Font.BOLD);
+
+                                pdf.addCell(tableOgrenciBilgileri, "ADI SOYADI :", hizalama: Element.ALIGN_RIGHT);
+                                pdf.addCell(tableOgrenciBilgileri, string.Format("{0} {1} (Kitapçık Türü: {2})", kutuk.Adi, kutuk.Soyadi, kTuru));
+
+                                pdf.addCell(tableOgrenciBilgileri, "İLÇESİ / OKULU :", hizalama: Element.ALIGN_RIGHT);
+                                pdf.addCell(tableOgrenciBilgileri,
+                                    string.Format("{0} / {1}", kutuk.IlceAdi, kutuk.KurumAdi));
+
+                                pdf.addCell(tableOgrenciBilgileri, "SINIFI / ŞUBE :", hizalama: Element.ALIGN_RIGHT);
+                                pdf.addCell(tableOgrenciBilgileri, string.Format("{0} / {1}", kutuk.Sinifi, kutuk.Sube));
+                                //  pdf.addCell(tableOgrenciBilgileri, "");
+
+                                doc.Add(tableOgrenciBilgileri);
+
+                                //pdf.addParagraph(doc, "SS: Soru Sayısı    D: Doğru Cevap Sayısı   Y: Yanlış Cevap Sayısı   B: Boş Sayısı   KT: Kitapçık Türü", fontSize: 6, fontStil: Font.ITALIC, hizalama: Element.ALIGN_RIGHT);
+
+                                #endregion
+
+                                foreach (var brans in branslar)
+                                {
+                                    var kitapcikTuru = ogrCevaplarList.FirstOrDefault(x => x.BransId == brans.BransId);
+
+                                    CkKarneDogruCevaplarInfo dogruCvplar = dogruCevapList.FirstOrDefault(x => x.Sinif == sinif && x.BransId == brans.BransId && x.KitapcikTuru == kitapcikTuru.KitapcikTuru);
+
+                                    if (dogruCvplar != null)  //Sınavda sorulmayan dersleri ayırmak için suni kontrol
                                     {
-                                        int dersKodu = cevapBilgisi[t].ToInt32();
-                                        if (dersKodu == brans.BransId)
-                                            ogrenciCevabi = cevapBilgisi[t + 1];
-                                    }
-
-                                    int soruSayisi = dogruCvplar.Cevaplar.Length;
-
-                                    #region Kazamılar
-
-                                    PdfPTable tableKazanimlar = new PdfPTable(4)
-                                    {
-                                        TotalWidth = 522f, // puan cinsinden tablonun gerçek genişliği
-                                        LockedWidth = true, // tablonun mutlak genişliğini sabitle
-                                        SpacingBefore = 10f, //öncesinde boşluk miktarı
-                                        SpacingAfter = 0f, //sonrasında boşluk miktarı
-                                        HorizontalAlignment = Element.ALIGN_LEFT
-                                    };
-
-                                    float[] widthsKazanim = { 40f, 40f, 40f, 407f };
-
-                                    tableKazanimlar.SetWidths(widthsKazanim);
-
-                                   
-
-                                    //Kazanım Karnesi 
-                                    pdf.addCell(tableKazanimlar, "S. No", bgColor: PdfIslemleri.Renkler.Gri,
-                                        hizalama: Element.ALIGN_CENTER, fontStyle: Font.BOLD);
-                                    pdf.addCell(tableKazanimlar, "C. Anahtarı", bgColor: PdfIslemleri.Renkler.Gri,
-                                        hizalama: Element.ALIGN_CENTER, fontStyle: Font.BOLD);
-                                    pdf.addCell(tableKazanimlar, "Ö. Cevabı", bgColor: PdfIslemleri.Renkler.Gri,
-                                        hizalama: Element.ALIGN_CENTER, fontStyle: Font.BOLD);
-                                    if (sinav.DegerlendirmeTuru == DegerlendirmeTurleri.DegerlendirmeTuru.KazanimBazli.ToInt32())
-                                    {
-                                        pdf.addCell(tableKazanimlar, DersAdi(sinavId, brans.BransId).BransAdi + " Dersi Kazanımları", bgColor: PdfIslemleri.Renkler.Gri, hizalama: Element.ALIGN_CENTER,
-                                            fontStyle: Font.BOLD);
-                                    }
-                                    else
-                                    {
-                                        pdf.addCell(tableKazanimlar, DersAdi(sinavId, brans.BransId).BransAdi + " Dersi Konuları", bgColor: PdfIslemleri.Renkler.Gri, hizalama: Element.ALIGN_CENTER,
-                                            fontStyle: Font.BOLD);
-                                    }
-                                   
-
-                                    for (int i = 1; i <= soruSayisi; i++)
-                                    {
-                                        string kazanimAdi = "";
+                                        List<CkKarneKazanimlarInfo> kazanimlar = kazanimList.Where(x => x.BransId == brans.BransId && x.Sinif == sinif).ToList();
 
 
-                                        string soruSql = kutuk.KitapcikTuru + i + ",";
-                                        CkKarneKazanimlarInfo kazanim = kazanimlar.Find(x => x.Sorulari.Contains(soruSql));
-
-                                        if (kazanim != null)
+                                        string ogrenciCevabi = "";
+                                        string[] cevapBilgisi = kutuk.Cevaplar.Split('#');
+                                        for (int t = 0; t < cevapBilgisi.Length - 1; t += 3)
                                         {
-                                            kazanimAdi = kazanim.KazanimAdiOgrenci==""? kazanim.KazanimAdi: kazanim.KazanimAdiOgrenci;
+                                            int dersKodu = cevapBilgisi[t].ToInt32();
+                                            if (dersKodu == brans.BransId)
+                                                ogrenciCevabi = cevapBilgisi[t + 2];
                                         }
 
 
-                                        pdf.addCell(tableKazanimlar, i.ToString(), fontSize: 6,
-                                            hizalama: Element.ALIGN_CENTER);
-                                        pdf.addCell(tableKazanimlar, dogruCvplar.Cevaplar.Substring(i - 1, 1), fontSize: 6,
-                                            hizalama: Element.ALIGN_CENTER);
-                                        pdf.addCell(tableKazanimlar, ogrenciCevabi.Substring(i - 1, 1), fontSize: 6,
-                                            hizalama: Element.ALIGN_CENTER);
-                                        pdf.addCell(tableKazanimlar, kazanimAdi, fontSize: 6);
+                                        #region Kazamılar
+
+                                        PdfPTable tableKazanimlar = new PdfPTable(4)
+                                        {
+                                            TotalWidth = 522f, // puan cinsinden tablonun gerçek genişliği
+                                            LockedWidth = true, // tablonun mutlak genişliğini sabitle
+                                            SpacingBefore = 10f, //öncesinde boşluk miktarı
+                                            SpacingAfter = 0f, //sonrasında boşluk miktarı
+                                            HorizontalAlignment = Element.ALIGN_LEFT
+                                        };
+
+                                        float[] widthsKazanim = { 40f, 40f, 40f, 407f };
+
+                                        tableKazanimlar.SetWidths(widthsKazanim);
+                                        
+
+                                        //Kazanım Karnesi 
+                                        pdf.addCell(tableKazanimlar, "S. No", bgColor: PdfIslemleri.Renkler.Gri,
+                                            hizalama: Element.ALIGN_CENTER, fontStyle: Font.BOLD);
+                                        pdf.addCell(tableKazanimlar, "C. Anahtarı", bgColor: PdfIslemleri.Renkler.Gri,
+                                            hizalama: Element.ALIGN_CENTER, fontStyle: Font.BOLD);
+                                        pdf.addCell(tableKazanimlar, "Ö. Cevabı", bgColor: PdfIslemleri.Renkler.Gri,
+                                            hizalama: Element.ALIGN_CENTER, fontStyle: Font.BOLD);
+                                        if (sinav.DegerlendirmeTuru == DegerlendirmeTurleri.DegerlendirmeTuru.KazanimBazli.ToInt32())
+                                        {
+                                            pdf.addCell(tableKazanimlar, DersAdi(sinavId, brans.BransId).BransAdi + " Dersi Kazanımları (" + kitapcikTuru.KitapcikTuru + " kitapçığı)", bgColor: PdfIslemleri.Renkler.Gri, hizalama: Element.ALIGN_CENTER,
+                                                fontStyle: Font.BOLD);
+                                        }
+                                        else
+                                        {
+                                            pdf.addCell(tableKazanimlar, DersAdi(sinavId, brans.BransId).BransAdi + " Dersi Konuları (" + kitapcikTuru.KitapcikTuru + " kitapçığı)", bgColor: PdfIslemleri.Renkler.Gri, hizalama: Element.ALIGN_CENTER,
+                                                fontStyle: Font.BOLD);
+                                        }
+
+                                        int soruSayisi = dogruCvplar.Cevaplar.Length;
+
+                                        for (int i = 1; i <= soruSayisi; i++)
+                                        {
+                                            string kazanimAdi = "";
+                                            
+                                            string soruSql = kitapcikTuru.KitapcikTuru + i + ",";
+                                            CkKarneKazanimlarInfo kazanim = kazanimlar.Find(x => x.Sorulari.Contains(soruSql));
+
+                                            if (kazanim != null)
+                                            {
+                                                kazanimAdi = kazanim.KazanimAdiOgrenci == "" ? kazanim.KazanimAdi : kazanim.KazanimAdiOgrenci;
+                                            }
+
+
+                                            pdf.addCell(tableKazanimlar, i.ToString(), fontSize: 6, hizalama: Element.ALIGN_CENTER);
+                                            pdf.addCell(tableKazanimlar, dogruCvplar.Cevaplar.Substring(i - 1, 1), fontSize: 6, hizalama: Element.ALIGN_CENTER);
+                                            pdf.addCell(tableKazanimlar, ogrenciCevabi.Substring(i - 1, 1), fontSize: 6, hizalama: Element.ALIGN_CENTER);
+                                            pdf.addCell(tableKazanimlar, kazanimAdi, fontSize: 6);
+                                        }
+
+                                        doc.Add(tableKazanimlar);
+
+                                        #endregion
                                     }
-
-                                    doc.Add(tableKazanimlar);
-
-                                    #endregion
-
-
                                 }
 
+                                //-------------SON SATIR -----------------
+                                pdf.addParagraph(doc, "\n\n");
+                                pdf.addParagraph(doc,
+                                    "Erzurum Ölçme ve Değerlendirme Merkezi - Adres: Lalapaşa Mahallesi, Yukarı Mumcu Caddesi, Atatürk Evi Sokak, No1, Kat 5/6, Yakutiye / ERZURUM\n",
+                                    7, Element.ALIGN_CENTER, Font.ITALIC);
+                                pdf.addParagraph(doc, "Web: http://erzurumodm.meb.gov.tr E-Mail: odm25@meb.gov.tr", 7,
+                                    Element.ALIGN_CENTER, Font.ITALIC);
+                                doc.NewPage();
                             }
-
-                            //-------------SON SATIR -----------------
-                            pdf.addParagraph(doc, "\n\n");
-                            pdf.addParagraph(doc,
-                                "Erzurum Ölçme ve Değerlendirme Merkezi - Adres: Lalapaşa Mahallesi, Yukarı Mumcu Caddesi, Atatürk Evi Sokak, No1, Kat 5/6, Yakutiye / ERZURUM\n",
-                                7, Element.ALIGN_CENTER, Font.ITALIC);
-                            pdf.addParagraph(doc, "Web: http://erzurumodm.meb.gov.tr E-Mail: odm25@meb.gov.tr", 7,
-                                Element.ALIGN_CENTER, Font.ITALIC);
-                            doc.NewPage();
                         }
+
                     }
                 }
             }
         }
-       
+
         doc.Close();
 
         //Dosyanın içeriğini Response içerisine aktarıyoruz.
@@ -448,7 +462,7 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
 
         CkSinavAdiDB sinavDb = new CkSinavAdiDB();
         CkSinavAdiInfo sinav = sinavDb.KayitBilgiGetir(sinavId);
-        
+
         CkKarneDogruCevaplarDB dogruCevapDb = new CkKarneDogruCevaplarDB();
         List<CkKarneDogruCevaplarInfo> dogruCevapList = dogruCevapDb.KayitlariDizeGetir(sinavId);
 
@@ -508,8 +522,25 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
 
             foreach (var kutuk in ogrenciListesi)
             {
-                if (kutuk.KitapcikTuru != "")
+                string[] kTuruList = kutuk.Cevaplar.Split('#'); //cevaplarda ikinci bölüm kitapçık türünü ifade eder
+                List<CevaplarModel> ogrCevaplarList = new List<CevaplarModel>();
+                for (int i = 0; i < kTuruList.Length; i += 3)
                 {
+                    //if (i == 2 || i % 3 == 2) //her ikinci bölüm kitapçık türünü ifade eder.
+                    //{
+                    //    if (!kTuru.Contains(kTuruList[i]))
+                    //        kTuru = kTuruList[i] + " ";
+                    //}
+                    ogrCevaplarList.Add(new CevaplarModel(kTuruList[i].ToInt32(), kTuruList[i + 1], kTuruList[i + 2]));
+
+                }
+                if (ogrCevaplarList.DistinctBy(x => x.KitapcikTuru).Count() > 0)
+                {
+                    string kTuru = "";
+                    foreach (var kt in ogrCevaplarList.DistinctBy(x => x.KitapcikTuru))
+                    {
+                        kTuru += kt.KitapcikTuru + " ";
+                    }
                     string ogrenciCevabi = "";
                     string[] cevapBilgisi = kutuk.Cevaplar.Split('#');
                     for (int t = 0; t < cevapBilgisi.Length - 1; t += 2)
@@ -519,10 +550,8 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
                             ogrenciCevabi = cevapBilgisi[t + 1];
                     }
 
-                    CkKarneDogruCevaplarInfo dogruCvplar = dogruCevapList.FirstOrDefault(x =>
-                        x.Sinif == sinif && x.BransId == brans && x.KitapcikTuru == kutuk.KitapcikTuru);
-                    tekSayfaliKarne.PdfOlustur(doc, sinav.SinavAdi, bransAdi, kutuk, ogrenciCevabi, dogruCvplar.Cevaplar,
-                        kazanimlar, kutuk.KatilimDurumu, kutuk.KitapcikTuru);
+                    CkKarneDogruCevaplarInfo dogruCvplar = dogruCevapList.FirstOrDefault(x => x.Sinif == sinif && x.BransId == brans && x.KitapcikTuru == kutuk.KitapcikTuru);
+                    tekSayfaliKarne.PdfOlustur(doc, sinav.SinavAdi, bransAdi, kutuk, ogrenciCevabi, dogruCvplar.Cevaplar, kazanimlar, kutuk.KatilimDurumu, kutuk.KitapcikTuru);
                     doc.NewPage();
                 }
             }
@@ -688,13 +717,13 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
         int sinavId = ddlSinavlar.SelectedValue.ToInt32();
 
         CkSinavAdiDB sinavDb = new CkSinavAdiDB();
-        CkSinavAdiInfo sinav = sinavDb.KayitBilgiGetir(sinavId); 
+        CkSinavAdiInfo sinav = sinavDb.KayitBilgiGetir(sinavId);
 
 
         CkKarneKazanimlardB kazanimDb = new CkKarneKazanimlardB();
 
         List<CkKarneKazanimlarInfo> kazanimList = kazanimDb.KayitlariDizeGetir(sinavId);
-        
+
         CkIlIlceOrtalamasiDB basariDb = new CkIlIlceOrtalamasiDB();
         List<CkIlIlceOrtalamasiInfo> basariYuzdesi = basariDb.KayitlariDizeGetir(sinavId);
 
@@ -790,8 +819,8 @@ public partial class ODM_LGSKazanimKarne : System.Web.UI.Page
         a++;
         if (e.Item.ItemType == ListItemType.Footer)
         {
-            Literal ltr = (Literal) e.Item.FindControl("ltrBilgi");
-            ltr.Text = a==1 ? "<p class=\"text-danger\">Kayıt bulunamadı</p>" : "<p class=\"text-info\"><strong>"+(a-1)+" kurum</strong> listelendi</p>";
+            Literal ltr = (Literal)e.Item.FindControl("ltrBilgi");
+            ltr.Text = a == 1 ? "<p class=\"text-danger\">Kayıt bulunamadı</p>" : "<p class=\"text-info\"><strong>" + (a - 1) + " kurum</strong> listelendi</p>";
         }
     }
 }

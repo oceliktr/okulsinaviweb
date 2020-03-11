@@ -25,7 +25,7 @@ namespace ErzurumOdmMvc.Areas.ODM.Controllers
                 FormsAuthentication.SignOut();
                 return View();
             }
-            return RedirectToAction("Index", "Default");
+            return RedirectToAction("Index", "Yonetim");
         }
 
         [AllowAnonymous]
@@ -33,6 +33,7 @@ namespace ErzurumOdmMvc.Areas.ODM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(GirisViewModel model, string returnurl)
         {
+            //Response.Write(model.Password.MD5Sifrele());
             if (ModelState.IsValid)
             {
                 var captchaResponse = Request.Form["g-recaptcha-response"];
@@ -42,7 +43,7 @@ namespace ErzurumOdmMvc.Areas.ODM.Controllers
 
                 if (result)
                 {
-                    string guid = ConvertIslemleri.YeniGuid();
+                    string guid = StringIslemleri.YeniGuid();
                     KullaniciManager kullaniciManager = new KullaniciManager();
                     BusinessResult<Kullanici> kullanici = await kullaniciManager.Giris(model.KurumKodu, model.Password,guid);
 
@@ -59,7 +60,7 @@ namespace ErzurumOdmMvc.Areas.ODM.Controllers
                         HttpResponse.RemoveOutputCacheItem("/ODM");
 
                         if (string.IsNullOrEmpty(returnurl))
-                            return RedirectToAction("Index", "Default");
+                            return RedirectToAction("Index", "Yonetim");
                         else
                             return Redirect(returnurl);
                     }

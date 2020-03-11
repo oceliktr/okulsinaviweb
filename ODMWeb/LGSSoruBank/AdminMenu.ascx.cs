@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using DAL;
 
 public partial class LGSSoruBank_AdminMenu : System.Web.UI.UserControl
 {

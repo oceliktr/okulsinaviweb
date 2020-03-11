@@ -33,7 +33,7 @@ namespace ErzurumOdmMvc.Common.Enums
                     result = "Öğretmen";
                     break;
                 case "LgsYazari":
-                    result = "Lgs Yazari";
+                    result = "Lgs Yazarı";
                     break;
                 case "LgsIlKomisyonu":
                     result = "Lgs İl Komisyonu";

@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI.WebControls;
-using DAL;
 
 namespace ODM
 {
@@ -22,7 +21,6 @@ namespace ODM
                 if (!Master.Yetki().Contains("Root") && !Master.Yetki().Contains("Admin"))
                 {
                     tabliKayit.Visible = false;
-                    tabliEvrakGelenler.Visible = false;
                 }
 
                 KurumlarDb veriDb = new KurumlarDb();
@@ -30,13 +28,6 @@ namespace ODM
                 ddlOkulTuru.DataValueField = "Tur";
                 ddlOkulTuru.DataTextField = "Tur";
                 ddlOkulTuru.DataBind();
-
-                CkSinavAdiDB snvDb = new CkSinavAdiDB();
-                ddlSinavId2.DataSource =  snvDb.KayitlariGetir();
-                ddlSinavId2.DataValueField = "SinavId";
-                ddlSinavId2.DataTextField =  "SinavAdi";
-                ddlSinavId2.DataBind();
-                ddlSinavId2.Items.Insert(0, new ListItem("Sınavı Seçiniz", ""));
 
                 KayitlariListele();
             }
@@ -120,7 +111,7 @@ namespace ODM
                 }
             }
 
-            string sinavAdi = txtSinavAdi.Text;
+            string aciklama = txtAciklama.Text;
             string url = string.IsNullOrEmpty(txtUrl.Text) ? dosya : txtUrl.Text;
             string kurumlar = "|";
             for (int a = 0; a < lbSecilenler.Items.Count; a++)
@@ -133,7 +124,7 @@ namespace ODM
             CkSinavEvrakDb veriDb = new CkSinavEvrakDb();
             CkSinavEvrakInfo info = new CkSinavEvrakInfo
             {
-                SinavAdi = sinavAdi,
+                Aciklama = aciklama,
                 BitisTarihi = bitisTarihi,
                 BaslangicTarihi = baslangicTarihi,
                 Kurumlar = kurumlar,
@@ -238,7 +229,7 @@ namespace ODM
                 txtBitisTarihi.Text = info.BitisTarihi.ToString(CultureInfo.CurrentCulture);
                 txtBaslangicTarihi.Text = info.BaslangicTarihi.ToString(CultureInfo.CurrentCulture);
                 txtUrl.Text = info.Url;
-                txtSinavAdi.Text = info.SinavAdi;
+                txtAciklama.Text = info.Aciklama;
 
                 KurumlarDb kurumlarDb = new KurumlarDb();
                 var kurumList = kurumlarDb.IlceveOkuluDiziyeGetir();
@@ -262,60 +253,13 @@ namespace ODM
             if (e.CommandName.Equals("Indir"))
             {
                 int hit = info.Hit + 1;
-                veriDb.KayitGuncelle(hit,GenelIslemler.YerelTarih(true),id);
+                veriDb.KayitGuncelle(hit,id);
                 string url = info.Url;
                 if (url != null)
                     Response.Redirect(url);
             }
         }
-        protected void btnEvrakGonder_OnClick(object sender, EventArgs e)
-        {
-            SinavlarDb ayr = new SinavlarDb();
-            int sinavId = ayr.AktifSinavAdi().SinavId;
-
-            KullanicilarDb kDb = new KullanicilarDb();
-            KullanicilarInfo info = kDb.KayitBilgiGetir(Master.UyeId());
-
-            if (fuEvrakGnder.HasFile)
-            {
-                string dosyaAdi = Server.HtmlEncode(fuEvrakGnder.FileName);
-                string uzanti = Path.GetExtension(dosyaAdi);
-                if (uzanti != null)
-                {
-                    //Dizin yoksa
-                    if (!DizinIslemleri.DizinKontrol(Server.MapPath("/upload/gelenevrak/")))
-                        Directory.CreateDirectory(Server.MapPath("/upload/gelenevrak/"));
-
-                    uzanti = uzanti.ToLower();
-                    string rastgeleMetin = GenelIslemler.RastgeleMetinUret(8);
-                    if (GenelIslemler.YuklenecekDosyalar.Contains(uzanti))
-                    {
-                        dosyaAdi = string.Format("{0}_{1}{2}", info.KurumKodu, rastgeleMetin, uzanti);
-                        string dosyaYolu = string.Format(@"{0}upload\gelenevrak\{1}\{2}", HttpContext.Current.Server.MapPath("/"), sinavId, dosyaAdi);
-                        File.WriteAllBytes(dosyaYolu, fuEvrakGnder.FileBytes);
-
-                        string dosya = string.Format(@"/upload/gelenevrak/{0}/{1}", sinavId, dosyaAdi);
-
-                        SinavEvrakGelenDb sgDb = new SinavEvrakGelenDb();
-                        SinavEvrakGelenInfo sgInfo = new SinavEvrakGelenInfo
-                        {
-                            SinavId = sinavId,
-                            Dosya = dosya,
-                            KurumKodu = info.KurumKodu
-                        };
-                        sgDb.KayitEkle(sgInfo);
-                        Master.UyariIslemTamam("Dosya başarıya yüklendi. Teşekkür ederiz.", phUyari);
-                        TablariKapat();
-                        tabliEvrakGonder.Attributes.Add("class", "active");
-                        EvrakGonder.Attributes.Add("class", "tab-pane active");
-                    }
-                    else
-                    {
-                        Master.UyariKirmizi("Yalnızca " + GenelIslemler.YuklenecekDosyalar + " uzantılı dosyalar yüklenir.", phUyari);
-                    }
-                }
-            }
-        }
+      
         protected void rptGelenEvraklar_OnItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
@@ -330,9 +274,9 @@ namespace ODM
             {
                 try
                 {
-                    SinavEvrakGelenDb veriDb = new SinavEvrakGelenDb();
-                    SinavEvrakGelenInfo info = veriDb.KayitBilgiGetir(id);
-                    string dosya = Server.MapPath(info.Dosya);
+                    CkSinavEvrakDb veriDb = new CkSinavEvrakDb();
+                    CkSinavEvrakInfo info = veriDb.KayitBilgiGetir(id);
+                    string dosya = Server.MapPath(info.Url);
                     if (DizinIslemleri.DosyaKontrol(dosya))
                     {
                         DizinIslemleri.DosyaSil(dosya);
@@ -344,10 +288,7 @@ namespace ODM
                         veriDb.KayitSil(id);
                         Master.UyariKirmizi("Kayıt silindi ancak sınav evrak dosyası bulunamadı. Dosya Yolu : " + dosya, phUyari);
                     }
-                    GelenSinavEvraklari();
                     TablariKapat();
-                    tabliEvrakGelenler.Attributes.Add("class", "active");
-                    EvrakGelenler.Attributes.Add("class", "tab-pane active");
                 }
                 catch (Exception ex)
                 {
@@ -355,22 +296,9 @@ namespace ODM
                 }
             }
         }
-        protected void ddlSinavId2_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            GelenSinavEvraklari();
-            TablariKapat();
-            tabliEvrakGelenler.Attributes.Add("class", "active");
-            EvrakGelenler.Attributes.Add("class", "tab-pane active");
-        }
+     
 
-        private void GelenSinavEvraklari()
-        {
-            int sinavId = ddlSinavId2.SelectedValue.ToInt32();
-            SinavEvrakGelenDb veriDb = new SinavEvrakGelenDb();
-            rptGelenEvraklar.DataSource = veriDb.KayitlariGetir(sinavId);
-            rptGelenEvraklar.DataBind();
-        }
-
+   
         protected void ddlOkulTuru_OnSelectedIndexChanged(object sender, EventArgs e)
         {
             string okulTuru = ddlOkulTuru.SelectedValue;

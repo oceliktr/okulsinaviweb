@@ -1,16 +1,14 @@
-﻿using System;
+﻿using ODM.CKYazdirDb.Business;
+using ODM.CKYazdirDb.DAL;
+using ODM.CKYazdirDb.Entities;
+using ODM.CKYazdirDb.Model;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ODM.CKYazdirDb.Business;
-using ODM.CKYazdirDb.DAL;
-using ODM.CKYazdirDb.Library;
 
 
 namespace ODM.CKYazdirDb
 {
-   public class DogruCevaplarManager: ManagerBase<DogruCevap>
+    public class DogruCevaplarManager: ManagerBase<DogruCevap>
    {
         private readonly Repository<DogruCevap> repo = new Repository<DogruCevap>();
        public void TumunuSil()

@@ -1,4 +1,4 @@
-﻿namespace CKYazdir
+﻿namespace ODM.CKYazdirDb
 {
     partial class FormTxtOlustur
     {
@@ -55,6 +55,8 @@
             this.cbAlanAdi = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dgBranslar = new System.Windows.Forms.DataGridView();
+            this.btnOturumlariBirlestir = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ndSutun)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ndKarakter)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -70,7 +72,7 @@
             this.txtData.Margin = new System.Windows.Forms.Padding(4);
             this.txtData.Name = "txtData";
             this.txtData.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtData.Size = new System.Drawing.Size(727, 28);
+            this.txtData.Size = new System.Drawing.Size(1000, 28);
             this.txtData.TabIndex = 165;
             this.txtData.Click += new System.EventHandler(this.txtData_Click);
             this.txtData.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtData_KeyUp);
@@ -113,6 +115,7 @@
             this.lvBolumler.Size = new System.Drawing.Size(460, 246);
             this.lvBolumler.TabIndex = 173;
             this.lvBolumler.UseCompatibleStateImageBehavior = false;
+            this.lvBolumler.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvBolumler_KeyDown);
             // 
             // contextMenuStrip1
             // 
@@ -165,6 +168,7 @@
             this.txtAraKarakter.Name = "txtAraKarakter";
             this.txtAraKarakter.Size = new System.Drawing.Size(42, 27);
             this.txtAraKarakter.TabIndex = 4;
+            this.txtAraKarakter.Text = "#";
             this.txtAraKarakter.TextChanged += new System.EventHandler(this.txtAraKarakter_TextChanged);
             // 
             // label2
@@ -227,9 +231,9 @@
             this.blAciklama.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.blAciklama.Location = new System.Drawing.Point(12, 364);
             this.blAciklama.Name = "blAciklama";
-            this.blAciklama.Size = new System.Drawing.Size(979, 166);
+            this.blAciklama.Size = new System.Drawing.Size(979, 154);
             this.blAciklama.TabIndex = 185;
-            this.blAciklama.Text = "...";
+            this.blAciklama.Text = resources.GetString("blAciklama.Text");
             this.blAciklama.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnTextOlustur
@@ -238,7 +242,7 @@
             this.btnTextOlustur.Location = new System.Drawing.Point(998, 361);
             this.btnTextOlustur.Margin = new System.Windows.Forms.Padding(4);
             this.btnTextOlustur.Name = "btnTextOlustur";
-            this.btnTextOlustur.Size = new System.Drawing.Size(121, 123);
+            this.btnTextOlustur.Size = new System.Drawing.Size(121, 86);
             this.btnTextOlustur.TabIndex = 178;
             this.btnTextOlustur.Text = "Text Oluştur";
             this.btnTextOlustur.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -252,7 +256,7 @@
             this.btnEkle.Location = new System.Drawing.Point(16, 220);
             this.btnEkle.Margin = new System.Windows.Forms.Padding(4);
             this.btnEkle.Name = "btnEkle";
-            this.btnEkle.Size = new System.Drawing.Size(279, 51);
+            this.btnEkle.Size = new System.Drawing.Size(289, 51);
             this.btnEkle.TabIndex = 6;
             this.btnEkle.Text = "Kesme Noktası Ekle";
             this.btnEkle.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -263,7 +267,7 @@
             // 
             this.btnDataAc.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDataAc.Image = ((System.Drawing.Image)(resources.GetObject("btnDataAc.Image")));
-            this.btnDataAc.Location = new System.Drawing.Point(753, 32);
+            this.btnDataAc.Location = new System.Drawing.Point(1026, 34);
             this.btnDataAc.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnDataAc.Name = "btnDataAc";
             this.btnDataAc.Size = new System.Drawing.Size(93, 30);
@@ -323,10 +327,11 @@
             "Kitapçık Türü",
             "Cevap Tipi",
             "Katılım Durumu",
-            "Cevaplar"});
+            "Cevaplar",
+            "Oturum"});
             this.cbAlanAdi.Location = new System.Drawing.Point(16, 120);
             this.cbAlanAdi.Name = "cbAlanAdi";
-            this.cbAlanAdi.Size = new System.Drawing.Size(279, 24);
+            this.cbAlanAdi.Size = new System.Drawing.Size(289, 24);
             this.cbAlanAdi.TabIndex = 190;
             // 
             // groupBox2
@@ -360,13 +365,36 @@
             this.dgBranslar.ShowRowErrors = false;
             this.dgBranslar.Size = new System.Drawing.Size(257, 268);
             this.dgBranslar.TabIndex = 190;
+            this.dgBranslar.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgBranslar_CellDoubleClick);
+            // 
+            // btnOturumlariBirlestir
+            // 
+            this.btnOturumlariBirlestir.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnOturumlariBirlestir.Location = new System.Drawing.Point(997, 454);
+            this.btnOturumlariBirlestir.Name = "btnOturumlariBirlestir";
+            this.btnOturumlariBirlestir.Size = new System.Drawing.Size(121, 121);
+            this.btnOturumlariBirlestir.TabIndex = 191;
+            this.btnOturumlariBirlestir.Text = "Oturum Verilerini Birleştir";
+            this.btnOturumlariBirlestir.UseVisualStyleBackColor = true;
+            this.btnOturumlariBirlestir.Click += new System.EventHandler(this.btnOturumlariBirlestir_Click);
+            // 
+            // label5
+            // 
+            this.label5.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.label5.Location = new System.Drawing.Point(12, 528);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(979, 62);
+            this.label5.TabIndex = 192;
+            this.label5.Text = resources.GetString("label5.Text");
             // 
             // FormTxtOlustur
             // 
             this.AcceptButton = this.btnEkle;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1397, 652);
+            this.ClientSize = new System.Drawing.Size(1137, 626);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.btnOturumlariBirlestir);
             this.Controls.Add(this.dgBranslar);
             this.Controls.Add(this.btnTextOlustur);
             this.Controls.Add(this.groupBox2);
@@ -424,5 +452,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ComboBox cbAlanAdi;
         private System.Windows.Forms.DataGridView dgBranslar;
+        private System.Windows.Forms.Button btnOturumlariBirlestir;
+        private System.Windows.Forms.Label label5;
     }
 }

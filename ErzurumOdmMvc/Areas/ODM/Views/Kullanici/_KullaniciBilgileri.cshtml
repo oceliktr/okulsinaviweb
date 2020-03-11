@@ -20,7 +20,7 @@
         <tr>
             <td><strong>Kurumu</strong></td>
             <td>
-                @Model.KurumKodu - @Model.KurumAdi
+                @Model.KurumKodu - @(Model.KurumAdi==null?"KURUMU YOK":Model.KurumAdi)
             </td>
         </tr>
         <tr>

@@ -1,17 +1,15 @@
-﻿using ErzurumOdmMvc.Common.Enums;
+﻿using ErzurumOdmMvc.Business.Abstract;
 using ErzurumOdmMvc.Common.Library;
 using ErzurumOdmMvc.Entities;
-using ErzurumOdmMvc.Business.Abstract;
 using ErzurumOdmMvcDAL.Dapper;
-using System.Threading.Tasks;
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ErzurumOdmMvc.Business
 {
     public class KullaniciManager : ManagerBase<Kullanici>
     {
-        private readonly Repository<Kullanici> _repo = new Repository<Kullanici>();
+        private readonly Repository<Kullanici> repo = new Repository<Kullanici>();
 
         public async Task<BusinessResult<Kullanici>> Giris(string kurumKodu, string sifre,string guid)
         {
@@ -23,7 +21,7 @@ namespace ErzurumOdmMvc.Business
 
             string sql = "Select * from kullanicilar where TcKimlik=@TcKimlik and Sifre=@Sifre";
 
-            res.Result = await _repo.QueryFirstOrDefaultAsync(sql, new { TcKimlik = kurumKoduStr, Sifre = password });
+            res.Result = await repo.QueryFirstOrDefaultAsync(sql, new { TcKimlik = kurumKoduStr, Sifre = password });
 
             if (res.Result == null)
             {
@@ -34,8 +32,8 @@ namespace ErzurumOdmMvc.Business
                 res.Result.OncekiGiris = res.Result.SonGiris;
                 res.Result.SonGiris = TarihIslemleri.YerelTarih();
                 res.Result.GirisSayisi += 1;
-                res.Result.GirisKodu = guid;
-                _ = UpdateAsync(res.Result);
+                res.Result.GirisKodu = guid; 
+                await UpdateAsync(res.Result);
 
             }
 
@@ -44,15 +42,11 @@ namespace ErzurumOdmMvc.Business
         public Kullanici KullaniciBilgisi(string girisKodu)
         {
             string sql = "Select * from kullanicilar where GirisKodu=@GirisKodu"; 
-            Kullanici res = _repo.QueryFirstOrDefault(sql, new { GirisKodu = girisKodu });
+            Kullanici res = repo.QueryFirstOrDefault(sql, new { GirisKodu = girisKodu });
             return res;
         }
-        public Kullanici KullaniciBilgisi(int kurumKodu,string tcKimlik)
-        {
-            string sql = "Select * from kullanicilar where TcKimlik=@TcKimlik and KurumKodu=@KurumKodu"; 
-            Kullanici res = _repo.QueryFirstOrDefault(sql, new { TcKimlik = tcKimlik, KurumKodu = kurumKodu });
-            return res;
-        }
+        //
+    
         public Task<IEnumerable<Kullanici>> Kullanicilar(int ilceId, int kurumKodu, int bransId, string yetki)
         {
             string sql = @"SELECT * from kullanicilar AS u where u.Id<>0";
@@ -83,12 +77,25 @@ namespace ErzurumOdmMvc.Business
             return resultList.Result.Id;
 
         }
+        //Kurumda kullanıcı var mı kontrolü
         public bool KullaniciKontrol(int kurumKodu)
         {
             var resultList = Scalar("SELECT Id FROM kullanicilar WHERE KurumKodu=@KurumKodu", new { KurumKodu = kurumKodu });
 
             return resultList.ToInt32() != 0;
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">Yeni kayıt kontrolü için 0 girilmeli</param>
+        /// <param name="tcKimlik"></param>
+        /// <returns></returns>
+        public bool KullaniciKontrol(int id, string tcKimlik)
+        {
+            string sql = "Select * from kullanicilar where TcKimlik=@TcKimlik and Id<>@Id";
+            var res = repo.Scalar(sql, new { TcKimlik = tcKimlik, Id = id });
+            return res.ToInt32() != 0;
         }
         public bool SifreDegistir(Kullanici kullanici, string sifre)
         {

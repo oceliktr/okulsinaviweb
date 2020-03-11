@@ -13,7 +13,7 @@ namespace ErzurumOdmMvc.Business.ViewManager
         public Task<KullaniciBilgileriViewModel> Bilgilerim(string tcKimlik)
         {
             string sql = @"SELECT i.IlceAdi,k.KurumAdi,b.BransAdi,u.* from kullanicilar AS u
-                        INNER JOIN kurumlar AS k ON u.KurumKodu=k.KurumKodu
+                        LEFT JOIN kurumlar AS k ON u.KurumKodu=k.KurumKodu
                         INNER JOIN ilceler AS i ON u.IlceId=i.Id
                         LEFT JOIN branslar AS b ON u.Bransi=b.Id
                         where u.TcKimlik=@TcKimlik";
