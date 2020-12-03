@@ -1,0 +1,31 @@
+﻿.big {
+    cursor: pointer;
+    padding: 7px 0 7px 30px;
+}
+.miniTxt {
+    font-size: 10px;
+}
+
+.makam {
+    display: block;
+}
+.makam2 {
+    display: none;
+}
+@media only screen and (max-width:690px) {
+    .makam {
+        display: none;
+    }
+    .makam2 {
+        display: block;
+    }
+}
+.dersler {
+    font-size: 12px;
+    padding: 0px;
+    height: 25px;
+    width: 150px;
+}
+.hiddens {
+    display: none;
+}

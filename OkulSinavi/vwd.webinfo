@@ -1,0 +1,10 @@
+﻿<?xml version="1.0"?>
+<!-- 
+  Visual Studio global web project settings.
+-->
+<VisualWebDeveloper>
+
+  <Globals>
+    <UserProperties cevrimicisinav_4content_4bootstrap_4js_4bootstrap_1bundle_1js_1map__JsonSchema="http://json.schemastore.org/ts-force-config"/>
+  </Globals>
+</VisualWebDeveloper>

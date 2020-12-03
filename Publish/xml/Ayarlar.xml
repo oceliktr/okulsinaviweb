@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ArrayOfAyarlarInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <AyarlarInfo>
+    <Id>1</Id>
+    <SiteAdi>Okul Sınavı</SiteAdi>
+    <Description>Okul Sınavı</Description>
+    <Keywords>Okul Sınavı</Keywords>
+    <SiteAdres>Okul Sınavı</SiteAdres>
+    <SiteTelefon></SiteTelefon>
+    <SiteFax></SiteFax>
+    <EpostaServer>nilufer.meb.gov.tr</EpostaServer>
+    <EpostaGonderenAdres>arge25@meb.gov.tr</EpostaGonderenAdres>
+    <EpostaReply />
+    <EpostaPass>nhs250555</EpostaPass>
+    <EpostaGonderenIsmi>Okul Sınavı</EpostaGonderenIsmi>
+    <EpostaSsl>110</EpostaSsl>
+    <EpostaPort>110</EpostaPort>
+    <EpostaSiteAdres>arge25@meb.gov.tr</EpostaSiteAdres>
+    <EpostaAliciAdres>arge25@meb.gov.tr</EpostaAliciAdres>
+    <SinavId>0</SinavId>
+    <VeriGirisi>0</VeriGirisi>
+  </AyarlarInfo>
+</ArrayOfAyarlarInfo>

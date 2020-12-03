@@ -1,0 +1,2 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="_SoruGetir.aspx.cs" Inherits="OkulSinavi_CevrimiciSinavYonetim_SoruGetir" %>
+<asp:Literal ID="ltrSoru" runat="server"></asp:Literal><asp:Image ID="imgSoru" CssClass="img-fluid" runat="server"></asp:Image>
