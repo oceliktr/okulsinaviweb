@@ -61,7 +61,7 @@ public class HelperDb
             SqlCommandParam(cmd, param);
 
             int x = cmd.ExecuteNonQuery();
-            sonId = 0;
+            sonId = cmd.LastInsertedId; 
             return x;
         }
         finally

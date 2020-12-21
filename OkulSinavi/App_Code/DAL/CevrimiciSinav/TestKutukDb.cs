@@ -16,10 +16,15 @@ public class TestKutukDb
         const string sql = "select * from testkutuk order by Id asc";
         return helper.ExecuteDataSet(sql).Tables[0];
     }
-    public DataTable OgrenciAra(string aranan)
+    public DataTable OgrenciAra(string aranan,int kurumKodu)
     {
-         string sql = string.Format("select * from testkutuk AS k WHERE k.OpaqId LIKE '%{0}%' OR IlceAdi LIKE '%{1}%' OR Adi LIKE '%{1}%' OR Soyadi LIKE '%{1}%' OR KurumKodu LIKE '%{1}%'",aranan.Md5Sifrele(),aranan);
-        return helper.ExecuteDataSet(sql).Tables[0];
+         string sql = string.Format("select * from testkutuk AS k WHERE k.KurumKodu=?KurumKodu and (k.OpaqId LIKE '%{0}%' OR IlceAdi LIKE '%{1}%' OR Adi LIKE '%{1}%' OR Soyadi LIKE '%{1}%')",aranan.Md5Sifrele(),aranan);
+         MySqlParameter[] pars =
+         {
+             new MySqlParameter("?KurumKodu", MySqlDbType.Int32)
+         };
+         pars[0].Value = kurumKodu;
+         return helper.ExecuteDataSet(sql,pars).Tables[0];
     }
     public DataTable OgrenciAra(int donem,string opaqId, string ogrAdi, string ogrSoyadi)
     {

@@ -20,6 +20,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_SinavSorulari : System.Web
 
                     TestOturumlarDb veriDb = new TestOturumlarDb();
                     var info = veriDb.KayitBilgiGetir(oturumId);
+                    ltrOturumAdi.Text = info.OturumAdi;
                     hlOturum.NavigateUrl = "OturumYonetim.aspx?SinavId=" + info.SinavId;
                 }
             }

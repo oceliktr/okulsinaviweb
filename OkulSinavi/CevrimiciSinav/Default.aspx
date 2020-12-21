@@ -16,15 +16,14 @@
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet" />
     <link rel="stylesheet" href="Content/sweetalert2/sweetalert2.min.css" />
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-56545817-27"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9HV0023N3K"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-        gtag('config', 'UA-56545817-27');
-
-    </script>
+  gtag('config', 'G-9HV0023N3K');
+</script>
     <style>
         html,body{
             height: 100%;

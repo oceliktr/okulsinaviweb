@@ -15,27 +15,20 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciTopluKayit : System
                 Response.Redirect("Default.aspx");
             }
 
-            IlcelerDb ilcelerDb = new IlcelerDb();
-            ddlIlce.DataSource = ilcelerDb.KayitlariGetir();
-            ddlIlce.DataValueField = "IlceAdi";
-            ddlIlce.DataTextField = "IlceAdi";
-            ddlIlce.DataBind();
-            ddlIlce.Items.Insert(0, new ListItem("İlçe Seçiniz", ""));
-            ddlKurum.Items.Insert(0, new ListItem("İlçe Seçiniz", ""));
-
-            
-
+           
             ddlSinif.Attributes.Add("onchange", "sinifDegis()");
-            if (Master.Yetki().Contains("OkulYetkilisi"))
+            if (Master.Yetki().Contains("Root"))
             {
-                TestDonemDb dnmDb = new TestDonemDb();
-                var donem = dnmDb.AktifDonem();
-
-                if (donem.VeriGirisi == 0)
-                {
-                    kayitForm.Visible = false;
-                    Master.UyariTuruncu("Şuan için kayıt işlemleri kapatılmıştır.", phUyari);
-                }
+                IlcelerDb ilcelerDb = new IlcelerDb();
+                ddlIlce.DataSource = ilcelerDb.KayitlariGetir();
+                ddlIlce.DataValueField = "IlceAdi";
+                ddlIlce.DataTextField = "IlceAdi";
+                ddlIlce.DataBind();
+                ddlIlce.Items.Insert(0, new ListItem("İlçe Seçiniz", ""));
+                ddlKurum.Items.Insert(0, new ListItem("İlçe Seçiniz", ""));
+            }
+            else
+            {
                 phOkulIlce.Visible = false;
             }
         }
@@ -45,7 +38,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciTopluKayit : System
     {
         OturumIslemleri oturum = new OturumIslemleri();
         KullanicilarInfo kInfo = oturum.OturumKontrol();
-        bool yetkili = !kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin") && !kInfo.Yetki.Contains("OkulYetkilisi");
+        bool yetkili = !kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin");
         return yetkili;
     }
 
@@ -75,8 +68,6 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciTopluKayit : System
     [WebMethod]
     public static string KayitKontrol(string veri)
     {
-
-
         try
         {
             string[] stringSeparators = new string[] { "\n" };
@@ -96,11 +87,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciTopluKayit : System
 
 
 
-                if (!tcKimlik.IsInteger())
-                    sonuc += "Tc Kimlik numarasında numerik olmayan karakterler var. ";
-                if (tcKimlik.Length != 11)
-                    sonuc += "Tc Kimlik numarasında 11 karakter olmalı. ";
-                if (adi.Length < 3)
+                 if (adi.Length < 3)
                     sonuc += "Adı geçerli değil. ";
                 if (soyadi.Length < 2)
                     sonuc += "Soyadı geçerli değil. ";
@@ -148,7 +135,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciTopluKayit : System
 
         OturumIslemleri oturum = new OturumIslemleri();
         KullanicilarInfo kInfo = oturum.OturumKontrol();
-        if (kInfo.Yetki.Contains("OkulYetkilisi"))
+        if (kInfo.Yetki.Contains("Admin"))
         {
             IlcelerDb ilcelerDb = new IlcelerDb();
 
@@ -194,7 +181,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciTopluKayit : System
             var kontrol = veriDb.KayitKontrol(donem, opaqId, 0);
             if (kontrol)
             {
-                return JsonConvert.SerializeObject(new { Mesaj = t.TcKimlik + " tc kimlikli öğrenci daha önce kaydedilmiş.\n Öğrenci listesi sayfasında görünmüyorsa sistem yöneticisi ile iletişime geçiniz.", Sonuc = "no" });
+                return JsonConvert.SerializeObject(new { Mesaj ="Sınav giriş bilgisi '"+ t.TcKimlik + "' olan öğrenci daha önce kaydedilmiş.\n Öğrenci listesi sayfasında görünmüyorsa sistem yöneticisi ile iletişime geçiniz.", Sonuc = "no" });
             }
 
             TestKutukInfo info = new TestKutukInfo

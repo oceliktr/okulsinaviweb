@@ -13,15 +13,13 @@ public class BrowserBilgisi
         var browser = System.Web.HttpContext.Current.Request.Browser;
         string browserBilgisi = "Browser UserAgent = " + HttpContext.Current.Request.UserAgent + "<br>"
                                 + "Ip Adres = " + HttpContext.Current.Request.UserHostAddress + "<br>"
-                                + "Browser = " + browser.Type + "<br>"
-                                + "Version = " + browser.Version + "<br>"
+                                + "Browser = " + browser.Type + " - "
+                                + "Version = " + browser.Version + " - "
                                 + "Platform = " + browser.Platform + "<br>"
-                                + "Supports Frames = " + browser.Frames + "<br>"
-                                + "Supports Tables = " + browser.Tables + "<br>"
-                                + "Supports Cookies = " + browser.Cookies + "<br>"
-                                + "Supports EcmaScript Version = " + browser.EcmaScriptVersion + "<br>"
-                                + "Supports Java Applets = " + browser.JavaApplets + "<br>"
-                                + "Supports ActiveX Controls = " + browser.ActiveXControls + "<br>"
+                                 + "Supports Cookies = " + browser.Cookies + " -"
+                                + "Supports EcmaScript Version = " + browser.EcmaScriptVersion + " - "
+                                + "Supports Java Applets = " + browser.JavaApplets + " - "
+                                + "Supports ActiveX Controls = " + browser.ActiveXControls + " - "
                                 + "Supports JavaScript Version = " + browser["JavaScriptVersion"];
         return browserBilgisi;
     }

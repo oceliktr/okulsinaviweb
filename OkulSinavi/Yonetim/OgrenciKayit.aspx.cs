@@ -12,14 +12,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciKayit : System.Web.
                 Response.Redirect("Default.aspx");
             }
 
-            IlcelerDb ilcelerDb = new IlcelerDb();
-            ddlIlce.DataSource = ilcelerDb.KayitlariGetir();
-            ddlIlce.DataValueField = "IlceAdi";
-            ddlIlce.DataTextField = "IlceAdi";
-            ddlIlce.DataBind();
-            ddlIlce.Items.Insert(0, new ListItem("İlçe Seçiniz", ""));
-            ddlKurum.Items.Insert(0, new ListItem("İlçe Seçiniz", ""));
-
+            
             TestDonemDb dnmDb = new TestDonemDb();
             var donem = dnmDb.AktifDonem();
             txtDonem.Text = donem.Donem;
@@ -27,15 +20,21 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciKayit : System.Web.
             
             OturumIslemleri oturum = new OturumIslemleri();
             KullanicilarInfo kInfo = oturum.OturumKontrol();
-            if (kInfo.Yetki.Contains("OkulYetkilisi"))
+            if (kInfo.Yetki.Contains("Root"))
             {
-                if (donem.VeriGirisi == 0)
-                {
-                    kayitForm.Visible = false;
-                    Master.UyariTuruncu("Şuan için kayıt işlemleri kapatılmıştır.", phUyari);
-                }
-
-                phOklIlce.Visible = false;
+                IlcelerDb ilcelerDb = new IlcelerDb();
+                ddlIlce.DataSource = ilcelerDb.KayitlariGetir();
+                ddlIlce.DataValueField = "IlceAdi";
+                ddlIlce.DataTextField = "IlceAdi";
+                ddlIlce.DataBind();
+                ddlIlce.Items.Insert(0, new ListItem("İlçe Seçiniz", ""));
+                ddlKurum.Items.Insert(0, new ListItem("İlçe Seçiniz", ""));
+            }
+            else
+            {
+                UpdatePanel1.Visible = false;
+                ddlKurum.Visible = false;
+                ddlIlce.Visible = false;
             }
             //düzeltme işlemleri
             if (Request.QueryString["Id"] != null)
@@ -51,11 +50,16 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciKayit : System.Web.
                     txtAdi.Text = info.Adi;
                     txtSoyadi.Text = info.Soyadi;
                     ddlSinif.SelectedValue = info.Sinifi.ToString();
-                    ddlIlce.SelectedValue = info.IlceAdi;
 
-                    KurumlariGetir(IlceBilgisi(info.IlceAdi));
+                    if (kInfo.Yetki.Contains("Root"))
+                    {
+                        ddlIlce.SelectedValue = info.IlceAdi;
 
-                    ddlKurum.SelectedValue = info.KurumKodu.ToString();
+                        KurumlariGetir(IlceBilgisi(info.IlceAdi));
+
+                        ddlKurum.SelectedValue = info.KurumKodu.ToString();
+                    }
+
                     txtSube.Text = info.Sube;
 
                     btnKaydet.Text = "Değiştir";
@@ -72,7 +76,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciKayit : System.Web.
         OturumIslemleri oturum = new OturumIslemleri();
         KullanicilarInfo kInfo = oturum.OturumKontrol();
 
-        bool yetkili = !kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin") && !kInfo.Yetki.Contains("OkulYetkilisi");
+        bool yetkili = !kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin");
         return yetkili;
     }
 
@@ -96,13 +100,13 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciKayit : System.Web.
     protected void btnKaydet_OnClick(object sender, EventArgs e)
     {
         int id = hfId.Value.ToInt32();
+        OturumIslemleri oturum = new OturumIslemleri();
+        KullanicilarInfo kInfo = oturum.OturumKontrol();
 
         string ilce = ddlIlce.SelectedValue;
         int kurumkodu = ddlKurum.SelectedValue.ToInt32();
 
-        OturumIslemleri oturum = new OturumIslemleri();
-        KullanicilarInfo kInfo = oturum.OturumKontrol();
-        if (kInfo.Yetki.Contains("OkulYetkilisi"))
+        if (kInfo.Yetki.Contains("Admin"))
         {
             IlcelerDb ilcelerDb = new IlcelerDb();
             var ilceInfo = ilcelerDb.KayitBilgiGetir(kInfo.IlceId);
@@ -118,17 +122,11 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciKayit : System.Web.
 
         if (hfId.Value == "0")
         {
-            if (txtTcKimlik.Text.Length !=11)
-            {
-                Master.UyariKirmizi("Tc Kimlik numarası geçerli değil.", phUyari);
-                return;
-            }
-            
             string opaqId = txtTcKimlik.Text.Md5Sifrele();
             var kontrol = veriDb.KayitKontrol(donem, opaqId, 0);
             if (kontrol)
             {
-                Master.UyariKirmizi("Bu Tc kimlik numarası daha önce kaydedilmiş. Öğrenci listesini kontrol ediniz. Listede göremiyorsanız sistem yöneticisi ile iletişime geçiniz.", phUyari);
+                Master.UyariKirmizi("Bu giriş bilgisi ile bir öğrenci daha önce kaydedilmiş. Öğrenci listenizi kontrol ediniz. Listede göremiyorsanız sistem yöneticisi ile iletişime geçiniz.", phUyari);
                 return;
             }
 
@@ -168,18 +166,12 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OgrenciKayit : System.Web.
             }
             else
             {
-                if (txtTcKimlik.Text.Length != 11)
-                {
-                    Master.UyariKirmizi("Tc Kimlik numarası geçerli değil.", phUyari);
-                    return;
-                }
-
                 opaqId = txtTcKimlik.Text.Md5Sifrele();
             }
             var kontrol = veriDb.KayitKontrol(donem, opaqId, id);
             if (kontrol)
             {
-                Master.UyariKirmizi("Bu Tc kimlik numarası daha önce kaydedilmiş. Öğrenci listesini kontrol ediniz. Listede göremiyorsanız sistem yöneticisi ile iletişime geçiniz.", phUyari);
+                Master.UyariKirmizi("Bu giriş bilgisi ile bir öğrenci daha önce kaydedilmiş. Öğrenci listesini kontrol ediniz. Listede göremiyorsanız sistem yöneticisi ile iletişime geçiniz.", phUyari);
                 return;
             }
             TestKutukInfo info = new TestKutukInfo

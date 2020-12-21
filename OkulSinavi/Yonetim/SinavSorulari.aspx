@@ -1,6 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="SinavSorulari.aspx.cs" Inherits="OkulSinavi_CevrimiciSinavYonetim_SinavSorulari" %>
-
-<%@ Register TagPrefix="uc1" TagName="UstMenu" Src="~/Yonetim/UstMenu.ascx" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="MasterPage.master" AutoEventWireup="true" CodeFile="SinavSorulari.aspx.cs" Inherits="OkulSinavi_CevrimiciSinavYonetim_SinavSorulari" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <link rel="stylesheet" href="/CevrimiciSinav/Content/sweetalert2/sweetalert2.min.css" />
@@ -11,7 +9,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü   <small class="float-right">Eğitim Öğretim Yılı: <%=TestSeciliDonem.SeciliDonem().Donem%></small></h1>
+                        <h1 class="m-0 text-dark">'<asp:Literal ID="ltrOturumAdi" runat="server"></asp:Literal>' Oturum Soruları</h1>
                     </div>
                 </div>
             </div>
@@ -19,14 +17,11 @@
         <div class="content">
             <div class="row">
                 <div class="col-lg-12">
-                    <uc1:UstMenu runat="server" ID="UstMenu" />
                     <div class="card">
-
                         <div class="card-body">
-                            
                             <div class="col-md-6">
                                 <ol class="breadcrumb float-sm-left">
-                                    <li class="breadcrumb-item"><a href="SinavYonetim.aspx"><%=TestSeciliDonem.SeciliDonem().Donem%> Sınav Yönetimi</a></li>
+                                    <li class="breadcrumb-item"><a href="SinavYonetim.aspx">Sınav Yönetimi</a></li>
                                     <li class="breadcrumb-item">
                                         <asp:HyperLink ID="hlOturum" runat="server">Oturumlar</asp:HyperLink></li>
                                     <li class="breadcrumb-item active">Sorular</li>

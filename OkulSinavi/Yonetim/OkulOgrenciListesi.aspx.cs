@@ -12,13 +12,19 @@ public partial class Okul_SinaviYonetim_OkulOgrenciListesi : System.Web.UI.Page
             {
                 Response.Redirect("Default.aspx");
             }
+
+            if (Master.Yetki().Contains("Ogretmen"))
+            {
+                okulYoneticiBilgi.Visible = false;
+                okulYoneticiKayit.Visible = false;
+            }
         }
     }
     private static bool YetkiKontrol()
     {
         OturumIslemleri oturum = new OturumIslemleri();
         KullanicilarInfo kInfo = oturum.OturumKontrol();
-        bool yetkili = !kInfo.Yetki.Contains("OkulYetkilisi");
+        bool yetkili = !kInfo.Yetki.Contains("Ogretmen")&& !kInfo.Yetki.Contains("Admin");
         return yetkili;
     }
 
@@ -41,15 +47,7 @@ public partial class Okul_SinaviYonetim_OkulOgrenciListesi : System.Web.UI.Page
         KullanicilarInfo kInfo = oturum.OturumKontrol();
 
         int donem = TestSeciliDonem.SeciliDonem().Id;
-        if (TestSeciliDonem.SeciliDonem().VeriGirisi==0)
-        {
-            soList = new JsonMesaj
-            {
-                Sonuc = "no",
-                Mesaj = "Veri girişleri kapatıldığı için kayıt silinemedi.",
-            };
-            return JsonConvert.SerializeObject(soList);
-        }
+        
         TestKutukInfo sonuc = kutukDb.KayitBilgiGetir(donem,kInfo.KurumKodu.ToInt32(),OgrencId);
         if (sonuc.Id == 0)
         {

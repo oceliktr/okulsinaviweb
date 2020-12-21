@@ -11,6 +11,7 @@ public class TestKutukInfo
     public string Soyadi { get; set; }
     public int Sinifi { get; set; }
     public string Sube { get; set; }
+    public string GirisKey { get; set; }
     public DateTime? SonGiris { get; set; }
     public TestKutukInfo()
     {
@@ -19,6 +20,15 @@ public class TestKutukInfo
     public TestKutukInfo(int kurumKodu)
     {
         KurumKodu = kurumKodu;
+    }
+
+    public TestKutukInfo(string opaqId, string adi, string soyadi, int sinifi, string sube)
+    {
+        OpaqId = opaqId;
+        Adi = adi;
+        Soyadi = soyadi;
+        Sinifi = sinifi;
+        Sube = sube;
     }
 
     public TestKutukInfo(int id, string opaqId, string ilceAdi, int kurumKodu,  string adi, string soyadi, int sinifi, string sube)

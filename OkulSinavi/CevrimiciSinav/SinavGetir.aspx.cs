@@ -53,7 +53,7 @@ public partial class Sinav_SinavGetir : System.Web.UI.Page
                     //Her cevaptan sonra öğrenci cevaplarını işaretli tutmak için gerekli session işlemi
                     TestOgrCevapDb testCevapDb = new TestOgrCevapDb();
                     var sonuc = testCevapDb.KayitBilgiGetir(oturumId, ogrenci.OpaqId);
-                    Session["Cevap"] = sonuc.Cevap.Substring(soruNo - 1, 1);
+                    Session["Cevap"] =  sonuc.Cevap.Substring(soruNo - 1, 1);
 
                     ddlBranslar.DataSource = CacheHelper.SinavdakiBranslar(oturumId);
                     ddlBranslar.DataValueField = "Id";

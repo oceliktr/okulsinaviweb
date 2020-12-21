@@ -12,9 +12,11 @@ public partial class Okul_SinaviYonetim__Sinavlar : System.Web.UI.Page
                 Response.Redirect("Default.aspx");
             }
 
-            int donem = TestSeciliDonem.SeciliDonem().Id;
+            OturumIslemleri oturum = new OturumIslemleri();
+            KullanicilarInfo kInfo = oturum.OturumKontrol();
+      
             TestSinavlarDb sinavDb = new TestSinavlarDb();
-            rptSinavlar.DataSource = sinavDb.KayitlariGetir(donem);
+            rptSinavlar.DataSource = kInfo.Yetki.Contains("Root")? sinavDb.KayitlariGetir(): sinavDb.KayitlariGetir(kInfo.KurumKodu);
             rptSinavlar.DataBind();
         }
     }
@@ -29,6 +31,13 @@ public partial class Okul_SinaviYonetim__Sinavlar : System.Web.UI.Page
     {
         if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
         {
+            OturumIslemleri oturum = new OturumIslemleri();
+            KullanicilarInfo kInfo = oturum.OturumKontrol();
+            HyperLink hlSinavAktar = (HyperLink)e.Item.FindControl("hlSinavAktar");
+            if (kInfo.Yetki.Contains("Root"))
+            {
+                hlSinavAktar.Visible = true;
+            }
             GenelIslemler.SiraNumarasiForRepeater(e, "lblSira", 0, 10000);
         }
     }

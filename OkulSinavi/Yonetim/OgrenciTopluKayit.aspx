@@ -1,8 +1,8 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="OgrenciTopluKayit.aspx.cs" Inherits="OkulSinavi_CevrimiciSinavYonetim_OgrenciTopluKayit" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="MasterPage.master" AutoEventWireup="true" CodeFile="OgrenciTopluKayit.aspx.cs" Inherits="OkulSinavi_CevrimiciSinavYonetim_OgrenciTopluKayit" %>
 
 <%@ Register TagPrefix="uc1" TagName="UstMenu" Src="~/Yonetim/UstMenu.ascx" %>
 
-<%@ MasterType VirtualPath="~/MasterPage.master" %>
+<%@ MasterType VirtualPath="MasterPage.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <link rel="stylesheet" href="/CevrimiciSinav/Content/sweetalert2/sweetalert2.min.css" />
     <style>
@@ -67,10 +67,14 @@
                                                             <label>Sınıf<asp:RequiredFieldValidator ControlToValidate="ddlSinif" ValidationGroup="form" ID="RequiredFieldValidator2" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
                                                             <asp:DropDownList ID="ddlSinif" ValidationGroup="form" class="form-control" runat="server">
                                                                 <asp:ListItem Value="">Sınıf Seçiniz</asp:ListItem>
+                                                                <asp:ListItem Value="1">1. Sınıf</asp:ListItem>
+                                                                <asp:ListItem Value="2">2. Sınıf</asp:ListItem>
+                                                                <asp:ListItem Value="3">3. Sınıf</asp:ListItem>
+                                                                <asp:ListItem Value="4">4. Sınıf</asp:ListItem>
                                                                 <asp:ListItem Value="5">5. Sınıf</asp:ListItem>
                                                                 <asp:ListItem Value="6">6. Sınıf</asp:ListItem>
                                                                 <asp:ListItem Value="7">7. Sınıf</asp:ListItem>
-                                                                <asp:ListItem Value="8" Selected="True">8. Sınıf</asp:ListItem>
+                                                                <asp:ListItem Value="8">8. Sınıf</asp:ListItem>
                                                                 <asp:ListItem Value="9">9. Sınıf</asp:ListItem>
                                                                 <asp:ListItem Value="10">10. Sınıf</asp:ListItem>
                                                                 <asp:ListItem Value="11">11. Sınıf</asp:ListItem>
@@ -97,14 +101,15 @@
                                             </div>
                                             <div class="col-md-12 mt-2" id="uyari">
                                                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                                    <strong>Nasıl!</strong><br/> Excel dosyasında öğrenci listenizi sırasıyla T.C. Kimlik No, Adı, Soyadı ve Şube sütunları olacak şekilde oluşturunuz. <br/>
+                                                    <strong>Nasıl!</strong><br/> Excel dosyasında öğrenci listenizi sırasıyla Sınav giriş bilgisi (TC. Kimlik No olabilir), Adı, Soyadı ve Şube sütunları olacak şekilde oluşturunuz. <br/>
                                                     <em>Adı ve soyadı alanlarının ayrı olması gerektiğine dikkat ediniz.</em><br/>
-                                                    Yalnızca öğrencilerin  T.C. Kimlik No, Adı, Soyadı ve Şube bilgilerini seçiniz. Kopyalayıp yukarıdaki alana yapıştırınız.<br/>
+                                                    Yalnızca öğrencilerin  Sınav giriş bilgisi, Adı, Soyadı ve Şube bilgilerini seçiniz. Kopyalayıp yukarıdaki alana yapıştırınız.<br/>
                                                     Listede başlık alanı varsa <span style="text-decoration: underline;">seçmeyiniz</span>.<br/><br/>
                                                     Örnek izlemek için  <a href="#" data-toggle="modal" data-target="#video">tıklayınız</a>
                                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
+                                                    <p><em>Öğrencilerin TC kimlik numaraları sisteme kaydedilmemektedir.</em></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -200,7 +205,7 @@
                     $("#btnVazgec").removeClass("d-none");
                     $("#btnTopluKayit").attr("disabled", false);
                     $("#btnTopluKayit").html(sinifi+". sınıf Listesine Kaydet");
-                    var html = "<table class='table table-hover'><thead><tr><th></th><th>TC Kimlik</th><th>Adı</th><th>Soyadı</th><th>Sınıfı</th><th>Şubesi</th><th>Sonuç</th></tr></thead><tbody>";
+                    var html = "<table class='table table-hover'><thead><tr><th></th><th>Sınav giriş bilgisi</th><th>Adı</th><th>Soyadı</th><th>Sınıfı</th><th>Şubesi</th><th>Sonuç</th></tr></thead><tbody>";
                     for (var i = 0; i < data.length; i++) {
 
                         if (data[i].Sonuc !== "") {

@@ -1,6 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Giris.aspx.cs" Inherits="OkulSinavi.AdminGiris" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="MasterPage.master" AutoEventWireup="true" CodeFile="Giris.aspx.cs" Inherits="OkulSinavi.AdminGiris" %>
 
-<%@ MasterType VirtualPath="~/MasterPage.master" %>
+<%@ MasterType VirtualPath="MasterPage.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">

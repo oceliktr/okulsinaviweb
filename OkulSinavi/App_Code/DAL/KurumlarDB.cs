@@ -37,6 +37,7 @@ public class KurumlarInfo
     {
         KurumKodu = kurumKodu;
         KurumAdi = kurumveIlceAdi; //ilçe adýyla birleþtirilecek
+        
     }
 }
 
@@ -174,7 +175,7 @@ public class KurumlarDb
 
         return _helper.ExecuteDataSet(sql, p).Tables[0];
     }
-
+    
     public KurumlarInfo KayitBilgiGetir(string kurumKodu)
     {
         const string sqlText = @"select kurumlar.*,ilceler.IlceAdi from kurumlar
@@ -185,7 +186,28 @@ public class KurumlarDb
 
         return info;
     }
-
+    public DevamEdenOkullarModel KayitBilgiGetir(string kurumKodu,int sinif)
+    {
+        const string sqlText = @"select kurumlar.KurumAdi,ilceler.IlceAdi,(SELECT Count(Id) FROM testkutuk where KurumKodu=?KurumKodu AND Sinifi=?Sinif) AS OgrenciSayisi from kurumlar
+                                    INNER JOIN ilceler ON ilceler.Id = kurumlar.IlceId where KurumKodu=?KurumKodu";
+        MySqlParameter[] p =
+        {
+            new MySqlParameter("?KurumKodu", MySqlDbType.Int32),
+            new MySqlParameter("?Sinif", MySqlDbType.Int32)
+        };
+        p[0].Value = kurumKodu.ToInt32();
+        p[1].Value = sinif;
+        MySqlDataReader dr = _helper.ExecuteReader(sqlText, p);
+         DevamEdenOkullarModel info = new DevamEdenOkullarModel();
+        while (dr.Read())
+        {
+            info.OgrenciSayisi = dr.GetMySayi("OgrenciSayisi");
+            info.KurumAdi = dr.GetMyMetin("KurumAdi");
+            info.IlceAdi = dr.GetMyMetin("IlceAdi");
+        }
+        dr.Close();
+        return info;
+    }
     public KurumlarInfo KayitBilgiGetir(int ilce, int kurumId, string uyeKurumKodu)
     {
         const string sqlText = "select * from kurumlar where (IlceId=?IlceId and Id=?Id and KurumKodu=?KurumKodu)";

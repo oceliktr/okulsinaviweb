@@ -1,8 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="SinavKayit.aspx.cs" Inherits="Okul_SinaviYonetim_SinavKayit" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="MasterPage.master" AutoEventWireup="true" CodeFile="SinavKayit.aspx.cs" Inherits="Okul_SinaviYonetim_SinavKayit" %>
 
-<%@ Register TagPrefix="uc1" TagName="UstMenu" Src="~/Yonetim/UstMenu.ascx" %>
-
-<%@ MasterType VirtualPath="~/MasterPage.master" %>
+<%@ MasterType VirtualPath="MasterPage.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
@@ -11,7 +9,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü   <small class="float-right">Eğitim Öğretim Yılı: <%=TestSeciliDonem.SeciliDonem().Donem%></small></h1>
+                        <h1 class="m-0 text-dark">Sınav Kayıt</h1>
                     </div>
                 </div>
             </div>
@@ -20,11 +18,6 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card card-default">
-                        <div class="row" style="margin-bottom: 20px;">
-                            <div class="col-md-12">
-                                <uc1:UstMenu runat="server" ID="UstMenu" />
-                            </div>
-                        </div>
                         <div class="card-body">
 
                             <div class="row">
@@ -42,21 +35,8 @@
                                 <div class="card card-warning">
                                     <div class="card-body">
                                         <div class="row">
+                                            
                                             <div class="col-md-12">
-                                                
-                                                <div class="alert alert-info" role="alert">
-                                                    <asp:Literal ID="ltrDonem" runat="server"></asp:Literal><br/>
-                                                    Yalnızca aktif döneme kayıt yapılır. 
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>
-                                                        Aktif Dönem: </label>
-                                                    <asp:TextBox ID="txtDonem" ValidationGroup="form" ReadOnly="True" CssClass="form-control" runat="server"></asp:TextBox>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-8">
                                                 <div class="form-group">
                                                     <label>
                                                         Sınav Adı
@@ -77,6 +57,10 @@
                                                     <label>Sınıf<asp:RequiredFieldValidator ControlToValidate="ddlSinif" ValidationGroup="form" ID="RequiredFieldValidator2" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
                                                     <asp:DropDownList ID="ddlSinif" ValidationGroup="form" class="form-control" runat="server">
                                                         <asp:ListItem Value="">Seçiniz</asp:ListItem>
+                                                        <asp:ListItem Value="1">1. Sınıf</asp:ListItem>
+                                                        <asp:ListItem Value="2">2. Sınıf</asp:ListItem>
+                                                        <asp:ListItem Value="3">3. Sınıf</asp:ListItem>
+                                                        <asp:ListItem Value="4">4. Sınıf</asp:ListItem>
                                                         <asp:ListItem Value="5">5. Sınıf</asp:ListItem>
                                                         <asp:ListItem Value="6">6. Sınıf</asp:ListItem>
                                                         <asp:ListItem Value="7">7. Sınıf</asp:ListItem>

@@ -1,8 +1,8 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="OgrenciKayit.aspx.cs" Inherits="OkulSinavi_CevrimiciSinavYonetim_OgrenciKayit" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="MasterPage.master" AutoEventWireup="true" CodeFile="OgrenciKayit.aspx.cs" Inherits="OkulSinavi_CevrimiciSinavYonetim_OgrenciKayit" %>
 
 <%@ Register TagPrefix="uc1" TagName="UstMenu" Src="~/Yonetim/UstMenu.ascx" %>
 
-<%@ MasterType VirtualPath="~/MasterPage.master" %>
+<%@ MasterType VirtualPath="MasterPage.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
@@ -50,7 +50,6 @@
                                                             <asp:TextBox ID="txtDonem" ValidationGroup="form" ReadOnly="True" CssClass="form-control" runat="server"></asp:TextBox>
                                                         </div>
                                                     </div>
-                                                    <asp:PlaceHolder ID="phOklIlce" runat="server">
                                                         <div class="col-md-3">
                                                             <div class="form-group">
                                                                 <label>
@@ -69,7 +68,6 @@
                                                                 </asp:DropDownList>
                                                             </div>
                                                         </div>
-                                                    </asp:PlaceHolder>
                                     </div>
                                             </ContentTemplate>
                                         </asp:UpdatePanel>
@@ -77,9 +75,9 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>
-                                                    Tc Kimlik <i data-toggle="tooltip" title="TC Kimlik bilgisi sistemimizde tutulmamaktadır. Yalnızca benzersiz kayıt oluşturmak için kullanılmaktadır." class="fa fa-question-circle"></i>
+                                                    Sınav Giriş Bilgisi <i data-toggle="tooltip" title="TC Kimlik yazabilirsiniz. TC Kimlik bilgisi sistemimizde tutulmamaktadır. Yalnızca benzersiz kayıt oluşturmak için kullanılmaktadır." class="fa fa-question-circle"></i>
                                                     </label>
-                                                <asp:TextBox ID="txtTcKimlik" MaxLength="11" ValidationGroup="form" TextMode="Number" CssClass="form-control" runat="server" placeholder="Tc Kimlik numarasını giriniz"></asp:TextBox>
+                                                <asp:TextBox ID="txtTcKimlik" MaxLength="11" ValidationGroup="form" CssClass="form-control" runat="server" placeholder="Giriş bilgisini giriniz"></asp:TextBox>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -87,10 +85,14 @@
                                                 <label>Sınıf<asp:RequiredFieldValidator ControlToValidate="ddlSinif" ValidationGroup="form" ID="RequiredFieldValidator2" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
                                                 <asp:DropDownList ID="ddlSinif" ValidationGroup="form" class="form-control" runat="server">
                                                     <asp:ListItem Value="">Sınıf Seçiniz</asp:ListItem>
+                                                    <asp:ListItem Value="1">1. Sınıf</asp:ListItem>
+                                                    <asp:ListItem Value="2">2. Sınıf</asp:ListItem>
+                                                    <asp:ListItem Value="3">3. Sınıf</asp:ListItem>
+                                                    <asp:ListItem Value="4">4. Sınıf</asp:ListItem>
                                                     <asp:ListItem Value="5">5. Sınıf</asp:ListItem>
                                                     <asp:ListItem Value="6">6. Sınıf</asp:ListItem>
                                                     <asp:ListItem Value="7">7. Sınıf</asp:ListItem>
-                                                    <asp:ListItem Value="8" Selected="True">8. Sınıf</asp:ListItem>
+                                                    <asp:ListItem Value="8">8. Sınıf</asp:ListItem>
                                                     <asp:ListItem Value="9">9. Sınıf</asp:ListItem>
                                                     <asp:ListItem Value="10">10. Sınıf</asp:ListItem>
                                                     <asp:ListItem Value="11">11. Sınıf</asp:ListItem>

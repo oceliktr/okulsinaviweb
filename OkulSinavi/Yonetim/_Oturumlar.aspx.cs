@@ -22,8 +22,24 @@ public partial class Okul_SinaviYonetim_Oturumlar : System.Web.UI.Page
                     int sinavId = Request.QueryString["SinavId"].ToInt32();
 
                     TestOturumlarDb sinavDb = new TestOturumlarDb();
-                    rptOturumlar.DataSource = sinavDb.KayitlariGetir(sinavId);
+                    var oturumlar = sinavDb.Oturumlar(sinavId);
+                    rptOturumlar.DataSource = oturumlar;
                     rptOturumlar.DataBind();
+
+
+                    //Sınav sonuçlarını öğrenciler sınavı bitirdikten sonra gösterilmeli.
+                    List<DateTime> sonOturumTarihleri = new List<DateTime>();
+
+                    foreach (var o in oturumlar)
+                    {
+                        sonOturumTarihleri.Add(o.BitisTarihi.AddMinutes(o.Sure.ToDouble()));
+
+                    }
+
+                    var sonOturumBitis = sonOturumTarihleri.OrderByDescending(x => x).First();
+                    ltrCevapAnahtariBilgi.Text = sonOturumBitis.TarihYaz();
+
+
                 }
             }
         }

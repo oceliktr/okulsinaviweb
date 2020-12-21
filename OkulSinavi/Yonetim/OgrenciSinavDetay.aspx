@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="OgrenciSinavDetay.aspx.cs" Inherits="OkulSinavi_CevrimiciSinavYonetim_OgrenciSinavDetay" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="MasterPage.master" AutoEventWireup="true" CodeFile="OgrenciSinavDetay.aspx.cs" Inherits="OkulSinavi_CevrimiciSinavYonetim_OgrenciSinavDetayRoot" %>
 
 <%@ Register Src="~/Yonetim/UstMenu.ascx" TagPrefix="uc1" TagName="UstMenu" %>
 
@@ -85,7 +85,11 @@
         function Sinav() {
             var sinavId = $("#ContentPlaceHolder1_ddlSinavlar option:selected").val();
            if(sinavId!=="")
-            $("#ogrSinavDurum").load("/Yonetim/_OgrenciSinavDetay.aspx?OpaqId="+<%=Request.QueryString["OpaqId"]%>+"&SinavId="+sinavId);
+            $("#ogrSinavDurum").load("/Yonetim/_OgrenciSinavDetay.aspx?OpaqId=<%=Request.QueryString["OpaqId"]%>&SinavId="+sinavId);
+        }
+
+        function SinavTamamla() {
+           
         }
     </script>
 </asp:Content>

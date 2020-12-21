@@ -14,8 +14,7 @@ public partial class Okul_SinaviYonetim_SinavDetay : System.Web.UI.Page
             OturumIslemleri oturum = new OturumIslemleri();
             KullanicilarInfo kInfo = oturum.OturumKontrol();
 
-            if (!kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin") &&
-                !kInfo.Yetki.Contains("OkulYetkilisi") && !kInfo.Yetki.Contains("LgsIlKomisyonu") && !kInfo.Yetki.Contains("IlceMEMYetkilisi"))
+            if (!kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin") &&!kInfo.Yetki.Contains("Ogretmen"))
             {
                 Response.Redirect("Default.aspx");
             }
@@ -27,21 +26,18 @@ public partial class Okul_SinaviYonetim_SinavDetay : System.Web.UI.Page
                     int sinavId = Request.QueryString["SinavId"].ToInt32();
 
                     TestIlcePuanDb veriDb = new TestIlcePuanDb();
-                    if (kInfo.Yetki.Contains("OkulYetkilisi"))
+                    if (kInfo.Yetki.Contains("Ogretmen")|| kInfo.Yetki.Contains("Admin"))
                     {
                         rptKayitlar.DataSource = veriDb.KayitlariGetir(sinavId, kInfo.KurumKodu.ToInt32());
                         rptKayitlar.DataBind();
                     }
-                    else if (kInfo.Yetki.Contains("IlceMEMYetkilisi"))
+                    else if (kInfo.Yetki.Contains("Root"))
                     {
                         IlcelerDb ilcelerDb = new IlcelerDb();
                         IlcelerInfo ilce = ilcelerDb.KayitBilgiGetir(kInfo.IlceId);
                         rptKayitlar.DataSource = veriDb.KayitlariGetir(sinavId, ilce.IlceAdi);
                         rptKayitlar.DataBind();
-                    }
-                    else if (kInfo.Yetki.Contains("Root") || kInfo.Yetki.Contains("Admin") ||
-                             kInfo.Yetki.Contains("LgsIlKomisyonu"))
-                    {
+                    
                         ddlIlce.Visible = true; 
                     }
                 }

@@ -45,7 +45,7 @@ public partial class CevrimiciSinav_OturumGetir : Page
 
             TestOgrenci ogrenci = (TestOgrenci)Session["Ogrenci"];
 
-            var sinavInfo = CacheHelper.AktifSinavlar(ogrenci.Sinifi).FirstOrDefault(x => x.Id == sinavId);
+            var sinavInfo = CacheHelper.AktifSinavlar(ogrenci.KurumKodu.ToString(),ogrenci.Sinifi).FirstOrDefault(x => x.Id == sinavId);
 
             TestOgrCevapDb ogrCevapDb = new TestOgrCevapDb();
             var ogrCvpInfo = ogrCevapDb.KayitBilgiGetir(buOturumId, ogrenci.OpaqId);

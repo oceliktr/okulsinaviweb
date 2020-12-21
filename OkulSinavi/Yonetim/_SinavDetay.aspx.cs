@@ -22,8 +22,11 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_SinavDetay : System.Web.UI
                 {
                     int id = Request.QueryString["Id"].ToInt32();
 
+                    OturumIslemleri oturum = new OturumIslemleri();
+                    KullanicilarInfo kInfo = oturum.OturumKontrol();
+
                     TestSinavlarDb sinavDb = new TestSinavlarDb();
-                    TestSinavlarInfo info = sinavDb.KayitBilgiGetir(id);
+                    TestSinavlarInfo info = sinavDb.KayitBilgiGetir(id, kInfo.KurumKodu);
                     ltrSinavAdi.Text = info.SinavAdi;
                     ltrAciklama.Text = info.Aciklama;
                     ltrSinif.Text = info.Sinif.ToString();

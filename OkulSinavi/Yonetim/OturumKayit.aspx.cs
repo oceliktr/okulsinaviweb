@@ -17,8 +17,11 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OturumKayit : System.Web.U
                 {
                     int sinavId = Request.QueryString["SinavId"].ToInt32();
 
+                    OturumIslemleri oturum = new OturumIslemleri();
+                    KullanicilarInfo kInfo = oturum.OturumKontrol();
+
                     TestSinavlarDb sinavDb = new TestSinavlarDb();
-                    TestSinavlarInfo info = sinavDb.KayitBilgiGetir(sinavId);
+                    TestSinavlarInfo info = sinavDb.KayitBilgiGetir(sinavId,kInfo.KurumKodu);
                     txtSinavAdi.Text = info.SinavAdi;
                     hfSinavId.Value = info.Id.ToString();
 
@@ -35,7 +38,13 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OturumKayit : System.Web.U
                             txtSiraNo.Text = oturumInfo.SiraNo.ToString();
                             txtAciklama.Text = oturumInfo.Aciklama.Replace("<br>",Environment.NewLine);
                             txtSure.Text = oturumInfo.Sure.ToString();
-                            txtTarih.Text = oturumInfo.BaslamaTarihi+ " - " + oturumInfo.BitisTarihi;
+
+                            string tarih = oturumInfo.BaslamaTarihi.ToShortDateString();
+                            string baslamaSaati = oturumInfo.BaslamaTarihi.Hour + ":" + oturumInfo.BaslamaTarihi.Minute;
+                            string bitisSaati = oturumInfo.BitisTarihi.Hour + ":" + oturumInfo.BitisTarihi.Minute;
+                            txtTarih.Text = tarih;
+                            txtBaslangicSaati.Text = baslamaSaati;
+                            txtBitisSaati.Text = bitisSaati;
 
                             btnKaydet.Text = "Değiştir";
                         }
@@ -49,7 +58,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OturumKayit : System.Web.U
     {
         OturumIslemleri oturum = new OturumIslemleri();
         KullanicilarInfo kInfo = oturum.OturumKontrol();
-        bool yetkili = !kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin");
+        bool yetkili = !kInfo.Yetki.Contains("Admin");
         return yetkili;
     }
 
@@ -58,9 +67,12 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OturumKayit : System.Web.U
         int sinavId = hfSinavId.Value.ToInt32();
         int siraNo = txtSiraNo.Text.ToInt32();
         int id = hfId.Value.ToInt32();
-        string[] tarih = txtTarih.Text.Split('-');
-        DateTime baslamaTarihi = tarih[0].Trim().ToDateTime();
-        DateTime bitisTarihi = tarih[1].Trim().ToDateTime();
+        string tarih = txtTarih.Text;
+        string baslamaSaati = txtBaslangicSaati.Text;
+        string bitisSaati = txtBitisSaati.Text;
+
+        DateTime baslamaTarihi = (tarih+" "+baslamaSaati+":00").ToDateTime();
+        DateTime bitisTarihi = (tarih + " " + bitisSaati + ":59").ToDateTime();
         TestOturumlarInfo info = new TestOturumlarInfo
         {
             OturumAdi = txtOturmAdi.Text.ToTemizMetin(),
@@ -87,7 +99,6 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OturumKayit : System.Web.U
                 {
                     Master.UyariIslemTamam("Yeni bir oturum eklendi.", phUyari);
                     FormuTemizle();
-                    CacheHelper.OturumlarKaldir(sinavId);
                 }
                 else
                     Master.UyariTuruncu("Kayıt yapılamadı.", phUyari);
@@ -98,7 +109,6 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OturumKayit : System.Web.U
                 {
                     Master.UyariIslemTamam("Değişiklikler kaydildi.", phUyari);
 
-                    CacheHelper.OturumlarKaldir(sinavId);
                 }
                 else
                     Master.UyariTuruncu("Güncelleme yapılamadı.", phUyari);

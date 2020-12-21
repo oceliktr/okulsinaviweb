@@ -10,17 +10,29 @@ public class TestSinavlarDb
 {
     private readonly HelperDb helper = new HelperDb();
 
-    public DataTable KayitlariGetir(int donem)
-    {
-        const string sql = "select * from testsinavlar where DonemId=?DonemId ORDER BY Aktif desc,Id desc";
-        MySqlParameter par =new MySqlParameter("?DonemId",MySqlDbType.Int32){Value = donem};
-        return helper.ExecuteDataSet(sql,par).Tables[0];
+    public DataTable KayitlariGetir()
+    { string sql = "select * from testsinavlar ORDER BY Aktif desc,Id desc";
+       return helper.ExecuteDataSet(sql).Tables[0];
     }
-    public List<TestSinavlarInfo> TumSinavlar(int donem)
+    public DataTable KayitlariGetir(string kurumkodu)
     {
-        const string sql = "select * from testsinavlar where DonemId=?DonemId ORDER BY Aktif desc,Id desc";
-        MySqlParameter par = new MySqlParameter("?DonemId", MySqlDbType.Int32) { Value = donem };
-        DataTable dt = helper.ExecuteDataSet(sql,par).Tables[0];
+        string sql = "select * from testsinavlar where Kurumlar Like '%," + kurumkodu + ",%' ORDER BY Aktif desc,Id desc";
+        return helper.ExecuteDataSet(sql).Tables[0];
+    }
+    public DataTable KayitlariGetir(int sinif,string kurumkodu)
+    {
+         string sql = "select * from testsinavlar where Sinif=?Sinif and Kurumlar Like '%,"+kurumkodu+",%' ORDER BY Aktif desc,Id desc";
+        MySqlParameter[] pars =
+        {
+            new MySqlParameter("?Sinif", MySqlDbType.Int32)
+        };
+        pars[0].Value = sinif;
+        return helper.ExecuteDataSet(sql, pars).Tables[0];
+    }
+    public List<TestSinavlarInfo> TumSinavlar(string kurumkodu)
+    {
+         string sql = "select * from testsinavlar where Kurumlar Like '%," + kurumkodu + ",%' ORDER BY Aktif desc,Id desc";
+        DataTable dt = helper.ExecuteDataSet(sql).Tables[0];
         List<TestSinavlarInfo> table = new List<TestSinavlarInfo>();
         foreach (DataRow k in dt.Rows)
         {
@@ -28,16 +40,14 @@ public class TestSinavlarDb
         }
         return table;
     }
-    public List<TestSinavlarInfo> AktifSinavlar(int donem,int sinif)
+    public List<TestSinavlarInfo> AktifSinavlar(int sinif,string kurumkodu)
     {
-        const string sql = @"SELECT t.* from testsinavlar as t WHERE t.DonemId=?DonemId and t.Sinif=?Sinif and t.Aktif=1 ORDER BY t.Id desc";
+         string sql = @"SELECT t.* from testsinavlar as t WHERE Kurumlar Like '%," + kurumkodu + ",%' and t.Sinif=?Sinif and t.Aktif=1 ORDER BY t.Id desc";
         MySqlParameter[] pars =
         {
-            new MySqlParameter("?Sinif", MySqlDbType.Int32),
-            new MySqlParameter("?DonemId", MySqlDbType.Int32)
+            new MySqlParameter("?Sinif", MySqlDbType.Int32)
         };
         pars[0].Value = sinif;
-        pars[1].Value = donem;
 
         DataTable dt = helper.ExecuteDataSet(sql, pars).Tables[0];
         List<TestSinavlarInfo> table = new List<TestSinavlarInfo>();
@@ -47,20 +57,7 @@ public class TestSinavlarDb
         }
         return table;
     }
-    //public List<TestSinavlarInfo> AktifSinavlar()
-    //{
-    //    const string sql = @"SELECT t.* from testsinavlar as t WHERE t.Aktif=1 ORDER BY t.Id desc";
-
-
-    //    DataTable dt = helper.ExecuteDataSet(sql).Tables[0];
-    //    List<TestSinavlarInfo> table = new List<TestSinavlarInfo>();
-    //    foreach (DataRow k in dt.Rows)
-    //    {
-    //        table.Add(new TestSinavlarInfo(Convert.ToInt32(k["Id"].ToString()), Convert.ToInt32(k["DonemId"].ToString()), Convert.ToInt32(k["Sinif"].ToString()), Convert.ToInt32(k["Puanlama"].ToString()), k["SinavAdi"].ToString(), k["Aciklama"].ToString(), Convert.ToInt32(k["Aktif"].ToString()), Convert.ToInt32(k["OturumTercihi"].ToString()), Convert.ToInt32(k["BeklemeSuresi"].ToString())));
-    //    }
-    //    return table;
-    //}
-
+    
     private static TestSinavlarInfo TabloAlanlar(MySqlDataReader dr)
     {
         TestSinavlarInfo info = new TestSinavlarInfo();
@@ -69,6 +66,7 @@ public class TestSinavlarDb
             info.Id = dr.GetMySayi("Id");
             info.DonemId = dr.GetMySayi("DonemId");
             info.Aciklama = dr.GetMyMetin("Aciklama");
+            info.Kurumlar = dr.GetMyMetin("Kurumlar");
             info.Aktif = dr.GetMySayi("Aktif");
             info.Sinif = dr.GetMySayi("Sinif");
             info.Puanlama = dr.GetMySayi("Puanlama");
@@ -90,7 +88,32 @@ public class TestSinavlarDb
 
         return info;
     }
+    public TestSinavlarInfo KayitBilgiGetir(int id, string kurumkodu)
+    {
+        string cmdText = "select * from testsinavlar where Id=?Id and Kurumlar Like '%," + kurumkodu + ",%'";
+        MySqlParameter param = new MySqlParameter("?Id", MySqlDbType.Int32) { Value = id };
+        MySqlDataReader dr = helper.ExecuteReader(cmdText, param);
+        var info = TabloAlanlar(dr);
 
+        return info;
+    }
+    public TestSinavlarInfo KayitBilgiGetir(TestSinavlarInfo snv)
+    {
+        string cmdText = "select * from testsinavlar where Sinif=?Sinif and SinavAdi=?SinavAdi and Kurumlar=?Kurumlar Order By Id desc limit 1";
+        MySqlParameter[] pars =
+        {
+            new MySqlParameter("?Sinif", MySqlDbType.Int32),
+            new MySqlParameter("?SinavAdi", MySqlDbType.String),
+            new MySqlParameter("?Kurumlar", MySqlDbType.String)
+        };
+        pars[0].Value = snv.Sinif;
+        pars[1].Value = snv.SinavAdi;
+        pars[2].Value = snv.Kurumlar;
+        MySqlDataReader dr = helper.ExecuteReader(cmdText, pars);
+        var info = TabloAlanlar(dr);
+
+        return info;
+    }
     public int KayitSil(int id)
     {
         TestOturumlarDb oturumlarDb = new TestOturumlarDb();
@@ -110,21 +133,22 @@ public class TestSinavlarDb
         return helper.ExecuteNonQuery(sql, p);
     }
 
-    public int KayitEkle(TestSinavlarInfo info)
+    public long KayitEkle(TestSinavlarInfo info)
     {
-        const string sql = @"insert into testsinavlar (DonemId,SinavAdi,Aciklama,Sinif,Puanlama,Aktif,OturumTercihi,BeklemeSuresi) values (?DonemId,?SinavAdi,?Aciklama,?Sinif,?Puanlama,?Aktif,?OturumTercihi,?BeklemeSuresi)";
+        const string sql = @"insert into testsinavlar (DonemId,SinavAdi,Aciklama,Sinif,Puanlama,Aktif,OturumTercihi,BeklemeSuresi,Kurumlar) values (?DonemId,?SinavAdi,?Aciklama,?Sinif,?Puanlama,?Aktif,?OturumTercihi,?BeklemeSuresi,?Kurumlar)";
         MySqlParameter[] pars =
         {
-                new MySqlParameter("?DonemId", MySqlDbType.Int32),
-                new MySqlParameter("?SinavAdi", MySqlDbType.String),
-                new MySqlParameter("?Aciklama", MySqlDbType.String),
-                new MySqlParameter("?Sinif", MySqlDbType.Int32),
-                new MySqlParameter("?Puanlama", MySqlDbType.Int32),
-                new MySqlParameter("?Aktif", MySqlDbType.Int32),
-                new MySqlParameter("?OturumTercihi", MySqlDbType.Int32),
-                new MySqlParameter("?BeklemeSuresi", MySqlDbType.Int32)
-            };
-        pars[0].Value = info.DonemId;
+            new MySqlParameter("?DonemId", MySqlDbType.Int32),
+            new MySqlParameter("?SinavAdi", MySqlDbType.String),
+            new MySqlParameter("?Aciklama", MySqlDbType.String),
+            new MySqlParameter("?Sinif", MySqlDbType.Int32),
+            new MySqlParameter("?Puanlama", MySqlDbType.Int32),
+            new MySqlParameter("?Aktif", MySqlDbType.Int32),
+            new MySqlParameter("?OturumTercihi", MySqlDbType.Int32),
+            new MySqlParameter("?BeklemeSuresi", MySqlDbType.Int32),
+            new MySqlParameter("?Kurumlar", MySqlDbType.String)
+        };
+        pars[0].Value = 0;
         pars[1].Value = info.SinavAdi;
         pars[2].Value = info.Aciklama;
         pars[3].Value = info.Sinif;
@@ -132,7 +156,11 @@ public class TestSinavlarDb
         pars[5].Value = info.Aktif;
         pars[6].Value = info.OturumTercihi;
         pars[7].Value = info.BeklemeSuresi;
-        return helper.ExecuteNonQuery(sql, pars);
+        pars[8].Value = info.Kurumlar;
+
+        long sonId;
+        helper.ExecuteNonQuery(out sonId, sql, pars);
+        return sonId;
     }
 
     public int KayitGuncelle(TestSinavlarInfo info)
@@ -160,11 +188,10 @@ public class TestSinavlarDb
         return helper.ExecuteNonQuery(sql, pars);
     }
 
-    public int KayitSayisi(int donem)
+    public int KayitSayisi(string kurumkodu)
     {
-        const string cmdText = "select count(Id) from testsinavlar where DonemId=?DonemId";
-        MySqlParameter pars = new MySqlParameter("?DonemId", MySqlDbType.Int32) { Value = donem };
-        int sonuc = Convert.ToInt32(helper.ExecuteScalar(cmdText, pars));
+         string cmdText = "select count(Id) from testsinavlar where Kurumlar Like '%," + kurumkodu + ",%'";
+         int sonuc = Convert.ToInt32(helper.ExecuteScalar(cmdText));
         return sonuc;
     }
 

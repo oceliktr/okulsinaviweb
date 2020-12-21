@@ -427,7 +427,8 @@ public partial class Sinav_Sinav : System.Web.UI.Page
                 //yoksa oturumları listeleyecek sayfaya yönlendir.
 
                 //önce bu oturumdaki öğrencinin testogrcevaplar tablosundaki doğru yanlış sayılarını hesapla
-                OgrenciCevaplariniIsle(OturumId, sonuc, ogrenci);
+                SinavPuanlamaIslemleri puanlama = new SinavPuanlamaIslemleri();
+                puanlama.OgrenciCevaplariniIsle(OturumId, sonuc, ogrenci.OpaqId);
 
                 //##### LOG İŞLEMLERİ
                 TestLogInfo logInfo = new TestLogInfo
@@ -578,9 +579,9 @@ public partial class Sinav_Sinav : System.Web.UI.Page
 
                     if (okulPuani.Count > 0)
                     {
-                        OgrPuanTablosunaKayitIslemleri(okulPuani, toplamBransPuan, toplamKatsayiPuani, ogrenci, sinavId);
+                        puanlama.OgrPuanTablosunaKayitIslemleri(okulPuani, toplamBransPuan, toplamKatsayiPuani, ogrenci, sinavId);
 
-                        IlcePuanHesaplama(sinavId, ogrenci, katSayi, dogruYanlisOrani, okulPuani);
+                        puanlama.IlcePuanHesaplama(sinavId, ogrenci, katSayi, dogruYanlisOrani, okulPuani);
                     }
 
 
@@ -622,137 +623,7 @@ public partial class Sinav_Sinav : System.Web.UI.Page
         }
     }
 
-    private static void IlcePuanHesaplama(int sinavId, TestOgrenci ogrenci, List<BranslarInfo> katSayi,
-        int dogruYanlisOrani, List<TestOkulCevapInfo> okulPuani)
-    {
-
-        TestIlcePuanDb ilcePuanDb = new TestIlcePuanDb(); //ilçe puan tablosu içinde sadece bu öğrencinin okul bilgileri güncellenir.
-        var ilcePuaniList = ilcePuanDb.KayitBilgiGetir(sinavId, ogrenci.KurumKodu);
-
-        TestOgrPuanDb ogrPuanDb = new TestOgrPuanDb();
-        // toplamKatsayiPuani öğrenci sayısıyla çarpılmalı
-        var ogrenciSayisi = ogrPuanDb.PuaniHesaplananOgrenciSayisi(sinavId, ogrenci.KurumKodu); //+1 bu öğrenci
-
-        decimal toplamIlceBransPuan = 0;
-        int toplamIlceKatsayiPuani = 0;
-        TestOkulPuanDb okulPuanDb = new TestOkulPuanDb();
-
-        List<TestOkulPuanInfo> okulPuaniList = okulPuanDb.KayitlariDiziyeGetir(sinavId, ogrenci.KurumKodu);
-
-        foreach (var opBrans in okulPuaniList)
-        {
-            var bransKatSayi = katSayi.FirstOrDefault(x => x.Id == opBrans.BransId).KatSayi;
-
-            decimal net = (opBrans.Dogru - ((decimal)opBrans.Yanlis / dogruYanlisOrani)) / ogrenciSayisi;
-            toplamIlceBransPuan += net * bransKatSayi;
-            toplamIlceKatsayiPuani += (opBrans.Bos + opBrans.Dogru + opBrans.Yanlis) * bransKatSayi;
-        }
-        TestSinavlarInfo sinavInfo = CacheHelper.Sinavlar().FirstOrDefault(x => x.Id == sinavId);
-
-        decimal toplamIlcePuan =
-            (toplamIlceBransPuan * sinavInfo.Puanlama) / ((decimal)toplamIlceKatsayiPuani / ogrenciSayisi);
-
-        if (ilcePuaniList.Id == 0) //kayıt yok ise
-        {
-            int toplamDogruSayisi = okulPuani.Sum(x => x.Dogru);
-            int toplamYanlisSayisi = okulPuani.Sum(x => x.Yanlis);
-            int toplamBosSayisi = okulPuani.Sum(x => x.Bos);
-
-            TestIlcePuanInfo ilcePuanInfo = new TestIlcePuanInfo()
-            {
-                Bos = toplamBosSayisi,
-                Dogru = toplamDogruSayisi,
-                Yanlis = toplamYanlisSayisi,
-                KurumKodu = ogrenci.KurumKodu,
-                SinavId = sinavId,
-                IlceAdi = ogrenci.IlceAdi,
-                Puan = toplamIlcePuan,
-                OgrSayisi = ogrenciSayisi
-            };
-            ilcePuanDb.KayitEkle(ilcePuanInfo);
-        }
-        else
-        {
-            int toplamDogruSayisi = okulPuani.Sum(x => x.Dogru) + ilcePuaniList.Dogru;
-            int toplamYanlisSayisi = okulPuani.Sum(x => x.Yanlis) + ilcePuaniList.Yanlis;
-            int toplamBosSayisi = okulPuani.Sum(x => x.Bos) + ilcePuaniList.Bos;
-
-            TestIlcePuanInfo ilcePuanInfo = new TestIlcePuanInfo()
-            {
-                Bos = toplamBosSayisi,
-                Dogru = toplamDogruSayisi,
-                Yanlis = toplamYanlisSayisi,
-                Puan = toplamIlcePuan,
-                OgrSayisi = ogrenciSayisi,
-                Id = ilcePuaniList.Id
-            };
-            ilcePuanDb.KayitGuncelle(ilcePuanInfo);
-        }
-    }
-
-    private static void OgrPuanTablosunaKayitIslemleri(List<TestOkulCevapInfo> okulPuani, decimal toplamBransPuan, int toplamKatsayiPuani,
-        TestOgrenci ogrenci, int sinavId)
-    {
-        TestSinavlarInfo sinavInfo = CacheHelper.Sinavlar().FirstOrDefault(x => x.Id == sinavId);
-
-        //(tr*4+mat*4+....)*100 / 270 270 =>toplamKatsayiPuani
-        int toplamDogruSayisi = okulPuani.Sum(x => x.Dogru);
-        int toplamYanlisSayisi = okulPuani.Sum(x => x.Yanlis);
-        int toplamBosSayisi = okulPuani.Sum(x => x.Bos);
-        decimal toplamPuan = (toplamBransPuan * sinavInfo.Puanlama) / toplamKatsayiPuani;
-        TestOgrPuanDb ogrPuanDb = new TestOgrPuanDb();
-        TestOgrPuanInfo op = new TestOgrPuanInfo()
-        {
-            Dogru = toplamDogruSayisi,
-            Yanlis = toplamYanlisSayisi,
-            Bos = toplamBosSayisi,
-            OpaqId = ogrenci.OpaqId,
-            Puan = toplamPuan,
-            SinavId = sinavInfo.Id,
-            KurumKodu = ogrenci.KurumKodu
-        };
-        ogrPuanDb.KayitEkle(op);
-    }
-
-    private static void OgrenciCevaplariniIsle(int OturumId, TestOgrCevapInfo sonuc, TestOgrenci ogrenci)
-    {
-        string ogrCevaplari = sonuc.Cevap; //öğrencinin cevapları ABCCDCDCBCABCCDCDCBC formatında geliyor
-
-        List<TestSorularInfo> cevaplar = CacheHelper.SorulariGetir(OturumId);
-
-        int dogru = 0;
-        int yanlis = 0;
-
-        for (int i = 0; i < ogrCevaplari.Length; i++)
-        {
-            var c = cevaplar.FirstOrDefault(x => x.SoruNo == i + 1);
-            if (ogrCevaplari.Substring(i, 1) == " ")
-            {
-            }
-            else if (c.Cevap == ogrCevaplari.Substring(c.SoruNo - 1, 1))
-            {
-                dogru++;
-            }
-            else
-            {
-                yanlis++;
-            }
-        }
-
-        TestOgrCevapInfo cevapInfo = new TestOgrCevapInfo
-        {
-            OturumId = OturumId,
-            OpaqId = ogrenci.OpaqId,
-            Dogru = dogru,
-            Yanlis = yanlis,
-            Bitti = 1
-        };
-
-        TestOgrCevapDb oturumCevapDb = new TestOgrCevapDb();
-        oturumCevapDb.DogruYanlisGuncelle(cevapInfo);
-
-    }
-
+  
     [WebMethod]
     public static string BransIlkSorusu(int OturumId, int BransId)
     {
@@ -838,13 +709,4 @@ public partial class Sinav_Sinav : System.Web.UI.Page
 
         return soruSayisi;
     }
-}
-
-public class JsonSonuc
-{
-    public string Sonuc { get; set; }
-    public string Mesaj { get; set; }
-    public int KalanSaat { get; set; }
-    public int KalanDakika { get; set; }
-    public int KalanSaniye { get; set; }
 }

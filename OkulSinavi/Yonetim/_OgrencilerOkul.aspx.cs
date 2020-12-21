@@ -24,7 +24,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim__OgrencilerOkul : System.W
     {
         OturumIslemleri oturum = new OturumIslemleri();
         KullanicilarInfo kInfo = oturum.OturumKontrol();
-        bool yetkili = !kInfo.Yetki.Contains("OkulYetkilisi");
+        bool yetkili = !kInfo.Yetki.Contains("Ogretmen") && !kInfo.Yetki.Contains("Admin");
         return yetkili;
     }
 
@@ -54,7 +54,14 @@ public partial class OkulSinavi_CevrimiciSinavYonetim__OgrencilerOkul : System.W
     {
         if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
         {
+            OturumIslemleri oturum = new OturumIslemleri();
+            KullanicilarInfo kInfo = oturum.OturumKontrol();
             GenelIslemler.SiraNumarasiForRepeater(e, "lblSira", 0, 10000);
+            PlaceHolder phEdit = (PlaceHolder)e.Item.FindControl("phEdit");
+            if (kInfo.Yetki.Contains("Ogretmen"))
+            {
+                phEdit.Visible = false;
+            }
         }
         if (rptOgrenciler.Items.Count < 1)
         {

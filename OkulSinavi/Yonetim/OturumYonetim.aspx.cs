@@ -12,6 +12,17 @@ public partial class Okul_SinaviYonetim_OturumYonetim : System.Web.UI.Page
             {
                 Response.Redirect("Default.aspx");
             }
+
+            int sinavId = 0;
+            if (Request.QueryString["SinavId"] != null)
+            {
+                sinavId = Request.QueryString["SinavId"].ToInt32();
+            }
+
+            TestSinavlarDb sinavDb = new TestSinavlarDb();
+            var sinav = sinavDb.KayitBilgiGetir(sinavId);
+            ltrSinavAdi.Text = sinav.SinavAdi;
+
         }
     }
 

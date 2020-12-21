@@ -79,9 +79,9 @@ public class CacheHelper
         Remove(key);
     }
 
-    public static List<TestSinavlarInfo> Sinavlar()
+    public static List<TestSinavlarInfo> Sinavlar(string kurumKodu)
     {
-        string key = "sinavlar-all";
+        string key = "sinavlar-all-"+kurumKodu;
         List<TestSinavlarInfo> result = WebCache.Get(key);
         if (result == null)
         {
@@ -89,15 +89,15 @@ public class CacheHelper
 
             TestSinavlarDb veriDb = new TestSinavlarDb();
             
-            result = veriDb.TumSinavlar(AktifDonem());
+            result = veriDb.TumSinavlar(kurumKodu);
 
             WebCache.Set(key, result, 20, false);//false süre sıfırlanmasın
         }
         return result;
     }
-    public static void SinavlarKaldir()
+    public static void SinavlarKaldir(string kurumKodu)
     {
-        string key = "sinavlar-all";
+        string key = "sinavlar-all-" + kurumKodu;
         Remove(key);
     }
 
@@ -123,9 +123,9 @@ public class CacheHelper
     }
 
 
-    public static List<TestSinavlarInfo> AktifSinavlar(int sinif)
+    public static List<TestSinavlarInfo> AktifSinavlar(string kurumKodu,int sinif)
     {
-        string key = "aktif-sinavlar-" + sinif;
+        string key = "aktif-sinavlar-" + sinif+"-"+kurumKodu;
         List<TestSinavlarInfo> result = WebCache.Get(key);
         if (result == null)
         {
@@ -133,15 +133,15 @@ public class CacheHelper
 
             
             TestSinavlarDb veriDb = new TestSinavlarDb();
-            result = veriDb.AktifSinavlar(AktifDonem(), sinif);
+            result = veriDb.AktifSinavlar(sinif, kurumKodu);
 
             WebCache.Set(key, result, 20, false);//false süre sıfırlanmasın
         }
         return result;
     }
-    public static void AktifSinavlarKaldir(int sinif)
+    public static void AktifSinavlarKaldir(string kurumKodu, int sinif)
     {
-        string key = "aktif-sinavlar-" + sinif;
+        string key = "aktif-sinavlar-" + sinif + "-" + kurumKodu;
         Remove(key);
     }
 

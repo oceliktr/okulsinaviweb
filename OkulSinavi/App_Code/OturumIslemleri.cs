@@ -18,11 +18,12 @@ public  class OturumIslemleri
         {
             KullanicilarDb kDb = new KullanicilarDb();
             kInfo = kDb.KayitBilgiGetir(uyeId);
+            HttpContext.Current.Session["Kullanici"] = kInfo;//tekrar sessiona yükle
         }
         else
         {
             kInfo = (KullanicilarInfo)HttpContext.Current.Session["Kullanici"];
-            HttpContext.Current.Session["Kullanici"] = kInfo;
+            HttpContext.Current.Session["Kullanici"] = kInfo;//tekrar sessiona yükle session süresi uzasın
         }
 
         return kInfo;

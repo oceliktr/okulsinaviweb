@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Web;
-using System.Web.Services;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Newtonsoft.Json;
 
 public partial class Sinav_SinavSonuc : Page
 {
@@ -11,19 +10,6 @@ public partial class Sinav_SinavSonuc : Page
     {
         if (!IsPostBack)
         {
-            //TestKutukDb okullarDb = new TestKutukDb();
-            //var sonuc = okullarDb.OgrenciBilgiGetir(749788, 11864728);
-            //TestOgrenci ogr = new TestOgrenci
-            //{
-            //    OpaqId = sonuc.OpaqId,
-            //    KurumKodu = sonuc.KurumKodu,
-            //    Adi = sonuc.Adi,
-            //    Soyadi = sonuc.Soyadi,
-            //    Sinifi = sonuc.Sinifi
-            //};
-            //Session["Ogrenci"] = ogr;
-            //yukarısı silinecek
-
             if (Session["Ogrenci"] == null)
             {
                 Response.Redirect("Default.aspx");
@@ -61,7 +47,7 @@ public partial class Sinav_SinavSonuc : Page
             if (sinavId != 0)
             {
                 TestSinavlarDb sinavlar = new TestSinavlarDb();
-                TestSinavlarInfo sinav = sinavlar.KayitBilgiGetir(sinavId);
+                TestSinavlarInfo sinav = sinavlar.KayitBilgiGetir(sinavId, ogrenci.KurumKodu.ToString());
                 miniText.InnerText = "En fazla " + sinav.Puanlama;
                 if (sinav.Sinif == ogrenci.Sinifi)
                 {
@@ -78,11 +64,25 @@ public partial class Sinav_SinavSonuc : Page
                         int soruSayisi = 0;
                         TestSorularDb sorularDb = new TestSorularDb();
                         var oturumList = oturumDb.Oturumlar(sinavId);
+
+                        //Sınav sonuçlarını öğrenciler sınavı bitirdikten sonra gösterilmeli.
+                        List<DateTime> sonOturumTarihleri = new List<DateTime>();
+
                         foreach (var o in oturumList)
                         {
+                            sonOturumTarihleri.Add(o.BitisTarihi.AddMinutes(o.Sure.ToDouble()));
+
                             soruSayisi += sorularDb.SoruSayisi(o.Id);
                         }
 
+                        var simdi = GenelIslemler.YerelTarih();
+                        var sonOturumBitis = sonOturumTarihleri.OrderByDescending(x => x).First();
+                        if (simdi<sonOturumBitis)
+                        {
+
+                            Master.UyariTuruncu("Cevap anahtarınız aşağıda belirtilen saatte kontrol edebilirsiniz. <br><br>Cevap açıklanacağı tarih :  <b>" + sonOturumBitis.TarihYaz()+"</b>", phUyari);
+                            rptOturumlar.Visible = false;
+                        }
                         rptOturumlar.DataSource = oturumList;
                         rptOturumlar.DataBind();
 
@@ -109,34 +109,41 @@ public partial class Sinav_SinavSonuc : Page
 
         if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
         {
-            int oturumId = DataBinder.Eval(e.Item.DataItem, "OturumId").ToInt32();
-            int soruNo = DataBinder.Eval(e.Item.DataItem, "SoruNo").ToInt32();
-            string dogruCevap = DataBinder.Eval(e.Item.DataItem, "Cevap").ToString();
-
-            Literal ltrOgrenciCevap = (Literal)e.Item.FindControl("ltrOgrenciCevap");
-            Literal ltrSonuc = (Literal)e.Item.FindControl("ltrSonuc");
-
-            TestOgrenci ogrenci = (TestOgrenci)Session["Ogrenci"];
-            TestOgrCevapDb testOgrCevapDb = new TestOgrCevapDb();
-            var ogrCevap = testOgrCevapDb.KayitBilgiGetir(oturumId, ogrenci.OpaqId);
-            if (ogrCevap.Id != 0)
+            try
             {
-                string ogrenciCevap = ogrCevap.Cevap.Substring(soruNo - 1, 1);
+                int oturumId = DataBinder.Eval(e.Item.DataItem, "OturumId").ToInt32();
+                int soruNo = DataBinder.Eval(e.Item.DataItem, "SoruNo").ToInt32();
+                string dogruCevap = DataBinder.Eval(e.Item.DataItem, "Cevap").ToString();
 
-                ltrOgrenciCevap.Text = ogrenciCevap;
+                Literal ltrOgrenciCevap = (Literal)e.Item.FindControl("ltrOgrenciCevap");
+                Literal ltrSonuc = (Literal)e.Item.FindControl("ltrSonuc");
 
-                if (ogrenciCevap == " ")
+                TestOgrenci ogrenci = (TestOgrenci)Session["Ogrenci"];
+                TestOgrCevapDb testOgrCevapDb = new TestOgrCevapDb();
+                var ogrCevap = testOgrCevapDb.KayitBilgiGetir(oturumId, ogrenci.OpaqId);
+                if (ogrCevap.Id != 0)
                 {
-                    ltrSonuc.Text = "";
+                    string ogrenciCevap =  ogrCevap.Cevap.Substring(soruNo - 1, 1);
+
+                    ltrOgrenciCevap.Text = ogrenciCevap;
+
+                    if (ogrenciCevap == " ")
+                    {
+                        ltrSonuc.Text = "";
+                    }
+                    else if (ogrenciCevap == dogruCevap)
+                    {
+                        ltrSonuc.Text = "<span class='badge badge-success'>Doğru</span>";
+                    }
+                    else if (ogrenciCevap != dogruCevap)
+                    {
+                        ltrSonuc.Text = "<span class='badge badge-danger'>Yanlış</span>";
+                    }
                 }
-                else if (ogrenciCevap == dogruCevap)
-                {
-                    ltrSonuc.Text = "<span class='badge badge-success'>Doğru</span>";
-                }
-                else if (ogrenciCevap != dogruCevap)
-                {
-                    ltrSonuc.Text = "<span class='badge badge-danger'>Yanlış</span>";
-                }
+            }
+            catch (Exception)
+            {
+              //
             }
         }
     }

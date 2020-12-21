@@ -10,15 +10,13 @@ public partial class Okul_SinaviYonetim_Sinavlar : System.Web.UI.Page
             OturumIslemleri oturum = new OturumIslemleri();
             KullanicilarInfo kInfo = oturum.OturumKontrol();
 
-            if (!kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin") &&
-                !kInfo.Yetki.Contains("OkulYetkilisi") && !kInfo.Yetki.Contains("LgsIlKomisyonu") && !kInfo.Yetki.Contains("IlceMEMYetkilisi"))
+            if (!kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin") &&!kInfo.Yetki.Contains("Ogretmen"))
             {
                Response.Redirect("Default.aspx");
             }
-            int donem = TestSeciliDonem.SeciliDonem().Id;
-
+            
             TestSinavlarDb sinavAdi = new TestSinavlarDb();
-            rptTestler.DataSource = sinavAdi.KayitlariGetir(donem);
+            rptTestler.DataSource = kInfo.Yetki.Contains("Root")? sinavAdi.KayitlariGetir(): sinavAdi.KayitlariGetir(kInfo.KurumKodu);
             rptTestler.DataBind();
 
         }

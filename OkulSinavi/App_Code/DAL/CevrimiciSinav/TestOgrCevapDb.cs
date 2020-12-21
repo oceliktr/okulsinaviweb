@@ -47,27 +47,32 @@ public class TestOgrCevapDb
         return helper.ExecuteDataSet(sql, p).Tables[0];
     }
 
-    public List<TestOgrCevapInfo> PuaniHesaplanmayanlariGetir(int sinavId)
+    public List<TestKutukInfo> PuaniHesaplanmayanlariGetir(int sinavId,int kurumkodu,bool x)
     {
-        const string sql = @"select DISTINCT(OpaqId) from testogrcevaplar 
-        where testogrcevaplar.SinavId=?SinavId AND (testogrcevaplar.Cevap LIKE '%A%' OR testogrcevaplar.Cevap LIKE '%B%' OR  testogrcevaplar.Cevap LIKE '%C%' OR testogrcevaplar.Cevap LIKE '%D%' OR testogrcevaplar.Cevap LIKE '%E%') AND testogrcevaplar.OpaqId
-        not in (select testogrpuanlar.OpaqId from testogrpuanlar WHERE testogrpuanlar.SinavId=?SinavId) GROUP BY testogrcevaplar.OpaqId HAVING COUNT(*)>1";
+        const string sql = @"SELECT op.OpaqId,k.Adi,k.Soyadi,k.Sinifi,k.Sube FROM testogrcevaplar AS op
+                            INNER JOIN testkutuk AS k ON k.OpaqId=op.OpaqId                                                             
+							WHERE op.SinavId=?SinavId AND k.KurumKodu=?KurumKodu AND NOT EXISTS (SELECT oc.OpaqId FROM testogrpuanlar AS oc WHERE oc.OpaqId=op.OpaqId)";
+        MySqlParameter[] p =
+        {
+            new MySqlParameter("?SinavId", MySqlDbType.Int32),
+            new MySqlParameter("?KurumKodu", MySqlDbType.Int32)
+        };
+        p[0].Value = sinavId;
+        p[1].Value = kurumkodu;
 
-        MySqlParameter p = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
         DataTable dt = helper.ExecuteDataSet(sql, p).Tables[0];
-        List<TestOgrCevapInfo> table = new List<TestOgrCevapInfo>();
+        List<TestKutukInfo> table = new List<TestKutukInfo>();
         foreach (DataRow k in dt.Rows)
         {
-            table.Add(new TestOgrCevapInfo(k["OpaqId"].ToString()));
+            table.Add(new TestKutukInfo(k["OpaqId"].ToString(), k["Adi"].ToString(), k["Soyadi"].ToString(), Convert.ToInt32(k["Sinifi"].ToString()), k["Sube"].ToString()));
         }
         return table;
     }
     public List<TestOgrCevapInfo> PuaniHesaplanmayanlariGetir(int sinavId, int kayitsayisi)
     {
         //    string sql = string.Format("select DISTINCT(OpaqId) from testogrcevaplar where SinavId=?SinavId and Dogru=0 and Yanlis=0 AND (Cevap LIKE '%A%' OR Cevap LIKE '%B%' OR  Cevap LIKE '%C%' OR Cevap LIKE '%D%' OR Cevap LIKE '%E%') order by Id asc Limit {0}", kayitsayisi);
-        string sql = string.Format(@"select DISTINCT(OpaqId) from testogrcevaplar 
-        where testogrcevaplar.SinavId=?SinavId AND (testogrcevaplar.Cevap LIKE '%A%' OR testogrcevaplar.Cevap LIKE '%B%' OR  testogrcevaplar.Cevap LIKE '%C%' OR testogrcevaplar.Cevap LIKE '%D%' OR testogrcevaplar.Cevap LIKE '%E%') AND testogrcevaplar.OpaqId
-        not in (select testogrpuanlar.OpaqId from testogrpuanlar WHERE testogrpuanlar.SinavId=?SinavId) GROUP BY testogrcevaplar.OpaqId HAVING COUNT(*)>1 Limit {0}", kayitsayisi);
+        string sql = string.Format(@"SELECT op.OpaqId FROM testogrcevaplar AS op                                                              
+							WHERE op.SinavId=?SinavId AND NOT EXISTS (SELECT oc.OpaqId FROM testogrpuanlar AS oc WHERE oc.OpaqId=op.OpaqId) Limit {0}", kayitsayisi);
 
         MySqlParameter p = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
         DataTable dt = helper.ExecuteDataSet(sql, p).Tables[0];

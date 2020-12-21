@@ -20,8 +20,10 @@
                     <a class="btn btn-default btn-sm" href="#" title="Sınav detayları" data-toggle="modal" data-target="#detay" data-id="<%#Eval("Id") %>"><i class="fas fa-align-justify"></i></a>
                 </td>
                 <td>
+                    <a title="Oturum Ekle" class="btn btn-default btn-sm" href="OturumKayit.aspx?SinavId=<%#Eval("Id") %>"><i class="fa fa-plus"></i></a>
                     <a class="btn btn-default btn-sm" href="SinavKayit.aspx?id=<%#Eval("Id") %>"><i class="fa fa-edit"></i></a>
                     <a class="btn btn-default btn-sm" href="#" onclick="Sil(<%#Eval("Id") %>)"><i class="fa fa-trash-alt"></i></a>
+                    <asp:HyperLink ToolTip="Sınavın kopyasını oluştur" CssClass="btn btn-default btn-sm" ID="hlSinavAktar" Visible="False" NavigateUrl='<%#string.Format("SinavAktar.aspx?SinavId={0}",Eval("Id")) %>' runat="server"><i class="far fa-object-ungroup"></i></asp:HyperLink>
                 </td>
             </tr>
         </ItemTemplate>
@@ -29,6 +31,6 @@
 </table>
 <script>
     $(function () {
-        $('[data-toggle="modal"]').tooltip();
+        $('[data-toggle="title"]').tooltip();
     });
 </script>

@@ -10,21 +10,20 @@ public partial class Okul_SinaviYonetim_SinavKayit : System.Web.UI.Page
             {
                 Response.Redirect("Default.aspx");
             }
-            TestDonemDb dnmDb = new TestDonemDb();
-            ltrDonem.Text = "<label>Aktif Dönem: </label> " + dnmDb.AktifDonem().Donem;
-            txtDonem.Text = dnmDb.AktifDonem().Donem;
-
+            
             if (Request.QueryString["id"] != null)
             {
                 if (Request.QueryString["id"].IsInteger())
                 {
                     int id = Request.QueryString["id"].ToInt32();
+                    OturumIslemleri oturum = new OturumIslemleri();
+                    KullanicilarInfo kInfo = oturum.OturumKontrol();
 
                     TestSinavlarDb sinavDb = new TestSinavlarDb();
-                    TestSinavlarInfo info = sinavDb.KayitBilgiGetir(id);
+                    TestSinavlarInfo info = sinavDb.KayitBilgiGetir(id, kInfo.KurumKodu);
                     hfId.Value = info.Id.ToString();
                     txtSinavAdi.Text = info.SinavAdi;
-                    txtAciklama.Text = info.Aciklama.Replace("<br>", Environment.NewLine);
+                    txtAciklama.Text =string.IsNullOrEmpty(info.Aciklama)? info.Aciklama: info.Aciklama.Replace("<br>", Environment.NewLine);
                     ddlSinif.SelectedValue = info.Sinif.ToString();
                     ddlPuanlama.SelectedValue = info.Puanlama.ToString();
                     cbDurum.Checked = info.Aktif == 1;
@@ -32,11 +31,8 @@ public partial class Okul_SinaviYonetim_SinavKayit : System.Web.UI.Page
                     txtBeklemeSuresi.Text = info.BeklemeSuresi.ToString();
                     btnKaydet.Text = "Değiştir";
 
-                    var ogrDonemi = dnmDb.KayitBilgiGetir(info.DonemId);
-                    txtDonem.Text = ogrDonemi.Donem;
                 }
             }
-
         }
     }
 
@@ -54,6 +50,10 @@ public partial class Okul_SinaviYonetim_SinavKayit : System.Web.UI.Page
         TestDonemDb dnmDb = new TestDonemDb();
        int donem= dnmDb.AktifDonem().Id;
 
+       OturumIslemleri oturum = new OturumIslemleri();
+       KullanicilarInfo kInfo = oturum.OturumKontrol();
+
+
         TestSinavlarInfo info = new TestSinavlarInfo
         {
             SinavAdi = txtSinavAdi.Text.ToTemizMetin(),
@@ -64,7 +64,8 @@ public partial class Okul_SinaviYonetim_SinavKayit : System.Web.UI.Page
             BeklemeSuresi = txtBeklemeSuresi.Text.ToInt32(),
             OturumTercihi = ddlOturumTercihi.SelectedValue.ToInt32(),
             Id = hfId.Value.ToInt32(),
-            DonemId = donem
+            DonemId = donem,
+            Kurumlar = ","+kInfo.KurumKodu+","
         };
 
         TestSinavlarDb sinavDb = new TestSinavlarDb();
@@ -86,7 +87,7 @@ public partial class Okul_SinaviYonetim_SinavKayit : System.Web.UI.Page
             else
                 Master.UyariTuruncu("Güncelleme yapılamadı.", phUyari);
         }
-        CacheHelper.AktifSinavlarKaldir(sinif);
+        CacheHelper.AktifSinavlarKaldir(kInfo.KurumKodu,sinif);
     }
 
     private void FormuTemizle()

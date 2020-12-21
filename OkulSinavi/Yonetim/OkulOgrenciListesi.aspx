@@ -1,8 +1,9 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="OkulOgrenciListesi.aspx.cs" Inherits="Okul_SinaviYonetim_OkulOgrenciListesi" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="MasterPage.master" AutoEventWireup="true" CodeFile="OkulOgrenciListesi.aspx.cs" Inherits="Okul_SinaviYonetim_OkulOgrenciListesi" %>
 
 <%@ Register Src="~/Yonetim/UstMenu.ascx" TagPrefix="uc1" TagName="UstMenu" %>
 
 
+<%@ MasterType VirtualPath="MasterPage.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <link rel="stylesheet" href="/CevrimiciSinav/Content/sweetalert2/sweetalert2.min.css" />
 </asp:Content>
@@ -14,7 +15,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü   <small class="float-right">Eğitim Öğretim Yılı: <%=TestSeciliDonem.SeciliDonem().Donem%></small></h1>
+                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü</h1>
                     </div>
                 </div>
             </div>
@@ -23,17 +24,16 @@
         <div class="content">
             <div class="row">
                 <div class="col-lg-12">
-                    <uc1:UstMenu runat="server" ID="UstMenu" />
                     <div class="card">
                         <div class="card-body">
                             <div class="col-lg-12">
-                                <div class="row">
+                                <div class="row" id="okulYoneticiBilgi" runat="server">
                                     <div class="col-md-12">
                                         <div class="callout callout-info">
                                             <h5>Sayın Okul Yöneticisi!</h5>
                                             <p>
                                                 Öğrencilerinizin Çevrim İçi Sınav uygulamasına katılabilmeleri için sınıf listesine eklenmesi gerekmektedir. Öğrencilerinizi eklemek için <strong>Yeni Öğrenci</strong> butonuna tıklayınız. <br/>
-                                                Öğrencileriniz Çevrim İçi Sınav uygulamasına TC Kimlik numaraları ile gireceklerdir.
+                                                Öğrencileriniz Çevrim İçi Sınav uygulamasına sınav giriş bilgileri ile gireceklerdir.
                                             </p>
                                             <p>
                                                 Öğrencinizin sınavlardaki tüm hareketlerini görmek için öğrenci ismine tıklayınız. Sınav sonuçları için <strong>Sınavlar</strong> menüsünü kullanınız.
@@ -46,15 +46,22 @@
                                         <label>Öğrenci Listesi İçin Sınıf Seçiniz</label>
                                         <asp:DropDownList ID="ddlSinif" CssClass="form-control" runat="server">
                                             <asp:ListItem>Sınıf Seçiniz</asp:ListItem>
+                                            <asp:ListItem Value="1">1. Sınıf</asp:ListItem>
+                                            <asp:ListItem Value="2">2. Sınıf</asp:ListItem>
+                                            <asp:ListItem Value="3">3. Sınıf</asp:ListItem>
+                                            <asp:ListItem Value="4">4. Sınıf</asp:ListItem>
                                             <asp:ListItem Value="5">5. Sınıf</asp:ListItem>
                                             <asp:ListItem Value="6">6. Sınıf</asp:ListItem>
                                             <asp:ListItem Value="7">7. Sınıf</asp:ListItem>
                                             <asp:ListItem Value="8">8. Sınıf</asp:ListItem>
+                                            <asp:ListItem Value="9">9. Sınıf</asp:ListItem>
+                                            <asp:ListItem Value="10">10. Sınıf</asp:ListItem>
+                                            <asp:ListItem Value="11">11. Sınıf</asp:ListItem>
+                                            <asp:ListItem Value="12">12. Sınıf</asp:ListItem>
                                         </asp:DropDownList>
                                     </div>
-                                    <div class="col-md-10 text-right mb-2">
+                                    <div class="col-md-10 text-right mb-2" id="okulYoneticiKayit" runat="server">
                                         <a href="OgrenciKayit.aspx" class="btn btn-primary"><i class="fa fa-plus-circle mr-2"></i>Yeni Öğrenci</a>
-                                        <button type="button" class="btn btn-warning" id="btn-ogrenci-bul"><i class="fa fa-search mr-2"></i>Bul</button>
                                     </div>
                                 </div>
                                 <div id="ogrenciler"></div>

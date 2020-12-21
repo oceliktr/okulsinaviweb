@@ -14,9 +14,8 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OkulPuanDetay : Page
         {
             OturumIslemleri oturum = new OturumIslemleri();
             KullanicilarInfo kInfo = oturum.OturumKontrol();
-            Response.Write(kInfo.Yetki+"-+"+ kInfo.KurumKodu);
-            if (!kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin") &&
-                !kInfo.Yetki.Contains("OkulYetkilisi") && !kInfo.Yetki.Contains("LgsIlKomisyonu") && !kInfo.Yetki.Contains("IlceMEMYetkilisi"))
+
+            if (!kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin") && !kInfo.Yetki.Contains("Ogretmen"))
             {
                 Response.Redirect("Default.aspx");
             }
@@ -30,38 +29,24 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OkulPuanDetay : Page
         OturumIslemleri oturum = new OturumIslemleri();
         KullanicilarInfo kInfo = oturum.OturumKontrol();
         int sinavId = 0;
-        int kurumKodu = 0;
         if (Request.QueryString["SinavId"] != null)
         {
             sinavId = Request.QueryString["SinavId"].ToInt32();
         }
-        if (Request.QueryString["KurumKodu"] != null)
-        {
-            kurumKodu = Request.QueryString["KurumKodu"].ToInt32();
-        }
+
+        TestSinavlarDb sinavDb = new TestSinavlarDb();
+        var sinav = sinavDb.KayitBilgiGetir(sinavId);
+        ltrSinavAdi.Text = sinav.SinavAdi;
+        Page.Title = sinav.SinavAdi+" Öğrenci Listesi";
+
         TestOgrPuanDb veriDb = new TestOgrPuanDb();
-
-
-        DataTable kayit = null;
-        if (kInfo.Yetki.Contains("OkulYetkilisi"))
-        {
-             kayit = veriDb.KayitlariGetir(sinavId, kInfo.KurumKodu.ToInt32()); //sınırlandırma için kullanıcının kurum kodu olmalı.
-        }
-        else if(kInfo.Yetki.Contains("IlceMEMYetkilisi"))
-        {
-            IlcelerDb ilcelerDb = new IlcelerDb();
-            IlcelerInfo ilce = ilcelerDb.KayitBilgiGetir(kInfo.IlceId);
-            kayit = veriDb.KayitlariGetir(sinavId, kurumKodu,ilce.IlceAdi);
-        }
-        else if (kInfo.Yetki.Contains("Root") || kInfo.Yetki.Contains("Admin") || kInfo.Yetki.Contains("LgsIlKomisyonu"))
-        {
-            if (Request.QueryString["ilce"] != null)
-            {
-                string ilceAdi = Request.QueryString["ilce"];
-                kayit = veriDb.KayitlariGetir(sinavId, kurumKodu, ilceAdi);
-            }
-        }
+        DataTable kayit =  veriDb.KayitlariGetir(sinavId, kInfo.KurumKodu.ToInt32()); //sınırlandırma için kullanıcının kurum kodu olmalı.
         
+
+        if (kInfo.Yetki.Contains("Ogretmen")) {
+            phPuaniHesaplanmayanlar.Visible = false;
+        }
+
 
         rptKayitlar.DataSource = kayit;
         rptKayitlar.DataBind();
@@ -71,8 +56,18 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_OkulPuanDetay : Page
     {
         if (e.Item.ItemType == ListItemType.AlternatingItem || e.Item.ItemType == ListItemType.Item)
         {
+            OturumIslemleri oturum = new OturumIslemleri();
+            KullanicilarInfo kInfo = oturum.OturumKontrol();
+            
             GenelIslemler.SiraNumarasiForRepeater(e, "lblSira", 0, 100000);
             Literal ltrNet = (Literal)e.Item.FindControl("ltrNet");
+            HyperLink hlOgrenciDetay = (HyperLink) e.Item.FindControl("hlOgrenciDetay");
+            
+            //Öğrenci detay linki sadece kurumyetkilisine gçsterilmesi için
+            //kontrol sağlayalım
+            int kurumKodu = DataBinder.Eval(e.Item.DataItem, "KurumKodu").ToInt32();
+            hlOgrenciDetay.Visible = kurumKodu.ToString() == kInfo.KurumKodu;
+            
             int sinifi = DataBinder.Eval(e.Item.DataItem, "Sinifi").ToInt32();
             int dogru = DataBinder.Eval(e.Item.DataItem, "Dogru").ToInt32();
             int yanlis = DataBinder.Eval(e.Item.DataItem, "Yanlis").ToInt32();

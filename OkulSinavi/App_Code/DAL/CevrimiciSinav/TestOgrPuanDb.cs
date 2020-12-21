@@ -23,20 +23,12 @@ public class TestOgrPuanDb
         MySqlParameter p = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
         return helper.ExecuteDataSet(sql, p).Tables[0];
     }
-    public DataTable OgrenciSiralama(int sinavId)
+    public DataTable OgrenciSiralama(int sinavId,int kurumKodu)
     {
         const string sql = @"SELECT tk.IlceAdi,k.KurumKodu,k.KurumAdi,tk.OpaqId,tk.Adi,tk.Soyadi,tk.Sinifi,tk.Sube,op.Dogru,op.Yanlis,op.Bos,op.Puan,op.SinavId FROM testogrpuanlar AS op
                             INNER JOIN kurumlar AS k ON k.KurumKodu=op.KurumKodu
                             INNER JOIN testkutuk AS tk ON tk.OpaqId=op.OpaqId
-                            WHERE op.SinavId=?SinavId ORDER BY op.Puan DESC";
-        MySqlParameter p = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
-        return helper.ExecuteDataSet(sql, p).Tables[0];
-    }
-    public DataTable KayitlariGetir(int sinavId, int kurumKodu)
-    {
-        const string sql = @"SELECT k.Adi,k.Soyadi,k.Sinifi,k.Sube,op.* FROM testogrpuanlar AS op
-                            INNER JOIN testkutuk AS k ON k.OpaqId=op.OpaqId
-                            WHERE op.KurumKodu=?KurumKodu AND op.SinavId=?SinavId ORDER BY k.Sinifi,k.Sube,k.Adi,k.Soyadi";
+                            WHERE op.SinavId=?SinavId and op.KurumKodu=?KurumKodu ORDER BY op.Puan DESC";
         MySqlParameter[] p =
         {
             new MySqlParameter("?SinavId", MySqlDbType.Int32),
@@ -44,6 +36,23 @@ public class TestOgrPuanDb
         };
         p[0].Value = sinavId;
         p[1].Value = kurumKodu;
+        return helper.ExecuteDataSet(sql, p).Tables[0];
+    }
+     public DataTable KayitlariGetir(int sinavId, int kurumKodu)
+    {
+        //const string sql = @"SELECT k.Adi,k.Soyadi,k.Sinifi,k.Sube,op.* FROM testogrpuanlar AS op
+        //                    INNER JOIN testkutuk AS k ON k.OpaqId=op.OpaqId
+        //                    WHERE op.KurumKodu=?KurumKodu AND op.SinavId=?SinavId ORDER BY k.Sinifi,k.Sube,k.Adi,k.Soyadi";
+        string sql =string.Format(@"SELECT k.IlceAdi,krm.KurumAdi, k.Adi,k.Soyadi,k.Sinifi,k.Sube,op.KurumKodu,op.SinavId,op.OpaqId,op.Dogru,op.Yanlis,op.Bos,op.Puan FROM testogrpuanlar AS op
+INNER JOIN testkutuk AS k ON k.OpaqId=op.OpaqId
+INNER JOIN testsinavlar AS s ON s.Id=op.SinavId
+INNER JOIN kurumlar AS krm ON krm.KurumKodu=op.KurumKodu
+WHERE s.Kurumlar LIKE '%,{0},%' AND op.SinavId=?SinavId ORDER BY op.Puan,k.Sinifi,k.Sube,k.Adi,k.Soyadi DESC", kurumKodu);
+        MySqlParameter[] p =
+        {
+            new MySqlParameter("?SinavId", MySqlDbType.Int32)
+        };
+        p[0].Value = sinavId;
         return helper.ExecuteDataSet(sql, p).Tables[0];
     }
     public DataTable KayitlariGetir(int sinavId, int kurumKodu, string ilceAdi)
@@ -64,9 +73,8 @@ public class TestOgrPuanDb
     }
     public DataTable KayitlariGetir(string opaqId)
     {
-        const string sql = @"SELECT d.donem,sa.SinavAdi,oc.* FROM testogrpuanlar AS oc
+        const string sql = @"SELECT sa.SinavAdi,oc.* FROM testogrpuanlar AS oc
                             INNER JOIN testsinavlar AS sa ON sa.Id=oc.SinavId
-                            INNER JOIN testdonemler AS d ON sa.DonemId=d.Id
                             WHERE oc.OpaqId=?OpaqId order by oc.SinavId desc";
         MySqlParameter p = new MySqlParameter("?OpaqId", MySqlDbType.String) { Value = opaqId };
 

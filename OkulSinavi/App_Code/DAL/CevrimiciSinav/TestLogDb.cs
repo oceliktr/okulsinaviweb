@@ -20,10 +20,11 @@ public class TestLogDb
     public DataTable LogAra(string aranan)
     {
         string sql = string.Format(@"SELECT l.*,k.Adi,k.Soyadi from testlog AS l 
-                                     INNER JOIN testkutuk AS k ON l.OpaqId = k.OpaqId 
-                                    WHERE l.OpaqId LIKE '%{0}%' OR l.Rapor LIKE '%{0}%' OR l.Grup LIKE '%{0}%' order  by Tarih desc limit 200", aranan);
+                                     INNER JOIN testkutuk AS k ON l.OpaqId = k.OpaqId
+                                    WHERE l.OpaqId LIKE '%{1}%' OR l.OpaqId LIKE '%{0}%' OR l.Rapor LIKE '%{0}%' OR l.Grup LIKE '%{0}%' order  by Tarih desc limit 200", aranan,aranan.Md5Sifrele());
         return helper.ExecuteDataSet(sql).Tables[0];
     }
+  
     private static TestLogInfo TabloAlanlar(MySqlDataReader dr)
     {
         TestLogInfo info = new TestLogInfo();

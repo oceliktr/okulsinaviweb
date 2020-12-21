@@ -14,6 +14,7 @@ public class TestSinavlarInfo
     public int Puanlama { get; set; }
     public string SinavAdi { get; set; }
     public string Aciklama { get; set; }
+    public string Kurumlar { get; set; }
     public int Aktif { get; set; }
     public int OturumTercihi { get; set; }
     public int BeklemeSuresi { get; set; }

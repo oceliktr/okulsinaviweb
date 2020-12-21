@@ -15,11 +15,21 @@ public class TestOturumlarDb
         const string sql = "select * from testoturumlar ORDER BY BitisTarihi desc";
         return helper.ExecuteDataSet(sql).Tables[0];
     }
+    public DataTable DevamEdenSinavlar()
+    {
+        const string sql = @"SELECT s.Id,s.SinavAdi,s.Sinif,s.Puanlama,s.Aktif,s.OturumTercihi,s.BeklemeSuresi,s.Kurumlar,o.Id AS OturumId, o.OturumAdi,o.BaslamaTarihi,o.BitisTarihi,o.Sure FROM testoturumlar AS o
+                            INNER JOIN testsinavlar AS s ON s.Id = o.SinavId WHERE o.BitisTarihi>=?Bugun AND s.Aktif=1 ORDER BY o.BitisTarihi ASC";
+        MySqlParameter param = new MySqlParameter("?Bugun", MySqlDbType.Date)
+        {
+            Value = GenelIslemler.YerelTarih(true,true)
+        };
+        return helper.ExecuteDataSet(sql,param).Tables[0];
+    }
     public DataTable KayitlariGetir(int sinavId)
     {
         const string sql = "select * from testoturumlar where SinavId=?SinavId ORDER BY SiraNo asc";
         MySqlParameter param = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
-        return helper.ExecuteDataSet(sql,param).Tables[0];
+        return helper.ExecuteDataSet(sql, param).Tables[0];
     }
 
     public List<TestOturumlarInfo> AktifTestler()
@@ -46,7 +56,7 @@ public class TestOturumlarDb
     public List<TestOturumlarInfo> Oturumlar(int sinavId)
     {
         const string sql = @"SELECT * from testoturumlar where SinavId=?SinavId order by SiraNo";
-        MySqlParameter pars = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId};
+        MySqlParameter pars = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
 
         DataTable dt = helper.ExecuteDataSet(sql, pars).Tables[0];
         List<TestOturumlarInfo> table = new List<TestOturumlarInfo>();
@@ -64,7 +74,7 @@ public class TestOturumlarDb
         WHERE o.Id = ?Id";
         MySqlParameter param = new MySqlParameter("?Id", MySqlDbType.Int32) { Value = oturumId };
         MySqlDataReader dr = helper.ExecuteReader(cmdText, param);
-         OturumSinavJoinModel info = new OturumSinavJoinModel();
+        OturumSinavJoinModel info = new OturumSinavJoinModel();
         while (dr.Read())
         {
             info.Id = dr.GetMySayi("Id");
@@ -110,11 +120,11 @@ public class TestOturumlarDb
     {
         const string sql = "delete from testoturumlar where Id=?Id";
         MySqlParameter p = new MySqlParameter("?Id", MySqlDbType.Int32) { Value = id };
-      return  helper.ExecuteNonQuery(sql, p);
+        return helper.ExecuteNonQuery(sql, p);
     }
     public int OturumlariSil(int sinavId)
     {
-        TestSorularDb sorularDb= new TestSorularDb();
+        TestSorularDb sorularDb = new TestSorularDb();
         TestOgrCevapDb ogrCevapDb = new TestOgrCevapDb();
 
 
@@ -127,14 +137,14 @@ public class TestOturumlarDb
 
             sorularDb.OturumSorulariniSil(oturumId);
         }
-       
+
         const string sql = "delete from testoturumlar where SinavId=?SinavId";
         MySqlParameter p = new MySqlParameter("?SinavId", MySqlDbType.Int32) { Value = sinavId };
         return helper.ExecuteNonQuery(sql, p);
     }
-    public int KayitEkle(TestOturumlarInfo info)
+    public long KayitEkle(TestOturumlarInfo info)
     {
-        const string sql = @"insert into testoturumlar (OturumAdi,Aciklama,Sure,BaslamaTarihi,BitisTarihi,SinavId,SiraNo) values (?OturumAdi,?Aciklama,?Sure,?BaslamaTarihi,?BitisTarihi,?SinavId,?SiraNo)";
+        const string sql = @"insert into testoturumlar (OturumAdi,Aciklama,Sure,BaslamaTarihi,BitisTarihi,SinavId,SiraNo) values (?OturumAdi,?Aciklama,?Sure,?BaslamaTarihi,?BitisTarihi,?SinavId,?SiraNo);";
         MySqlParameter[] pars =
         {
                 new MySqlParameter("?OturumAdi", MySqlDbType.String),
@@ -152,7 +162,10 @@ public class TestOturumlarDb
         pars[4].Value = info.BitisTarihi;
         pars[5].Value = info.SinavId;
         pars[6].Value = info.SiraNo;
-        return  helper.ExecuteNonQuery(sql, pars);
+
+        long sonId;
+        helper.ExecuteNonQuery(out sonId, sql, pars);
+        return sonId;
     }
 
     public int KayitGuncelle(TestOturumlarInfo info)
@@ -175,7 +188,7 @@ public class TestOturumlarDb
         pars[4].Value = info.BitisTarihi;
         pars[5].Value = info.SiraNo;
         pars[6].Value = info.Id;
-      return  helper.ExecuteNonQuery(sql, pars);
+        return helper.ExecuteNonQuery(sql, pars);
     }
 
     public bool KayitKontrol(int sinavId, int siraNo, int id)

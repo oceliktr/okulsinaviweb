@@ -13,13 +13,16 @@
             <ItemTemplate>
                 <tr>
                     <th scope="row"><asp:Label ID="lblSira" runat="server" Text="Label"></asp:Label></th>
-                    <td><a href="OgrenciSinavDetay.aspx?OpaqId=<%#Eval("OpaqId") %>"><%#Eval("Adi") %> <%#Eval("Soyadi") %></a></td>
+                    <td><a href="OgrenciDetay.aspx?OpaqId=<%#Eval("OpaqId") %>"><%#Eval("Adi") %> <%#Eval("Soyadi") %></a></td>
                     <td><%#Eval("Sinifi") %></td>
                     <td><%#Eval("Sube") %></td>
                     <td><%#Eval("SonGiris").ToString()==""?"<small class='badge badge-danger'>Hiç giriş yapmadı</small>":Eval("SonGiris").ToDateTime().TarihYaz() %></td>
                     <td>
-                        <a class="btn btn-default btn-sm" href="OgrenciKayit.aspx?Id=<%#Eval("Id") %>"><i class="fa fa-edit"></i></a>
-                        <a class="btn btn-default btn-sm" href="#" onclick="Sil('<%#Eval("OpaqId") %>')"><i class="fa fa-trash-alt"></i></a>
+                        <asp:PlaceHolder ID="phEdit" runat="server">
+                            <a class="btn btn-default btn-sm" href="OgrenciKayit.aspx?Id=<%#Eval("Id") %>"><i class="fa fa-edit"></i></a>
+                            <a class="btn btn-default btn-sm" href="#" onclick="Sil('<%#Eval("OpaqId") %>')"><i class="fa fa-trash-alt"></i></a>
+
+                        </asp:PlaceHolder>
                     </td>
                 </tr>
             </ItemTemplate>

@@ -62,8 +62,11 @@ namespace OkulSinavi
 
                         Session["Kullanici"] = infoGiris;
 
+                        if(yetki.Contains("Root|"))
+                           Response.Redirect("/YonetimRoot/Giris.aspx");
+                        else
                            Response.Redirect("/Yonetim/Giris.aspx");
-                        
+
                     }
                     else
                     {

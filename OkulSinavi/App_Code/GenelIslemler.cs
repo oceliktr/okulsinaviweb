@@ -308,6 +308,12 @@ public static class GenelIslemler
 
         return s;
     }
+    public static String SaatYaz(this DateTime tarih)
+    {
+        string s = String.Format("{0:00}:{1:00}", tarih.Hour, tarih.Minute);
+
+        return s;
+    }
     public static String TarihFormala(this DateTime tarih)
     {
         //DateTime tarih = Convert.ToDateTime(obj);
@@ -348,6 +354,14 @@ public static class GenelIslemler
         DateTimeOffset istambulTime = TimeZoneInfo.ConvertTime(localServerTime, info);
         DateTime tarih = istambulTime.DateTime;
         return string.Format("{0}-{1:00}-{2:00} {3:00}:{4:00}", tarih.Year, tarih.Month, tarih.Day, tarih.Hour, tarih.Minute).ToDateTime();
+    }
+    public static DateTime YerelTarih(bool mySql,bool gunBaslangici)
+    {
+        TimeZoneInfo info = TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time");
+        DateTimeOffset localServerTime = DateTimeOffset.Now;
+        DateTimeOffset istambulTime = TimeZoneInfo.ConvertTime(localServerTime, info);
+        DateTime tarih = istambulTime.DateTime;
+        return string.Format("{0}-{1:00}-{2:00} 00:00:00", tarih.Year, tarih.Month, tarih.Day).ToDateTime();
     }
     public static String MetniAzTemizle(String s)
     {

@@ -11,10 +11,12 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_DemoGiris : System.Web.UI.
                 Response.Redirect("Default.aspx");
             }
 
+            OturumIslemleri oturum = new OturumIslemleri();
+            KullanicilarInfo kInfo = oturum.OturumKontrol();
             TestOgrenci ogrenci = new TestOgrenci
             {
                 OpaqId = "252525",
-                KurumKodu = 252525,
+                KurumKodu = kInfo.KurumKodu.ToInt32(),
                 Adi = "Demo",
                 Soyadi = "Kullanıcı",
                 Sinifi = 0,
@@ -28,7 +30,7 @@ public partial class OkulSinavi_CevrimiciSinavYonetim_DemoGiris : System.Web.UI.
     {
         OturumIslemleri oturum = new OturumIslemleri();
         KullanicilarInfo kInfo = oturum.OturumKontrol();
-        bool yetkili = !kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin")&& !kInfo.Yetki.Contains("LgsIlKomisyonu") && !kInfo.Yetki.Contains("LgsYazari");
+        bool yetkili = !kInfo.Yetki.Contains("Root") && !kInfo.Yetki.Contains("Admin")&& !kInfo.Yetki.Contains("Ogretmen");
         return yetkili;
     }
 }

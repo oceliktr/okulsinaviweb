@@ -19,7 +19,7 @@ public partial class Sinav_Sinavlar : System.Web.UI.Page
 
             if (ogrenci.OpaqId == "252525")
             {
-                rptSinavlarDemo.DataSource = CacheHelper.Sinavlar();
+                rptSinavlarDemo.DataSource = CacheHelper.Sinavlar(ogrenci.KurumKodu.ToString());
                 rptSinavlarDemo.DataBind();
                 rptSinavlar.Visible = false;
             }
@@ -29,7 +29,7 @@ public partial class Sinav_Sinavlar : System.Web.UI.Page
                 {
                    Response.Redirect("Default.aspx");
                 }
-                rptSinavlar.DataSource = CacheHelper.AktifSinavlar(ogrenci.Sinifi);
+                rptSinavlar.DataSource = CacheHelper.AktifSinavlar(ogrenci.KurumKodu.ToString(),ogrenci.Sinifi);
                 rptSinavlar.DataBind();
                 rptSinavlarDemo.Visible = false;
             }

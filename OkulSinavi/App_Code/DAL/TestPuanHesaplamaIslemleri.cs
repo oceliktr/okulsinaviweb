@@ -52,11 +52,11 @@ public class TestPuanHesaplamaIslemleri
             }
         }
 
-        if (kalanOturumSayisi == 0)
-        {
+       // if (kalanOturumSayisi == 0)
+       // {
             //oturumları tamamlamış. öğrenci okul ve ilçe için hesaplama yap ve sonuç ekranına yönlendir.
             TestSinavlarDb sinavlarDb = new TestSinavlarDb();
-            TestSinavlarInfo sinavInfo = sinavlarDb.KayitBilgiGetir(sinavId);
+            TestSinavlarInfo sinavInfo = sinavlarDb.KayitBilgiGetir(sinavId, ogrenciBilgi.KurumKodu.ToString());
 
             //sonuçları okul puanı dizisine al.
             List<TestOkulCevapInfo> okulPuani = new List<TestOkulCevapInfo>();
@@ -167,7 +167,7 @@ public class TestPuanHesaplamaIslemleri
 
                 IlcePuanHesaplama(sinavId, ogrenci, katSayi, dogruYanlisOrani, sinavInfo, okulPuani);
             }
-        }
+       // }
 
     }
 
