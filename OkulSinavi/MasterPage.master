@@ -1,0 +1,138 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Okul Sınavı</title>
+    <link rel="stylesheet" href="/Content/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/Content/css/site_main.css">
+    <link rel="stylesheet" href="/Content/css/animations.css">
+    <link rel="stylesheet" href="/Content/css/fonts.css">
+    <script src="/Content/js/modernizr-2.6.2.min.js"></script>
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="preloader">
+            <div class="preloader_image"></div>
+        </div>
+        <div id="canvas">
+        <div id="box_wrapper">
+             <section
+                class="page_topline ls section_padding_top_5 section_padding_bottom_5 table_section table_section_md">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3 text-center text-md-left">
+                            <div class="page_social_icons">
+                                <a class="social-icon soc-facebook" href="#" title="Facebook"></a>
+                                <a class="social-icon soc-instagram" href="#" title="Instagram"></a>
+                                <a class="social-icon soc-twitter" href="#" title="Twitter"></a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-9 text-center text-md-right">
+                            <span>
+                                <i class="rt-icon2-phone highlight fontsize_24"></i> 0552 800 2501
+                            </span>
+                            <span>
+                                <i class="rt-icon2-mail2 highlight fontsize_24"></i> bilgi@okulsinavi.com
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <header class="page_header header_darkgrey ms toggle_menu_left">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <!-- main nav start -->
+                            <nav class="mainmenu_wrapper">
+                                <ul class="mainmenu nav sf-menu">
+                                    <li class="active">
+                                        <a href="/">ANASAYFA</a>
+                                    </li>
+
+                                    <li><a href="#">KURUMSAL</a>
+                                        <ul>
+                                            <li><a href="Hakkimizda.aspx">HAKKIMIZDA</a></li>
+                                            <li><a href="Nedir.aspx">OKUL SINAVI NEDİR</a></li>
+                                            <li><a href="#">VERİLERİN KULLANIMI</a></li>
+                                            <li><a href="Gizlilik-Sozlesmesi.aspx">GİZLİLİK SÖZLEŞMESİ</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="/CevrimiciSinav/">ÖĞRENCİLER GİRİŞ</a></li>
+                                    <li><a href="/Yonetim/">OKUL GİRİŞ</a></li>
+                                    <li><a href="Iletisim.aspx">İLETİŞİM</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col-md-3 text-right">
+                            <span class="toggle_menu">
+                                <span></span>
+                            </span>
+                            <a href="#" class="theme_button">ÜCRETSİZ DENE</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+                <footer class="page_footer ls ms section_padding_top_50 section_padding_bottom_0">
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="col-sm-6 to_animate">
+                                <div class="teaser text-center">
+                                    <div class="teaser_icon highlight size_normal">
+                                        <i class="rt-icon2-users2"></i>
+                                    </div>
+                                    <h3>Öğrenciler</h3>
+                                    <p>Öğrenci çevrimiçi sınav giriş ekranı</p>
+                                    <a href="/CevrimiciSinav/" class="theme_button wide_button color1">Öğrenci Giriş</a>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 to_animate">
+                                <div class="teaser text-center">
+                                    <div class="teaser_icon highlight size_normal">
+                                        <i class="rt-icon2-user3"></i>
+                                    </div>
+                                    <h3>Okul Yöneticileri</h3>
+                                    <p>Okul yönetimi giriş ekranı</p>
+                                    <a href="/Yonetim/" class="theme_button wide_button color1">Okul Giriş</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+
+                <section class="page_copyright cs main_color2 section_padding_15 columns_margin_0">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12 text-center">
+                                <p>okulsinavi.com <a href="https://serdizayn.com.tr">&copy; Serdizayn</a> projesidir.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+
+        <script src="/Content/js/compressed.js"></script>
+        <script src="/Content/js/main.js"></script>
+        <asp:ContentPlaceHolder id="foter" runat="server">
+        
+        </asp:ContentPlaceHolder>
+    </form>
+</body>
+</html>
