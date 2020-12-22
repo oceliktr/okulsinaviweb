@@ -1,5 +1,6 @@
 ﻿<%@ page title="" language="C#" masterpagefile="~/CevrimiciSinav/MasterPage.master" autoeventwireup="true" inherits="Sinav_SinavSonuc, okulsinavi" enableEventValidation="false" %>
 
+<%@ MasterType VirtualPath="MasterPage.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <link rel="stylesheet" href="Content/ekko-lightbox/ekko-lightbox.css" />
     <link rel="stylesheet" href="Content/sweetalert2/sweetalert2.min.css" />
@@ -70,6 +71,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
+                                        <asp:PlaceHolder ID="phUyari" runat="server"></asp:PlaceHolder>
                                         <asp:Repeater runat="server" ID="rptOturumlar" OnItemDataBound="rptOturumlar_OnItemDataBound">
                                             <ItemTemplate>
                                                      <div class="card">

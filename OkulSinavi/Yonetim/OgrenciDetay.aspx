@@ -129,5 +129,18 @@
 <asp:Content ID="Content3" ContentPlaceHolderID="footer" runat="Server">
     <script src="/CevrimiciSinav/Content/ekko-lightbox/ekko-lightbox.min.js"></script>
     <script src="/CevrimiciSinav/Content/sweetalert2/sweetalert2.min.js"></script>
+    <script>
+        function Sinav() {
+            var sinavId = $("#ContentPlaceHolder1_ddlSinavlar option:selected").val();
+            $("#ogrSinavHareket").load("/Yonetim/_OgrenciSinavDetay.aspx?OpaqId=<%=Request.QueryString["OpaqId"]%>&SinavId=" + sinavId);
+        }
+
+        function PuanTablosu() {
+            $("#puantablosu").load("/Yonetim/_OgrenciPuanTablosu.aspx?OpaqId=<%=Request.QueryString["OpaqId"]%>");
+        }
+        function LogGetir() {
+            $("#tab_loglar").load("/Yonetim/_Rapor/_OgrenciLogArama.aspx?aranan=<%=Request.QueryString["OpaqId"]%>");
+        }
+    </script>
 </asp:Content>
 

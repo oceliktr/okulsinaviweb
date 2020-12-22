@@ -1,18 +1,17 @@
-﻿<%@ page title="" language="C#" masterpagefile="~/MasterPage.master" autoeventwireup="true" inherits="OkulSinavi_CevrimiciSinavYonetim_OkulPuanDetay, okulsinavi" enableEventValidation="false" %>
-
-<%@ Register TagPrefix="uc1" TagName="UstMenu" Src="~/Yonetim/UstMenu.ascx" %>
+﻿<%@ page title="" language="C#" masterpagefile="MasterPage.master" autoeventwireup="true" inherits="OkulSinavi_CevrimiciSinavYonetim_OkulPuanDetay, okulsinavi" enableEventValidation="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <link rel="stylesheet" href="/CevrimiciSinav/Content/ekko-lightbox/ekko-lightbox.css" />
     <link rel="stylesheet" href="/CevrimiciSinav/Content/datatables-bs4/css/dataTables.bootstrap4.css" />
+    <link rel="stylesheet" href="/CevrimiciSinav/Content/datatables/buttons.dataTables.min.css" />
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
-    <div class="content-wrapper">
+       <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü   <small class="float-right">Eğitim Öğretim Yılı: <%=TestSeciliDonem.SeciliDonem().Donem%></small></h1>
+                        <h1 class="m-0 text-dark">'<asp:Literal ID="ltrSinavAdi" runat="server"></asp:Literal>' - Katılan Öğrenci Listesi</h1>
                     </div>
                 </div>
             </div>
@@ -20,23 +19,27 @@
         <div class="content">
             <div class="row">
                 <div class="col-lg-12">
-                    <uc1:UstMenu runat="server" ID="UstMenu" />
                     <div class="card card-default">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
                                     <ol class="breadcrumb float-sm-left">
-                                        <li class="breadcrumb-item"><a href="Sinavlar.aspx"><%=TestSeciliDonem.SeciliDonem().Donem%> Sınavlar</a></li>
-                                        <li class="breadcrumb-item"><a href="SinavDetay.aspx?SinavId=<%=Request.QueryString["SinavId"] %>">Okullar</a></li>
+                                        <li class="breadcrumb-item"><a href="Sinavlar.aspx">Sınavlar</a></li>
                                         <li class="breadcrumb-item active">Öğrenci Listesi</li>
                                     </ol>
-                                </div>
+                                    <asp:PlaceHolder ID="phPuaniHesaplanmayanlar" runat="server">
+                                        <a class="btn btn-danger btn-sm float-right" href="PuanHesaplanmayanlar.aspx?SinavId=<%=Request.QueryString["SinavId"] %>">Puanı Hesaplanmayan Öğrenciler</a>
+                                    </asp:PlaceHolder>
+                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <table id="table" class="table table-striped table-responsive-sm">
                                     <thead>
                                         <tr>
                                             <th>#</th>
+                                            <th>İlçe</th>
+                                            <th>Okulu</th>
+                                            <th></th>
                                             <th>Adı Soyadı</th>
                                             <th>Sınıf - Şube</th>
                                             <th>Doğru</th>
@@ -52,6 +55,9 @@
                                                 <tr>
                                                     <th scope="row">
                                                         <asp:Label ID="lblSira" runat="server" Text="Label"></asp:Label></th>
+                                                    <td><%#Eval("IlceAdi") %></td>
+                                                    <td><%#Eval("KurumAdi") %></td>
+                                                    <td><asp:HyperLink ID="hlOgrenciDetay" NavigateUrl='<%#string.Format("OgrenciDetay.aspx?OpaqId={0}",Eval("OpaqId")) %>' runat="server"><i class="fa fa-user"></i></asp:HyperLink></td>
                                                     <td><a href="#" data-toggle="modal" data-target="#ogr-karne" data-adi="<%#Eval("Adi") %> <%#Eval("Soyadi") %>" data-sinavid="<%#Eval("SinavId") %>" data-opaqid="<%#Eval("OpaqId") %>"><%#Eval("Adi") %> <%#Eval("Soyadi") %></a></td>
                                                     <td><%#Eval("Sinifi") %> - <%#Eval("Sube") %></td>
                                                     <td><%#Eval("Dogru") %></td>
@@ -90,7 +96,8 @@
             </div>
         </div>
     </div>
-</asp:Content>
+
+ </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="footer" runat="Server">
     <script src="/CevrimiciSinav/Content/ekko-lightbox/ekko-lightbox.min.js"></script>
     <script src="/CevrimiciSinav/Content/datatables/jquery.dataTables.js"></script>
@@ -98,13 +105,21 @@
     <script>
         $(function () {
             $('#table').DataTable({
+                "scrollY": 500,
+                "scrollX": true,   // enables horizontal scrolling
                 "paging": true,
                 "lengthChange": true,
                 "searching": true,
                 "ordering": true,
                 "info": true,
                 "autoWidth": false,
-                "lengthMenu": [[50, 75, 100, 200, -1], [50, 75, 100, 200, "Tümü"]]
+                "lengthMenu": [[20,50, 75, 100, 200, -1], [20,50, 75, 100, 200, "Tümü"]],
+                dom: 'Bfrtip',
+                buttons: [
+                    'excel',
+                    'pdf',
+                    'pageLength'
+                ]
             });
         });
 
@@ -125,9 +140,14 @@
             var opaqid = $(event.relatedTarget).data("opaqid");
             var adi = $(event.relatedTarget).data("adi");
             $("#ogr-karne .modal-title").html(adi);
-            $("#ogr-karne .modal-body").load("/Yonetim/OgrenciKarne.aspx?SinavId=" + sinavId + "&OpaqId=" + opaqid);
+            $("#ogr-karne .modal-body").load("/Yonetim/_Rapor/OgrenciKarne.aspx?SinavId=" + sinavId + "&OpaqId=" + opaqid);
 
         });
     </script>
+    <script src="/CevrimiciSinav/Content/datatables/dataTables.buttons.min.js"></script>
+    <script src="/CevrimiciSinav/Content/datatables/jszip.min.js"></script>
+    <script src="/CevrimiciSinav/Content/datatables/pdfmake.min.js"></script>
+    <script src="/CevrimiciSinav/Content/datatables/vfs_fonts.js"></script>
+    <script src="/CevrimiciSinav/Content/datatables/buttons.html5.min.js"></script>
 </asp:Content>
 

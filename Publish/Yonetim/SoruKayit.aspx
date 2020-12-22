@@ -1,9 +1,6 @@
-﻿<%@ page title="" language="C#" masterpagefile="~/MasterPage.master" autoeventwireup="true" inherits="OkulSinavi_CevrimiciSinavYonetim_SoruKayit, okulsinavi" enableEventValidation="false" %>
+﻿<%@ page title="" language="C#" masterpagefile="MasterPage.master" autoeventwireup="true" inherits="OkulSinavi_CevrimiciSinavYonetim_SoruKayit, okulsinavi" enableEventValidation="false" %>
 
-
-<%@ Register TagPrefix="uc1" TagName="UstMenu" Src="~/Yonetim/UstMenu.ascx" %>
-
-<%@ MasterType VirtualPath="~/MasterPage.master" %>
+<%@ MasterType VirtualPath="MasterPage.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
@@ -12,7 +9,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü   <small class="float-right">Eğitim Öğretim Yılı: <%=TestSeciliDonem.SeciliDonem().Donem%></small></h1>
+                        <h1 class="m-0 text-dark">Soru Kayıt</h1>
                     </div>
                 </div>
             </div>
@@ -22,11 +19,7 @@
                 <div class="col-lg-12">
                     <div class="card card-default">
                         <div class="card-body">
-                            <div class="row" style="margin-bottom: 20px;">
-                                <div class="col-md-12">
-                                    <uc1:UstMenu runat="server" ID="UstMenu" />
-                                </div>
-                            </div>
+                           
                             <div class="col-lg-12">
                                 <asp:HiddenField ID="hfOturum" runat="server" Value="0" />
                                 <asp:HiddenField ID="hfId" runat="server" Value="0" />
@@ -132,13 +125,13 @@
                                         <asp:Button ID="btnKaydet" CssClass="btn btn-primary float-right" runat="server" ValidationGroup="form" Text="Kaydet" OnClick="btnKaydet_OnClick" />
                                     </div>
                                 </div>
-                                <div class="alert alert-light" role="alert">
+                                <div class="alert alert-light help-sinav" role="alert">
                                     <h5>Fotoğraf Yükleme Hakkında</h5>
 
-                                    <p>Fotoğraf yükleme işleminde 'Yükle' butonuna yalnızca 'Soru Yaz' alanındaki editöre dosya yükleneceğinde kullanınız.</p>
-                                    <p>Soru bir fotoğraf olacaksa dosya yükleme işlemi kayıt işleminde yüklenecektir.(kaydet butonuna tıklayınca) </p>
-                                    <p>Eğer dosya seçili veya 'Url Adresi' dolu ise 'Soru Yaz' metin alanı <strong>kaydedilmez.</strong></p>
-                                    <p>Dosya seçili ve 'Url Adresi' dolu ise öncelik seçili dosyaya aittir.</p>
+                                    <p>Fotoğraf yükleme işleminde 'Yükle' butonuna yalnızca 'Soru Yaz' alanındaki editöre dosya yükleneceğinde kullanınız.<br/>
+                                        Soru bir fotoğraf olacaksa dosya yükleme işlemi kayıt işleminde yüklenecektir.(kaydet butonuna tıklayınca) <br/>
+                                        Eğer dosya seçili veya 'Url Adresi' dolu ise 'Soru Yaz' metin alanı <strong>kaydedilmez.</strong><br/>
+                                        Dosya seçili ve 'Url Adresi' dolu ise öncelik seçili dosyaya aittir.</p>
                                 </div>
                             </div>
                         </div>

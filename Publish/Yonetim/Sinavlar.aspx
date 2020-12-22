@@ -1,6 +1,4 @@
-﻿<%@ page title="" language="C#" masterpagefile="~/MasterPage.master" autoeventwireup="true" inherits="Okul_SinaviYonetim_Sinavlar, okulsinavi" enableEventValidation="false" %>
-
-<%@ Register TagPrefix="uc1" TagName="UstMenu" Src="~/Yonetim/UstMenu.ascx" %>
+﻿<%@ page title="" language="C#" masterpagefile="MasterPage.master" autoeventwireup="true" inherits="Okul_SinaviYonetim_Sinavlar, okulsinavi" enableEventValidation="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
@@ -10,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü   <small class="float-right">Eğitim Öğretim Yılı: <%=TestSeciliDonem.SeciliDonem().Donem%></small></h1>
+                        <h1 class="m-0 text-dark">Uygulanan Sınavlar</h1>
                     </div>
                 </div>
             </div>
@@ -18,13 +16,12 @@
         <div class="content">
             <div class="row">
                 <div class="col-lg-12">
-                    <uc1:UstMenu runat="server" ID="UstMenu" />
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
                                     <ol class="breadcrumb float-sm-left">
-                                        <li class="breadcrumb-item active"> <%=TestSeciliDonem.SeciliDonem().Donem%> Sınavlar</li>
+                                        <li class="breadcrumb-item active"> Sınavlar</li>
                                     </ol>
                                 </div>
                             </div>
@@ -44,7 +41,7 @@
                                                 <tr>
                                                     <th scope="row">
                                                         <asp:Label ID="lblSira" runat="server" Text="Label"></asp:Label></th>
-                                                    <td><a href="SinavDetay.aspx?SinavId=<%#Eval("Id") %>"><%#Eval("SinavAdi") %></a></td>
+                                                    <td><a href="OkulPuanDetay.aspx?SinavId=<%#Eval("Id") %>"><%#Eval("SinavAdi") %></a></td>
                                                     <td><%#Eval("Sinif") %>. Sınıf</td>
                                                     <td><%#Eval("Puanlama") %> üzerinden</td>
                                                 </tr>

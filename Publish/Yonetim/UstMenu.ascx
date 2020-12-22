@@ -4,8 +4,8 @@
 
      if (sayfaAdi == "OgrenciSifreleri.aspx")
          liOkulOgrListesi.Attributes.Add("class", "nav-item active");
-     else if (sayfaAdi == "Sinavlar.aspx"||sayfaAdi=="SinavDetay.aspx")
-         liTestler.Attributes.Add("class", "nav-item active");
+     else if (sayfaAdi == "Sinavlar.aspx"||sayfaAdi=="SinavDetay.aspx"||sayfaAdi=="OkulPuanDetay.aspx")
+         liSinavlar.Attributes.Add("class", "nav-item active");
      else if (sayfaAdi == "SinavYonetim.aspx"||sayfaAdi=="SinavKayit.aspx")
          liSinavYonetim.Attributes.Add("class", "nav-item active");
     else if (sayfaAdi == "Ogrenciler.aspx")
@@ -24,7 +24,7 @@
         <ul class="navbar-nav">
             <li class="nav-item" id="liOgrenciler" runat="server" Visible="False"><a class="nav-link" href="/Yonetim/Ogrenciler.aspx">Öğrenciler</a></li>
             <li class="nav-item" id="liOkulOgrListesi" runat="server" visible="False"><a class="nav-link" href="/Yonetim/OkulOgrenciListesi.aspx">Öğrenci Listesi</a></li>
-            <li class="nav-item" id="liTestler" runat="server" Visible="False"><a class="nav-link" href="/Yonetim/Sinavlar.aspx">Sınavlar</a></li>
+            <li class="nav-item" id="liSinavlar" runat="server" Visible="False"><a class="nav-link" href="/Yonetim/Sinavlar.aspx">Sınavlar</a></li>
             <li class="nav-item" id="liSinavYonetim" runat="server" Visible="False"><a class="nav-link" href="/Yonetim/SinavYonetim.aspx">Sınav Yönetim</a></li>
             <li class="nav-item" id="liSinavRapor" runat="server" Visible="False"><a class="nav-link" href="/Yonetim/SinavRapor.aspx">Raporlar</a></li>
              <li class="nav-item" id="liDemo" runat="server" Visible="False"><a class="nav-link" href="/Yonetim/DemoGiris.aspx">Demo Sınav</a></li>

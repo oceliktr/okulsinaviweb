@@ -32,7 +32,6 @@
                                                     <table class="table m-0 table-striped table-valign-middle">
                                                         <thead>
                                                         <tr>
-                                                            <th>Dönem</th>
                                                             <th>Sınav Adı</th>
                                                             <th>Doğru Cevap Sayısı</th>
                                                             <th>Yanlış Cevap Sayısı</th>
@@ -43,7 +42,6 @@
                                                         <asp:Repeater ID="rptSinavlar" runat="server">
                                                             <ItemTemplate>
                                                                 <tr>
-                                                                    <td><%#Eval("Donem") %></td>
                                                                     <td><a href="SinavSonuc.aspx?SinavId=<%#Eval("SinavId") %>"><%#Eval("SinavAdi") %></a></td>
                                                                     <td><%#Eval("Dogru") %></td>
                                                                     <td><%#Eval("Yanlis") %></td>

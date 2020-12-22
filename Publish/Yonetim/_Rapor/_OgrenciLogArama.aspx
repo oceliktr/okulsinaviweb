@@ -3,20 +3,19 @@
     <form id="form1" runat="server">
         <ul class="products-list product-list-in-card pl-2 pr-2">
             <asp:Repeater ID="rptLog" runat="server">
-                <itemtemplate>
+                <ItemTemplate>
                     <li class="item">
                         <div class="product-info" style="margin-left: 0px;">
                             <span class="product-title">
-                                <button type="button" class="btn btn-default btn-sm text-sm mr-1"  data-toggle="modal" data-target="#ogr-islem" data-adi="<%#Eval("Adi") %> <%#Eval("Soyadi") %>" data-opaqid="<%#Eval("OpaqId") %>"><i class="fa fa-user"></i></button>
-                                <a href="<%#Eval("OpaqId") %>"><%#Eval("OpaqId") %> - <%#Eval("Adi") %> <%#Eval("Soyadi") %></a> <br/> <%#Eval("Grup") %>
+                                İşlem: <%#Eval("Grup") %>
                                 <span class="badge badge-warning float-right"><%#Eval("Tarih").ToDateTime().TarihYaz() %></span>
                             </span>
                             <span class="product-description">
-                                <%#Eval("Rapor") %>
+                               Rapor: <%#Eval("Rapor") %>
                             </span>
                         </div>
                     </li>
-                </itemtemplate>
+                </ItemTemplate>
             </asp:Repeater>
         </ul>
     </form>

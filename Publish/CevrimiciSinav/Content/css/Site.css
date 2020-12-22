@@ -29,3 +29,11 @@
 .hiddens {
     display: none;
 }
+.help-sinav {
+    font-size: 13px;
+}
+
+.help-sinav h4 {
+    font-size: 17px;
+    font-weight: 600;
+}

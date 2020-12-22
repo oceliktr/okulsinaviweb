@@ -1,8 +1,7 @@
-﻿<%@ page title="" language="C#" masterpagefile="~/MasterPage.master" autoeventwireup="true" inherits="Okul_SinaviYonetim_SinavYonetim, okulsinavi" enableEventValidation="false" %>
+﻿<%@ page title="" language="C#" masterpagefile="MasterPage.master" autoeventwireup="true" inherits="Okul_SinaviYonetim_SinavYonetim, okulsinavi" enableEventValidation="false" %>
 
-<%@ Register TagPrefix="uc1" TagName="UstMenu" Src="~/Yonetim/UstMenu.ascx" %>
 
-<%@ MasterType VirtualPath="~/MasterPage.master" %>
+<%@ MasterType VirtualPath="MasterPage.master" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <link rel="stylesheet" href="/CevrimiciSinav/Content/sweetalert2/sweetalert2.min.css" />
     <style>
@@ -10,6 +9,7 @@
             margin-right: 10px;
             margin-top: 10px;
         }
+        
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
@@ -18,7 +18,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü   <small class="float-right">Eğitim Öğretim Yılı: <%=TestSeciliDonem.SeciliDonem().Donem%></small></h1>
+                        <h1 class="m-0 text-dark">Sınav Yönetim</h1>
                     </div>
                 </div>
             </div>
@@ -26,12 +26,11 @@
         <div class="content">
             <div class="row">
                 <div class="col-lg-12">
-                    <uc1:UstMenu runat="server" ID="UstMenu" />
                     <div class="card">
                         <div class="card-body">
                             <div class="col-md-6">
                                 <ol class="breadcrumb float-sm-left">
-                                    <li class="breadcrumb-item"><a href="#"><%=TestSeciliDonem.SeciliDonem().Donem%> Sınav Yönetimi</a></li>
+                                    <li class="breadcrumb-item"><a href="#">Sınav Yönetimi</a></li>
                                 </ol>
                             </div>
                             <div class="text-right mb-2">
@@ -40,98 +39,25 @@
 
                             <div class="col-lg-12" id="sinavlar">
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Dönemler</h3>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered table-hover dataTable" role="grid">
-                                <thead>
-                                    <tr role="row">
-                                        <th>Dönemler</th>
-                                        <th>Veri Girişi</th>
-                                        <th>İşlem</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <asp:Repeater ID="rptKayitlar" runat="server" OnItemCommand="rptKayitlar_ItemCommand">
-                                        <ItemTemplate>
-                                            <tr role="row" class="odd">
-                                                <td><%#Eval("Aktif").ToString()=="1"?"<i class='far fa-check-square'></i>":"<i class='far fa-square'></i>" %> <%#Eval("Donem") %></td>
-                                                <td><%#Eval("VeriGirisi").ToString()=="1"?"<i class='far fa-check-square'></i>":"<i class='far fa-square'></i>" %></td>
-                                                <td>
-                                                    <asp:LinkButton ID="lnkDuzenle" runat="server" CommandName="Duzenle" CommandArgument='<%#Eval("Id") %>'><i class="fa fa-edit"></i></asp:LinkButton>
-                                                    <asp:LinkButton ID="lnkSil" runat="server" CommandName="Sil" OnClientClick="return confirm('Silmek istediğinizden emin misiniz?');" CommandArgument='<%#Eval("Id") %>'><i class="fa fa-trash"></i></asp:LinkButton>
-                                                </td>
-                                            </tr>
-                                        </ItemTemplate>
-                                    </asp:Repeater>
-                                </tbody>
-                            </table>
+                            
+                            <div class="col-12">
+                                <div class="callout callout-info help-sinav mt-2">
+                                    <h4>Sınav Hazırlarken!</h4>
+                                    <p>
+                                        Sınav hazırlarken sağ üstte Yeni Sınav butonundan sınav ekleyiniz. Daha sonra sınava oturum ekleyiniz. Sınav sorularını bu oturumlara ekleyiniz.<br/>
+                                        Her sınavın en az bir oturumu olmalıdır. Sınava oturum eklemek için <i class="fa fa-plus"></i> butonuna tıklayınız. Oturumları görmek ve yönetmek için sınav adına tıklayınız.
+                                    </p>
+                                    <h4>Sınav Durumu</h4>
 
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
+                                    <p>
+                                     Çevrimiçi sınav ekranında öğrencilere   Sınav durumu "Aktif" olanlar gösterilmektedir. Sınav bittikten sonra öğrencilerin sınava giriş ekranında görmemesini istiyorsanız "Kapalı" duruma getiriniz. <br/>
+                                        Kapalı sınavlar öğrencilere gösterilmez. Ancak sınav girmiş ise Sınavlarım bağlantısından sınav sonucunu görebilir.
+                                    </p>
 
-                    <asp:PlaceHolder ID="phUyari" runat="server"></asp:PlaceHolder>
-
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <asp:Literal ID="ltrKayitBilgi" Text="Yeni dönem kayıt formu" runat="server"></asp:Literal></h3>
-                        </div>
-                        <div class="card-body">
-                            <asp:HiddenField ID="hfId" Value="0" runat="server" />
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">
-                                        Dönem
-                                                                    <asp:RequiredFieldValidator ControlToValidate="txtDonem" ValidationGroup="form" ID="RequiredFieldValidator1" ForeColor="Red" Text="*" SetFocusOnError="true" runat="server" ErrorMessage="RequiredFieldValidator" Display="Dynamic"></asp:RequiredFieldValidator></label>
-                                    <div class="col-sm-8">
-                                        <asp:TextBox ID="txtDonem" CssClass="form-control" runat="server" placeholder="Dönem tanımını giriniz" ValidationGroup="form"></asp:TextBox>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer">
-                            <asp:Button ID="btnVazgec" CssClass="btn btn-default" runat="server" Text="Vazgeç" OnClick="btnVazgec_Click" />
-                            <asp:Button ID="btnKaydet" CssClass="btn btn-primary pull-right" runat="server" ValidationGroup="form" Text="Kaydet" OnClick="btnKaydet_Click" />
-                        </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Aktif Dönem</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-horizontal">
-                                <asp:HiddenField ID="HiddenField1" Value="0" runat="server" />
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Aktif dönem</label>
-                                    <div class="col-sm-8">
-                                        <asp:HiddenField ID="hfAktifdonem" runat="server" />
-                                        <asp:DropDownList runat="server" ID="ddlAktifDonem" CssClass="form-control"></asp:DropDownList>
-                                    </div>
-                                    <label class="col-sm-4 control-label">
-                                        <asp:CheckBox ID="cbVeriGirisi" runat="server" Text=" Okullara veri girişi açık" /> </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <asp:Button ID="btnAktifDonem" CssClass="btn btn-primary pull-right" runat="server" Text="Kaydet" OnClick="btnAktifDonem_OnClick" />
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -159,6 +85,7 @@
     <script src="/CevrimiciSinav/Content/sweetalert2/sweetalert2.min.js"></script>
     <script>
         $(function () {
+            $('[data-tooltip="title"]').tooltip();
             $("#sinavlar").load("/Yonetim/_Sinavlar.aspx");
         });
         $('#detay').on('show.bs.modal',

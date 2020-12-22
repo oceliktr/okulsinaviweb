@@ -1,6 +1,4 @@
-﻿<%@ page title="" language="C#" masterpagefile="~/MasterPage.master" autoeventwireup="true" inherits="Okul_SinaviYonetim_SinavDetay, okulsinavi" enableEventValidation="false" %>
-
-<%@ Register TagPrefix="uc1" TagName="UstMenu" Src="~/Yonetim/UstMenu.ascx" %>
+﻿<%@ page title="" language="C#" masterpagefile="MasterPage.master" autoeventwireup="true" inherits="Okul_SinaviYonetim_SinavDetay, okulsinavi" enableEventValidation="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <link rel="stylesheet" href="/CevrimiciSinav/Content/datatables-bs4/css/dataTables.bootstrap4.css" />
@@ -11,7 +9,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü   <small class="float-right">Eğitim Öğretim Yılı: <%=TestSeciliDonem.SeciliDonem().Donem%></small></h1>
+                        <h1 class="m-0 text-dark">Çevrim İçi Sınav Modülü </h1>
                     </div>
                 </div>
             </div>
@@ -19,13 +17,12 @@
         <div class="content">
             <div class="row">
                 <div class="col-lg-12">
-                    <uc1:UstMenu runat="server" ID="UstMenu" />
                     <div class="card card-default">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-10">
                                     <ol class="breadcrumb float-sm-left">
-                                        <li class="breadcrumb-item"><a href="Sinavlar.aspx"><%=TestSeciliDonem.SeciliDonem().Donem%> Sınavlar</a></li>
+                                        <li class="breadcrumb-item"><a href="Sinavlar.aspx"> Sınavlar</a></li>
                                         <li class="breadcrumb-item active">Okullar</li>
                                     </ol>
                                 </div>

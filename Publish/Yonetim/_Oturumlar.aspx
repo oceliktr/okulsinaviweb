@@ -33,3 +33,14 @@
         </asp:Repeater>
     </tbody>
 </table>
+<div class="col-12">
+    <div class="callout callout-info help-sinav mt-2">
+        <h4>Sınav Sonuçlarının Açıklanması ve Cevap Anahtarının Gösterimi</h4>
+
+        <p>
+            Öğrenciler yukarıdaki oturumları tamamlayınca doğru yanlış sayılarını ve sınav puanlarını görebileceklerdir.<br />
+            Cevap anahtarlarını, cevaplarını ve soruları ancak oturumlar bittikten sonra görebileceklerdir. Oturumların bitiş saati <strong>
+                <asp:Literal ID="ltrCevapAnahtariBilgi" runat="server"></asp:Literal></strong>
+        </p>
+    </div>
+</div>
