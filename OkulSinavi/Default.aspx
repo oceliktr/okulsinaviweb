@@ -28,7 +28,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="intro-layer to_animate" data-animation="fadeInLeft">
-                                                    <a href="#" class="theme_button color2">ÜCRETSİZ DENE</a>
+                                                    <a href="Basvuru.aspx" class="theme_button color2">ÜCRETSİZ DENE</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -58,7 +58,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="intro-layer to_animate" data-animation="fadeInLeft">
-                                                    <a href="#" class="theme_button">ÜCRETSİZ DENE</a>
+                                                    <a href="Basvuru.aspx" class="theme_button">ÜCRETSİZ DENE</a>
                                                 </div>
                                             </div>
                                         </div>

@@ -13,8 +13,9 @@ namespace OkulSinavi
                 ddlYetki.Items.Insert(0, new ListItem("Yetki Seçiniz", ""));
                 ddlYetki.Items.Insert(1, new ListItem("Admin", "Admin"));
                 ddlYetki.Items.Insert(2, new ListItem("Öğretmen", "Ogretmen"));
-                
-                    ddlYetki.Items.Insert(3, new ListItem("Root", "Root"));
+                ddlYetki.Items.Insert(3, new ListItem("Başvuru Sahibi", "Sahip"));
+
+                ddlYetki.Items.Insert(3, new ListItem("Root", "Root"));
 
                     IlcelerDb ilcelerDb = new IlcelerDb();
                     ddlIlce.DataSource = ilcelerDb.KayitlariGetir();
@@ -121,6 +122,9 @@ namespace OkulSinavi
                     cbAdmin.Checked = true;
                 if (info.Yetki.Contains("Ogretmen"))
                     cbOgretmen.Checked = true;
+                
+                cbSahip.Checked = info.Sahip==1;
+
 
 
                 btnKaydet.Text = "Bilgileri Değiştir";
@@ -159,6 +163,8 @@ namespace OkulSinavi
             if (cbOgretmen.Checked)
                 yetki += "Ogretmen|";
 
+            int sahip = cbSahip.Checked ? 1 : 0;
+            
             int id = hfId.Value.ToInt32();
 
             KullanicilarDb veriDb = new KullanicilarDb();
@@ -170,7 +176,8 @@ namespace OkulSinavi
                 Bransi = brans,
                 Yetki = yetki,
                 Email = email,
-                CepTlf = cepTlf
+                CepTlf = cepTlf,
+                Sahip = sahip
             };
             if (tcKimlik != "")
             {
@@ -231,7 +238,8 @@ namespace OkulSinavi
 
             cbOgretmen.Checked = false;
             cbAdmin.Checked = false;
-
+            cbSahip.Checked = false;
+            
             btnKaydet.Text = "Kaydet";
             ltrKayitBilgi.Text = "Yeni Kullanıcı Kayıt Formu";
 

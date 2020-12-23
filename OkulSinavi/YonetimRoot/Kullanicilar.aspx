@@ -74,7 +74,7 @@
                                                         <ItemTemplate>
                                                             <tr role="row" class="odd">
                                                                 <td><%#Eval("Id") %></td>
-                                                                <td><%#Eval("AdiSoyadi") %></td>
+                                                                <td><%#Eval("AdiSoyadi") %> <%#Eval("Sahip").ToString()=="1"?"<span class='badge badge-success float-right'>B. Sahibi</span>":"" %></td>
                                                                 <td>
                                                                     <asp:Literal ID="ltrKurumAdi" runat="server"></asp:Literal></td>
                                                                 <td>
@@ -175,6 +175,12 @@
                                                                     <asp:CheckBox ID="cbRoot" runat="server" Text=" Root" /><br />
                                                                     <asp:CheckBox ID="cbAdmin" runat="server" Text=" Okul Yetkilisi - Admin" /><br />
                                                                     <asp:CheckBox ID="cbOgretmen" runat="server" Text=" Öğretmen" />
+                                                                </div>
+                                                            </div><div class="form-group">
+                                                                <label class="col-sm-4 control-label">
+                                                                    Başvuru Sahibi</label>
+                                                                <div class="col-sm-8">
+                                                                    <asp:CheckBox ID="cbSahip" runat="server" Text="  Başvuru Sahibi" />
                                                                 </div>
                                                             </div>
                                                             <div class="card-footer">

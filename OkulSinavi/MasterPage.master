@@ -6,7 +6,15 @@
 <head runat="server">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Okul Sınavı</title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Okullar, dershaneler ve eğitim kurumları için Online - Çevrimiçi Sınav platformu.">
+    <meta name="author" content="Serdizayn.com.tr">
+    <link rel="icon" href="/Content/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/Content/images/favicon.ico" type="image/x-icon">
+    <title>Okul Sınavı - Online - Çevrimiçi Sınav platformu.</title>
     <link rel="stylesheet" href="/Content/css/bootstrap.min.css">
     <link rel="stylesheet" href="/Content/css/site_main.css">
     <link rel="stylesheet" href="/Content/css/animations.css">
@@ -53,21 +61,21 @@
                             <!-- main nav start -->
                             <nav class="mainmenu_wrapper">
                                 <ul class="mainmenu nav sf-menu">
-                                    <li class="active">
+                                    <li id="liAnasayfa" runat="server">
                                         <a href="/">ANASAYFA</a>
                                     </li>
 
-                                    <li><a href="#">KURUMSAL</a>
+                                    <li id="liKurumsal" runat="server"><a href="#">KURUMSAL</a>
                                         <ul>
                                             <li><a href="Hakkimizda.aspx">HAKKIMIZDA</a></li>
                                             <li><a href="Nedir.aspx">OKUL SINAVI NEDİR</a></li>
-                                            <li><a href="#">VERİLERİN KULLANIMI</a></li>
+                                            <li><a href="Mesafeli-Satis-Sozlesmesi-Ornegi.aspx">MESAFELİ SATIŞ SÖZLEMESİ</a></li>
                                             <li><a href="Gizlilik-Sozlesmesi.aspx">GİZLİLİK SÖZLEŞMESİ</a></li>
                                         </ul>
                                     </li>
                                     <li><a href="/CevrimiciSinav/">ÖĞRENCİLER GİRİŞ</a></li>
                                     <li><a href="/Yonetim/">OKUL GİRİŞ</a></li>
-                                    <li><a href="Iletisim.aspx">İLETİŞİM</a></li>
+                                    <li id="liIletisim" runat="server"><a href="Iletisim.aspx">İLETİŞİM</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -75,7 +83,7 @@
                             <span class="toggle_menu">
                                 <span></span>
                             </span>
-                            <a href="#" class="theme_button">ÜCRETSİZ DENE</a>
+                            <a href="Basvuru.aspx" class="theme_button">ÜCRETSİZ DENE</a>
                         </div>
                     </div>
                 </div>
@@ -84,41 +92,50 @@
         <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
         
         </asp:ContentPlaceHolder>
-                <footer class="page_footer ls ms section_padding_top_50 section_padding_bottom_0">
-                    <div class="container-fluid">
+            <footer class="page_footer ls ms section_padding_top_50 section_padding_bottom_0">
+                <div class="container-fluid">
 
-                        <div class="row">
-                            <div class="col-sm-6 to_animate">
-                                <div class="teaser text-center">
-                                    <div class="teaser_icon highlight size_normal">
-                                        <i class="rt-icon2-users2"></i>
-                                    </div>
-                                    <h3>Öğrenciler</h3>
-                                    <p>Öğrenci çevrimiçi sınav giriş ekranı</p>
-                                    <a href="/CevrimiciSinav/" class="theme_button wide_button color1">Öğrenci Giriş</a>
+                    <div class="row">
+                        <div class="col-sm-6 to_animate">
+                            <div class="teaser text-center">
+                                <div class="teaser_icon highlight size_normal">
+                                    <i class="rt-icon2-users2"></i>
                                 </div>
+                                <h3>Öğrenciler</h3>
+                                <p>Öğrenci çevrimiçi sınav giriş ekranı</p>
+                                <a href="/CevrimiciSinav/" class="theme_button wide_button color1">ÖĞRENCİ GİRİŞ</a>
                             </div>
+                        </div>
 
-                            <div class="col-sm-6 to_animate">
-                                <div class="teaser text-center">
-                                    <div class="teaser_icon highlight size_normal">
-                                        <i class="rt-icon2-user3"></i>
-                                    </div>
-                                    <h3>Okul Yöneticileri</h3>
-                                    <p>Okul yönetimi giriş ekranı</p>
-                                    <a href="/Yonetim/" class="theme_button wide_button color1">Okul Giriş</a>
+                        <div class="col-sm-6 to_animate">
+                            <div class="teaser text-center">
+                                <div class="teaser_icon highlight size_normal">
+                                    <i class="rt-icon2-user3"></i>
                                 </div>
+                                <h3>Okul Yöneticileri</h3>
+                                <p>Okul yönetimi giriş ekranı</p>
+                                <a href="/Yonetim/" class="theme_button wide_button color1">OKUL GİRİŞ</a>
                             </div>
                         </div>
                     </div>
-                </footer>
+                </div>
+            </footer>
 
                 <section class="page_copyright cs main_color2 section_padding_15 columns_margin_0">
                     <div class="container">
                         <div class="row">
-                            <div class="col-sm-12 text-center">
+                            <div class="col-sm-9 text-center">
                                 <p>okulsinavi.com <a href="https://serdizayn.com.tr">&copy; Serdizayn</a> projesidir.
                                 </p>
+                            </div>
+                            <div class="col-sm-3 media-right media-middle">
+                                <a href="#"><img src="/Content/images/icon/visa.png" alt="Visa"></a>
+                                <a href="#"><img src="/Content/images/icon/mastercard.png" alt="Mastercard"></a>
+                                <a href="#"><img src="/Content/images/icon/american-express.png" alt="American Express"></a>
+                                <a href="#"><img src="/Content/images/icon/discover.png" alt="Discover"></a>
+                                <a href="#"><img src="/Content/images/icon/troy.png" alt="Troy"></a>
+                                           
+                                       
                             </div>
                         </div>
                     </div>

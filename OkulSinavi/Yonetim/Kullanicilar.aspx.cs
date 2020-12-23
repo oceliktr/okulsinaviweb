@@ -166,6 +166,7 @@ namespace OkulSinavi
                 {
                     info.Sifre = sifre != "" ? sifre.Md5Sifrele() : null; //yeni kayıtta şifre yok ise null yap
                     info.TcKimlik = tcKimlik;
+                    info.Sahip = 0;//okullar sahip ekleyemezler. 
                     veriDb.KayitEkle(info);
                     Master.UyariIslemTamam("Yeni bir kullanıcı eklendi.", phUyari);
                     FormuTemizle();
