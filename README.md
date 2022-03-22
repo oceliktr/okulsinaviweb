@@ -1,4 +1,3 @@
-# okulsinaviweb
-ÇEVRİMİÇİ SINAV UYGULAMASI
+# ÇEVRİMİÇİ SINAV UYGULAMASI
 
-Bir aralar üzerinde çalıştığım proje. 
+## Bir zamanlar üzerinde çalıştığım proje. İncelenip faydalanılabilir.
