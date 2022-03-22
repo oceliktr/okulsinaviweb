@@ -1,2 +1,0 @@
-﻿<%@ page language="C#" autoeventwireup="true" inherits="OkulSinavi_CevrimiciSinavYonetim_SoruGetir, okulsinavi" enableEventValidation="false" %>
-<asp:Literal ID="ltrSoru" runat="server"></asp:Literal><asp:Image ID="imgSoru" CssClass="img-fluid" runat="server"></asp:Image>
